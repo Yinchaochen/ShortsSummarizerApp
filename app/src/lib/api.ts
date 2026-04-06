@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-const API_BASE = "http://127.0.0.1:8000"; // Update to deployed URL in production
+const API_BASE = "https://shortssummarizer.up.railway.app";
 
 async function getAuthHeader(): Promise<Record<string, string>> {
   const { data } = await supabase.auth.getSession();
