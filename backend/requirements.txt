@@ -1,0 +1,8 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+celery==5.4.0
+redis==5.0.8
+google-genai
+pydantic>=2.10.0
+python-dotenv==1.0.1
+supabase
