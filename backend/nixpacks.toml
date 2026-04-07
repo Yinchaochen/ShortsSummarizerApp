@@ -1,2 +1,2 @@
 [phases.setup]
-nixPkgs = ["deno"]
+nixPkgs = ["python312", "deno"]
