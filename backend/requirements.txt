@@ -6,4 +6,4 @@ google-genai
 pydantic>=2.10.0
 python-dotenv==1.0.1
 supabase
-yt-dlp
+yt-dlp>=2025.1.15
