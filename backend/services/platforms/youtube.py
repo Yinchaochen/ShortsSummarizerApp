@@ -10,7 +10,6 @@ class YouTubePlatform(BasePlatform):
     def download(self, url: str, output_path: str) -> bool:
         ydl_opts = {
             "format": "best",
-            "extractor_args": {"youtube": {"player_client": ["android", "web"]}},
             "outtmpl": output_path,
             "quiet": True,
             "no_playlist": True,
