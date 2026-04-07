@@ -9,7 +9,7 @@ class YouTubePlatform(BasePlatform):
 
     def download(self, url: str, output_path: str) -> bool:
         ydl_opts = {
-            "format": "mp4/best[ext=mp4]/best",
+            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
             "outtmpl": output_path,
             "quiet": True,
             "no_playlist": True,
