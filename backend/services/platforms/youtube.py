@@ -13,7 +13,7 @@ class YouTubePlatform(BasePlatform):
             "outtmpl": output_path,
             "quiet": True,
             "no_playlist": True,
-            "remote_components": "ejs:github",
+            "remote_components": ["ejs:github"],
         }
 
         cookies_content = os.environ.get("YOUTUBE_COOKIES", "")
