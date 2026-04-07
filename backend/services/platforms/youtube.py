@@ -21,7 +21,7 @@ class YouTubePlatform(BasePlatform):
             tmp = tempfile.NamedTemporaryFile(
                 mode="w", suffix=".txt", delete=False, encoding="utf-8"
             )
-            tmp.write(cookies_content)
+            tmp.write(cookies_content.replace('\r\n', '\n').replace('\r', '\n'))
             tmp.flush()
             cookie_file = tmp.name
             tmp.close()
