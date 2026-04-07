@@ -16,23 +16,7 @@ class YouTubePlatform(BasePlatform):
             "no_playlist": True,
         }
 
-        cookies_content = os.environ.get("YOUTUBE_COOKIES", "")
-        cookie_file = None
-        if cookies_content:
-            tmp = tempfile.NamedTemporaryFile(
-                mode="w", suffix=".txt", delete=False, encoding="utf-8"
-            )
-            tmp.write(cookies_content)
-            tmp.flush()
-            cookie_file = tmp.name
-            tmp.close()
-            ydl_opts["cookiefile"] = cookie_file
-
-        try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([url])
-        finally:
-            if cookie_file and os.path.exists(cookie_file):
-                os.remove(cookie_file)
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
 
         return True
