@@ -6,15 +6,39 @@ import {
 import { router, useLocalSearchParams } from "expo-router";
 import { pollJob } from "../src/lib/api";
 import BreathingBackground from "../src/components/BreathingBackground";
+import AIDetectionCard from "../src/components/AIDetectionCard";
+import Footer from "../src/components/Footer";
 import { useLanguage } from "./_layout";
 
 const STEPS = ["downloading", "uploading", "processing", "analyzing"];
+
+type JobResult = {
+  summary: string;
+  is_ai_generated: "yes" | "no" | "uncertain";
+  is_deepfake: "yes" | "no" | "uncertain";
+  ai_confidence: "high" | "medium" | "low";
+  ai_reason: string;
+};
+
+function parseResult(raw: any): JobResult {
+  if (raw && typeof raw === "object" && "summary" in raw) {
+    return raw as JobResult;
+  }
+  // Legacy plain text result
+  return {
+    summary: typeof raw === "string" ? raw : String(raw),
+    is_ai_generated: "uncertain",
+    is_deepfake: "uncertain",
+    ai_confidence: "low",
+    ai_reason: "",
+  };
+}
 
 export default function ResultScreen() {
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
   const { t } = useLanguage();
   const [step, setStep] = useState("downloading");
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState<JobResult | null>(null);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const progressAnim = useRef(new Animated.Value(0)).current;
@@ -38,15 +62,11 @@ export default function ResultScreen() {
             : "analyzing";
           setStep(newStep);
           const progress = (STEPS.indexOf(newStep) + 1) / STEPS.length;
-          Animated.timing(progressAnim, {
-            toValue: progress,
-            duration: 400,
-            useNativeDriver: false,
-          }).start();
+          Animated.timing(progressAnim, { toValue: progress, duration: 400, useNativeDriver: false }).start();
         } else if (data.state === "done") {
           clearInterval(interval);
           Animated.timing(progressAnim, { toValue: 1, duration: 300, useNativeDriver: false }).start();
-          setResult(data.result ?? "");
+          setResult(parseResult(data.result));
           setDone(true);
         } else if (data.state === "error") {
           clearInterval(interval);
@@ -90,16 +110,27 @@ export default function ResultScreen() {
       ) : null}
 
       {result ? (
-        <View style={styles.resultCard}>
-          <Text style={styles.resultText}>{result}</Text>
-          <TouchableOpacity
-            style={styles.copyButton}
-            onPress={() => Clipboard.setString(result)}
-          >
-            <Text style={styles.copyText}>{t.copySummary}</Text>
-          </TouchableOpacity>
-        </View>
+        <>
+          <View style={styles.resultCard}>
+            <Text style={styles.resultText}>{result.summary}</Text>
+            <TouchableOpacity
+              style={styles.copyButton}
+              onPress={() => Clipboard.setString(result.summary)}
+            >
+              <Text style={styles.copyText}>{t.copySummary}</Text>
+            </TouchableOpacity>
+          </View>
+
+          <AIDetectionCard
+            isAiGenerated={result.is_ai_generated}
+            isDeepfake={result.is_deepfake}
+            confidence={result.ai_confidence}
+            reason={result.ai_reason}
+          />
+        </>
       ) : null}
+
+      <Footer />
     </ScrollView>
   );
 }
@@ -109,49 +140,15 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 24, paddingTop: 64, paddingBottom: 48 },
   back: { marginBottom: 32 },
   backText: { color: "#7170ff", fontSize: 15 },
-  title: {
-    fontSize: 28,
-    fontWeight: "600",
-    color: "#f7f8f8",
-    letterSpacing: -0.8,
-    marginBottom: 32,
-  },
+  title: { fontSize: 28, fontWeight: "600", color: "#f7f8f8", letterSpacing: -0.8, marginBottom: 32 },
   progressContainer: { gap: 12, marginBottom: 32 },
-  progressTrack: {
-    height: 4,
-    backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 9999,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#7170ff",
-    borderRadius: 9999,
-  },
+  progressTrack: { height: 4, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 9999, overflow: "hidden" },
+  progressFill: { height: "100%", backgroundColor: "#7170ff", borderRadius: 9999 },
   stepLabel: { color: "#62666d", fontSize: 13 },
-  errorCard: {
-    backgroundColor: "rgba(255,107,107,0.08)",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255,107,107,0.2)",
-    padding: 16,
-  },
+  errorCard: { backgroundColor: "rgba(255,107,107,0.08)", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,107,107,0.2)", padding: 16 },
   errorText: { color: "#ff6b6b", fontSize: 14, lineHeight: 22 },
-  resultCard: {
-    backgroundColor: "rgba(255,255,255,0.03)",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-    padding: 20,
-    gap: 16,
-  },
+  resultCard: { backgroundColor: "rgba(255,255,255,0.03)", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", padding: 20, gap: 16 },
   resultText: { color: "#d0d6e0", fontSize: 15, lineHeight: 26 },
-  copyButton: {
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
+  copyButton: { borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", borderRadius: 8, paddingVertical: 10, alignItems: "center" },
   copyText: { color: "#62666d", fontSize: 13 },
 });

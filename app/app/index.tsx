@@ -8,6 +8,7 @@ import { supabase } from "../src/lib/supabase";
 import { submitSummarize } from "../src/lib/api";
 import BreathingBackground from "../src/components/BreathingBackground";
 import LanguagePicker from "../src/components/LanguagePicker";
+import Footer from "../src/components/Footer";
 import { useLanguage } from "./_layout";
 import { LANGUAGES } from "../src/lib/languages";
 
@@ -84,6 +85,7 @@ export default function HomeScreen() {
           }
         </TouchableOpacity>
       </View>
+      <Footer />
     </ScrollView>
   );
 }

@@ -6,6 +6,7 @@ import {
 import { router } from "expo-router";
 import { supabase } from "../src/lib/supabase";
 import BreathingBackground from "../src/components/BreathingBackground";
+import Footer from "../src/components/Footer";
 import { useLanguage } from "./_layout";
 
 export default function LoginScreen() {
@@ -75,6 +76,7 @@ export default function LoginScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+      <Footer />
     </KeyboardAvoidingView>
   );
 }

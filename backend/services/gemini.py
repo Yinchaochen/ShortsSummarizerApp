@@ -1,4 +1,6 @@
 import os
+import re
+import json
 import time
 from google import genai
 from google.genai import types
@@ -95,10 +97,34 @@ LANG_PROMPTS = {
 }
 
 
-def analyze_video(video_path: str, language: str = "en", on_progress=None) -> str:
+def _parse_gemini_response(text: str) -> dict:
+    """Parse Gemini JSON response, falling back gracefully if not valid JSON."""
+    cleaned = text.strip()
+    cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+    cleaned = re.sub(r"\s*```$", "", cleaned).strip()
+    try:
+        data = json.loads(cleaned)
+        return {
+            "summary": data.get("summary", text),
+            "is_ai_generated": data.get("is_ai_generated", "uncertain"),
+            "is_deepfake": data.get("is_deepfake", "uncertain"),
+            "ai_confidence": data.get("ai_confidence", "low"),
+            "ai_reason": data.get("ai_reason", ""),
+        }
+    except Exception:
+        return {
+            "summary": text,
+            "is_ai_generated": "uncertain",
+            "is_deepfake": "uncertain",
+            "ai_confidence": "low",
+            "ai_reason": "",
+        }
+
+
+def analyze_video(video_path: str, language: str = "en", on_progress=None) -> dict:
     """
-    上传视频到 Gemini 并返回详细总结。
-    on_progress(msg): 可选回调，用于向前端推送进度。
+    Upload video to Gemini, return structured result with summary + AI detection.
+    on_progress(msg): optional callback to push progress to frontend.
     """
     api_key = os.environ.get("GOOGLE_API_KEY", "")
     if not api_key:
@@ -127,13 +153,15 @@ def analyze_video(video_path: str, language: str = "en", on_progress=None) -> st
 
     lang_instruction = LANG_PROMPTS.get(language, f"Reply in {language}.")
     prompt = (
-        f"Watch this short video completely. {lang_instruction}\n"
-        "Describe in detail:\n"
-        "1) All visuals and actions (including fast cuts)\n"
-        "2) All visible text and subtitles\n"
-        "3) Core theme (if humorous/meme, explain the joke)\n"
-        "4) Overall impression\n"
-        "Output the analysis directly — no opening remarks."
+        f"Watch this short video completely. {lang_instruction}\n\n"
+        "Return a JSON object with EXACTLY these fields (no markdown, no extra text):\n"
+        "{\n"
+        '  "summary": "<detailed analysis in the target language: all visuals, actions, text, subtitles, theme, overall impression>",\n'
+        '  "is_ai_generated": "<yes | no | uncertain>",\n'
+        '  "is_deepfake": "<yes | no | uncertain>",\n'
+        '  "ai_confidence": "<high | medium | low>",\n'
+        '  "ai_reason": "<one sentence explanation of AI/deepfake assessment, always in English>"\n'
+        "}"
     )
 
     last_err = None
@@ -145,13 +173,8 @@ def analyze_video(video_path: str, language: str = "en", on_progress=None) -> st
                 model=model_name,
                 contents=[video_file, prompt],
             )
-            return response.text
+            return _parse_gemini_response(response.text)
         except Exception as e:
             last_err = str(e)
 
     raise RuntimeError(f"All Gemini models failed: {last_err}")
-
-    try:
-        client.files.delete(name=video_file.name)
-    except Exception:
-        pass
