@@ -1,10 +1,12 @@
 from .base import BasePlatform
 from .tiktok import TikTokPlatform
 from .instagram import InstagramPlatform
+from .youtube import YouTubePlatform
 
 PLATFORM_MAP = {
     "tiktok": TikTokPlatform,
     "instagram": InstagramPlatform,
+    "youtube": YouTubePlatform,
 }
 
 
