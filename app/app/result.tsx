@@ -6,23 +6,25 @@ import {
 import { router, useLocalSearchParams } from "expo-router";
 import { pollJob } from "../src/lib/api";
 import BreathingBackground from "../src/components/BreathingBackground";
+import { useLanguage } from "./_layout";
 
 const STEPS = ["downloading", "uploading", "processing", "analyzing"];
 
-const STEP_LABELS: Record<string, string> = {
-  downloading: "Downloading video...",
-  uploading:   "Uploading to Gemini...",
-  processing:  "Processing video...",
-  analyzing:   "Analyzing content...",
-};
-
 export default function ResultScreen() {
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
+  const { t } = useLanguage();
   const [step, setStep] = useState("downloading");
   const [result, setResult] = useState("");
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const progressAnim = useRef(new Animated.Value(0)).current;
+
+  const STEP_LABELS: Record<string, string> = {
+    downloading: t.downloading,
+    uploading: t.uploading,
+    processing: t.processing,
+    analyzing: t.analyzing,
+  };
 
   useEffect(() => {
     if (!jobId) return;
@@ -30,7 +32,6 @@ export default function ResultScreen() {
       try {
         const data = await pollJob(jobId);
         if (data.state === "progress" && data.label) {
-          const currentStep = STEPS.indexOf(step);
           const newStep = data.label.toLowerCase().includes("download") ? "downloading"
             : data.label.toLowerCase().includes("upload") ? "uploading"
             : data.label.toLowerCase().includes("process") ? "processing"
@@ -53,7 +54,7 @@ export default function ResultScreen() {
         }
       } catch {
         clearInterval(interval);
-        setError("Failed to connect to server");
+        setError(t.failedToConnect);
       }
     }, 2000);
     return () => clearInterval(interval);
@@ -67,14 +68,12 @@ export default function ResultScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <BreathingBackground />
-      {/* Back */}
       <TouchableOpacity style={styles.back} onPress={() => router.back()}>
-        <Text style={styles.backText}>← Back</Text>
+        <Text style={styles.backText}>{t.back}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.title}>{done ? "Summary ready" : "Analyzing video..."}</Text>
+      <Text style={styles.title}>{done ? t.summaryReady : t.analyzingVideo}</Text>
 
-      {/* Progress bar */}
       {!done && !error && (
         <View style={styles.progressContainer}>
           <View style={styles.progressTrack}>
@@ -84,14 +83,12 @@ export default function ResultScreen() {
         </View>
       )}
 
-      {/* Error */}
       {error ? (
         <View style={styles.errorCard}>
           <Text style={styles.errorText}>{error}</Text>
         </View>
       ) : null}
 
-      {/* Result */}
       {result ? (
         <View style={styles.resultCard}>
           <Text style={styles.resultText}>{result}</Text>
@@ -99,7 +96,7 @@ export default function ResultScreen() {
             style={styles.copyButton}
             onPress={() => Clipboard.setString(result)}
           >
-            <Text style={styles.copyText}>Copy summary</Text>
+            <Text style={styles.copyText}>{t.copySummary}</Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -148,11 +145,7 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 16,
   },
-  resultText: {
-    color: "#d0d6e0",
-    fontSize: 15,
-    lineHeight: 26,
-  },
+  resultText: { color: "#d0d6e0", fontSize: 15, lineHeight: 26 },
   copyButton: {
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",

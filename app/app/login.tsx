@@ -6,8 +6,10 @@ import {
 import { router } from "expo-router";
 import { supabase } from "../src/lib/supabase";
 import BreathingBackground from "../src/components/BreathingBackground";
+import { useLanguage } from "./_layout";
 
 export default function LoginScreen() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
@@ -21,7 +23,6 @@ export default function LoginScreen() {
       const { error } = isSignUp
         ? await supabase.auth.signUp({ email, password })
         : await supabase.auth.signInWithPassword({ email, password });
-
       if (error) throw error;
       router.replace("/");
     } catch (e: any) {
@@ -37,8 +38,8 @@ export default function LoginScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <BreathingBackground />
-      <Text style={styles.title}>Shorts Summarizer</Text>
-      <Text style={styles.subtitle}>Understand any video instantly</Text>
+      <Text style={styles.title}>{t.appName}</Text>
+      <Text style={styles.subtitle}>{t.tagline}</Text>
 
       <View style={styles.card}>
         <TextInput
@@ -64,13 +65,13 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.button} onPress={handleAuth} disabled={loading}>
           {loading
             ? <ActivityIndicator color="#08090a" />
-            : <Text style={styles.buttonText}>{isSignUp ? "Create account" : "Sign in"}</Text>
+            : <Text style={styles.buttonText}>{isSignUp ? t.createAccount : t.signIn}</Text>
           }
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
           <Text style={styles.toggle}>
-            {isSignUp ? "Already have an account? Sign in" : "No account? Sign up"}
+            {isSignUp ? t.haveAccount : t.noAccount}
           </Text>
         </TouchableOpacity>
       </View>
@@ -124,20 +125,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 4,
   },
-  buttonText: {
-    color: "#08090a",
-    fontWeight: "600",
-    fontSize: 15,
-  },
+  buttonText: { color: "#08090a", fontWeight: "600", fontSize: 15 },
   toggle: {
     color: "#7170ff",
     textAlign: "center",
     fontSize: 14,
     marginTop: 4,
   },
-  error: {
-    color: "#ff6b6b",
-    fontSize: 13,
-    textAlign: "center",
-  },
+  error: { color: "#ff6b6b", fontSize: 13, textAlign: "center" },
 });

@@ -7,30 +7,19 @@ import { router } from "expo-router";
 import { supabase } from "../src/lib/supabase";
 import { submitSummarize } from "../src/lib/api";
 import BreathingBackground from "../src/components/BreathingBackground";
-
-const LANGUAGES = [
-  { code: "zh", label: "中文" },
-  { code: "en", label: "English" },
-  { code: "ja", label: "日本語" },
-  { code: "ko", label: "한국어" },
-  { code: "es", label: "Español" },
-  { code: "fr", label: "Français" },
-];
+import LanguagePicker from "../src/components/LanguagePicker";
+import { useLanguage } from "./_layout";
+import { LANGUAGES } from "../src/lib/languages";
 
 export default function HomeScreen() {
+  const { langCode, t, setLangCode } = useLanguage();
   const [url, setUrl] = useState("");
-  const [language, setLanguage] = useState("en");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
-        router.replace("/login");
-      } else {
-        setUserEmail(data.session.user.email ?? "");
-      }
+      if (!data.session) router.replace("/login");
     });
   }, []);
 
@@ -44,7 +33,7 @@ export default function HomeScreen() {
     setLoading(true);
     setError("");
     try {
-      const jobId = await submitSummarize(url.trim(), language);
+      const jobId = await submitSummarize(url.trim(), langCode);
       router.push({ pathname: "/result", params: { jobId } });
     } catch (e: any) {
       setError(e.message);
@@ -56,25 +45,22 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <BreathingBackground />
-      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.logo}>Shorts Summarizer</Text>
+        <Text style={styles.logo}>{t.appName}</Text>
         <TouchableOpacity onPress={handleSignOut}>
-          <Text style={styles.signOut}>Sign out</Text>
+          <Text style={styles.signOut}>{t.signOut}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Hero */}
       <View style={styles.hero}>
-        <Text style={styles.title}>Understand any{"\n"}short video instantly</Text>
-        <Text style={styles.subtitle}>Paste a TikTok link and get a detailed summary</Text>
+        <Text style={styles.title}>{t.title}</Text>
+        <Text style={styles.subtitle}>{t.subtitle}</Text>
       </View>
 
-      {/* Input card */}
       <View style={styles.card}>
         <TextInput
           style={styles.input}
-          placeholder="Paste TikTok URL here..."
+          placeholder={t.urlPlaceholder}
           placeholderTextColor="#62666d"
           value={url}
           onChangeText={setUrl}
@@ -82,28 +68,19 @@ export default function HomeScreen() {
           autoCorrect={false}
         />
 
-        {/* Language picker */}
-        <Text style={styles.label}>Summary language</Text>
-        <View style={styles.langRow}>
-          {LANGUAGES.map((lang) => (
-            <TouchableOpacity
-              key={lang.code}
-              style={[styles.langChip, language === lang.code && styles.langChipActive]}
-              onPress={() => setLanguage(lang.code)}
-            >
-              <Text style={[styles.langText, language === lang.code && styles.langTextActive]}>
-                {lang.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <Text style={styles.label}>{t.summaryLanguageLabel}</Text>
+        <LanguagePicker
+          value={langCode}
+          onChange={(lang) => setLangCode(lang.code)}
+          searchPlaceholder={t.searchLanguage}
+        />
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading || !url.trim()}>
           {loading
             ? <ActivityIndicator color="#08090a" />
-            : <Text style={styles.buttonText}>Summarize →</Text>
+            : <Text style={styles.buttonText}>{t.summarizeButton}</Text>
           }
         </TouchableOpacity>
       </View>
@@ -151,21 +128,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   label: { color: "#d0d6e0", fontSize: 13, fontWeight: "500" },
-  langRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  langChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 9999,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-    backgroundColor: "rgba(255,255,255,0.03)",
-  },
-  langChipActive: {
-    backgroundColor: "rgba(113,112,255,0.15)",
-    borderColor: "#7170ff",
-  },
-  langText: { color: "#62666d", fontSize: 13 },
-  langTextActive: { color: "#7170ff", fontWeight: "500" },
   button: {
     backgroundColor: "#7170ff",
     borderRadius: 8,
