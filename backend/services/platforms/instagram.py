@@ -1,7 +1,37 @@
-# Phase 2 预留 — Instagram 服务账号模式
+import os
+import tempfile
+import yt_dlp
 from .base import BasePlatform
 
 
 class InstagramPlatform(BasePlatform):
+    """Instagram Reels / Posts downloader (yt-dlp + cookie file)."""
+
     def download(self, url: str, output_path: str) -> bool:
-        raise NotImplementedError("Instagram support coming in Phase 2")
+        ydl_opts = {
+            "format": "best",
+            "outtmpl": output_path,
+            "quiet": True,
+            "no_playlist": True,
+        }
+
+        cookies_content = os.environ.get("INSTAGRAM_COOKIES", "")
+        cookie_file = None
+        if cookies_content:
+            tmp = tempfile.NamedTemporaryFile(
+                mode="w", suffix=".txt", delete=False, encoding="utf-8"
+            )
+            tmp.write(cookies_content.replace('\r\n', '\n').replace('\r', '\n'))
+            tmp.flush()
+            cookie_file = tmp.name
+            tmp.close()
+            ydl_opts["cookiefile"] = cookie_file
+
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+        finally:
+            if cookie_file and os.path.exists(cookie_file):
+                os.remove(cookie_file)
+
+        return True
