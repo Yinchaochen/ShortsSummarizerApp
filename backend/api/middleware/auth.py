@@ -1,7 +1,7 @@
 from fastapi import Header, HTTPException
 from services.supabase_client import get_client
 
-FREE_LIMIT = 3
+FREE_LIMIT = 15
 
 
 def get_current_user(authorization: str = Header(None)) -> dict:
