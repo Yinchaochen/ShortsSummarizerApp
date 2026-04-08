@@ -22,6 +22,12 @@ const APP_LINKS = [
     sub: "Get it on",
     url: "https://play.google.com",
   },
+  {
+    icon: "download" as const,
+    store: "Direct Download",
+    sub: "Get the APK",
+    url: "https://github.com/Yinchaochen/ShortsSummarizerApp/releases/latest",
+  },
 ];
 
 export default function Footer() {

@@ -152,17 +152,22 @@ def analyze_video(video_path: str, language: str = "en", on_progress=None) -> di
         raise RuntimeError(f"Gemini video processing failed: {video_file.state.name}")
 
     lang_instruction = LANG_PROMPTS.get(language, f"Reply in {language}.")
-    prompt = (
-        f"Watch this short video completely. {lang_instruction}\n\n"
-        "Return a JSON object with EXACTLY these fields (no markdown, no extra text):\n"
-        "{\n"
-        '  "summary": "<detailed analysis in the target language: all visuals, actions, text, subtitles, theme, overall impression>",\n'
-        '  "is_ai_generated": "<yes | no | uncertain>",\n'
-        '  "is_deepfake": "<yes | no | uncertain>",\n'
-        '  "ai_confidence": "<high | medium | low>",\n'
-        '  "ai_reason": "<one sentence explanation of AI/deepfake assessment, always in English>"\n'
-        "}"
-    )
+    prompt = "\n".join([
+        f"Watch this short video completely. {lang_instruction}",
+        "",
+        "Return a JSON object with EXACTLY these fields (no markdown, no extra text):",
+        "{",
+        '  "summary": "<structured analysis in the target language with these 4 sections:',
+        "1) All visuals and actions: Describe every visual element, scene change, person appearance, setting, camera movement, and on-screen action in detail.",
+        "2) All visible text and subtitles: List every subtitle or text overlay with its timestamp, e.g. 0:00 - 0:03: 'spoken or displayed text' (spoken by / overlay).",
+        "3) Core theme: Explain the main message, joke, or purpose. If it is a meme or humorous, explain the joke.",
+        '4) Overall impression: Summarize the tone, quality, target audience, and what makes this video effective or notable.>",',
+        '  "is_ai_generated": "<yes | no | uncertain>",',
+        '  "is_deepfake": "<yes | no | uncertain>",',
+        '  "ai_confidence": "<high | medium | low>",',
+        '  "ai_reason": "<one sentence explanation of AI/deepfake assessment, always in English>"',
+        "}",
+    ])
 
     last_err = None
     for model_name in GEMINI_MODELS:
