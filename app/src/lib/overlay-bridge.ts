@@ -114,6 +114,23 @@ export const OverlayBridge = {
   },
 
   /**
+   * Phase 3: set the target language for on-device ML Kit translation.
+   * Uses BCP 47 language codes (e.g. "en", "zh", "de").
+   */
+  setTargetLanguage(langCode: string): Promise<void> {
+    assertAndroid();
+    assertModule();
+    return BubbleModule.setTargetLanguage(langCode);
+  },
+
+  /** Phase 3: enable or disable the translation overlay. */
+  setOverlayEnabled(enabled: boolean): Promise<void> {
+    assertAndroid();
+    assertModule();
+    return BubbleModule.setOverlayEnabled(enabled);
+  },
+
+  /**
    * Phase 2: subscribe to subtitle text detected by SubtitleAccessibilityService.
    * Returns an unsubscribe function — call it in useEffect cleanup.
    *

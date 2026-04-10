@@ -1,18 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Platform,
+  ActivityIndicator, Platform, Switch,
 } from "react-native";
 import { router } from "expo-router";
 import BreathingBackground from "../src/components/BreathingBackground";
 import { OverlayBridge, BubblePermissionStatus } from "../src/lib/overlay-bridge";
+import LanguagePicker from "../src/components/LanguagePicker";
 import { useLanguage } from "./_layout";
 
 type BridgeState = "idle" | "loading" | "ok" | "error";
 type BubbleTestState = "idle" | "loading" | "ok" | "error";
 
 export default function OverlaySettingsScreen() {
-  const { t } = useLanguage();
+  const { t, langCode } = useLanguage();
   const [bridgeState, setBridgeState] = useState<BridgeState>("idle");
   const [bridgeMsg, setBridgeMsg] = useState("");
   const [permissions, setPermissions] = useState<BubblePermissionStatus | null>(null);
@@ -20,6 +21,8 @@ export default function OverlaySettingsScreen() {
   const [bubbleTest, setBubbleTest] = useState<BubbleTestState>("idle");
   const [liveSubtitle, setLiveSubtitle] = useState<string | null>(null);
   const [subtitleSource, setSubtitleSource] = useState("");
+  const [overlayEnabled, setOverlayEnabled] = useState(true);
+  const [targetLang, setTargetLang] = useState(langCode);
 
   const testBridge = useCallback(async () => {
     setBridgeState("loading");
@@ -45,6 +48,20 @@ export default function OverlaySettingsScreen() {
       setPermLoading(false);
     }
   }, [t]);
+
+  const handleOverlayToggle = useCallback(async (val: boolean) => {
+    setOverlayEnabled(val);
+    if (Platform.OS === "android") {
+      await OverlayBridge.setOverlayEnabled(val).catch(() => {});
+    }
+  }, []);
+
+  const handleTargetLangChange = useCallback(async (lang: { code: string }) => {
+    setTargetLang(lang.code);
+    if (Platform.OS === "android") {
+      await OverlayBridge.setTargetLanguage(lang.code).catch(() => {});
+    }
+  }, []);
 
   const testBubble = useCallback(async () => {
     setBubbleTest("loading");
@@ -148,6 +165,32 @@ export default function OverlaySettingsScreen() {
                 : <Text style={styles.buttonText}>Show bubble →</Text>
               }
             </TouchableOpacity>
+          </View>
+
+          {/* Translation settings */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Live Translation</Text>
+
+            <View style={styles.toggleRow}>
+              <Text style={styles.toggleLabel}>Enable overlay</Text>
+              <Switch
+                value={overlayEnabled}
+                onValueChange={handleOverlayToggle}
+                trackColor={{ false: "rgba(255,255,255,0.1)", true: "#7170ff" }}
+                thumbColor="#f7f8f8"
+              />
+            </View>
+
+            <Text style={styles.label}>Translate to</Text>
+            <LanguagePicker
+              value={targetLang}
+              onChange={handleTargetLangChange}
+              searchPlaceholder={t.searchLanguage}
+            />
+
+            <Text style={styles.cardDesc}>
+              First use downloads a ~30 MB language model. Translation runs fully on-device — no internet needed.
+            </Text>
           </View>
 
           {/* Permissions */}
@@ -267,4 +310,7 @@ const styles = StyleSheet.create({
   warningText: { color: "#ff6b6b", fontSize: 12, marginTop: 4 },
   subtitleSource: { color: "#7170ff", fontSize: 11, letterSpacing: 0.1, textTransform: "uppercase" },
   subtitleText: { color: "#f7f8f8", fontSize: 15, lineHeight: 22 },
+  toggleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  toggleLabel: { color: "#d0d6e0", fontSize: 14 },
+  label: { color: "#d0d6e0", fontSize: 13, fontWeight: "500" },
 });
