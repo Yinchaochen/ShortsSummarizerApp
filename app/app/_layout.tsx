@@ -25,15 +25,22 @@ export default function RootLayout() {
   const [langCode, setLangCodeState] = useState("en");
 
   useEffect(() => {
+    // Load saved language once on startup
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       const saved = data.session?.user?.user_metadata?.language;
       if (saved) setLangCodeState(saved);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
-      const saved = session?.user?.user_metadata?.language;
-      if (saved) setLangCodeState(saved);
+      // Only sync language on actual sign-in, not on token refreshes.
+      // TOKEN_REFRESHED can carry a stale JWT that would override the
+      // user's explicit language selection made moments earlier.
+      if (event === "SIGNED_IN") {
+        const saved = session?.user?.user_metadata?.language;
+        if (saved) setLangCodeState(saved);
+      }
     });
     return () => listener.subscription.unsubscribe();
   }, []);
@@ -49,6 +56,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="login" />
         <Stack.Screen name="result" />
+        <Stack.Screen name="overlay-settings" />
       </Stack>
     </LanguageContext.Provider>
   );

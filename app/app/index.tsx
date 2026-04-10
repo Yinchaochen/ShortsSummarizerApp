@@ -48,9 +48,14 @@ export default function HomeScreen() {
       <BreathingBackground />
       <View style={styles.header}>
         <Text style={styles.logo}>{t.appName}</Text>
-        <TouchableOpacity onPress={handleSignOut}>
-          <Text style={styles.signOut}>{t.signOut}</Text>
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => router.push("/overlay-settings")} style={styles.overlayButton}>
+            <Text style={styles.overlayButtonText}>Live ✦</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleSignOut}>
+            <Text style={styles.signOut}>{t.signOut}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.hero}>
@@ -100,6 +105,16 @@ const styles = StyleSheet.create({
     marginBottom: 64,
   },
   logo: { color: "#f7f8f8", fontWeight: "600", fontSize: 16 },
+  headerActions: { flexDirection: "row", alignItems: "center", gap: 16 },
+  overlayButton: {
+    backgroundColor: "rgba(113,112,255,0.12)",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(113,112,255,0.3)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  overlayButtonText: { color: "#7170ff", fontSize: 13, fontWeight: "600" },
   signOut: { color: "#62666d", fontSize: 14 },
   hero: { marginBottom: 48 },
   title: {

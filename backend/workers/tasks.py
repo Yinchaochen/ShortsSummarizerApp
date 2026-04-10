@@ -2,6 +2,7 @@ import os
 import sys
 import uuid
 import tempfile
+import yt_dlp
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -11,6 +12,18 @@ from celery import Celery
 from services.platforms import get_downloader
 from services.gemini import analyze_video
 from services.platforms.base import BasePlatform
+
+MAX_DURATION_SECONDS = 600  # 10 minutes
+
+
+def _get_video_duration(url: str) -> float | None:
+    """Fetch video duration in seconds without downloading."""
+    try:
+        with yt_dlp.YoutubeDL({"quiet": True, "skip_download": True}) as ydl:
+            info = ydl.extract_info(url, download=False)
+            return info.get("duration")
+    except Exception:
+        return None
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
@@ -34,6 +47,10 @@ def summarize_video(self, url: str, language: str = "en", user_id: str | None = 
     tmp_path = os.path.join(tempfile.gettempdir(), f"shorts_{uuid.uuid4().hex}.mp4")
 
     try:
+        duration = _get_video_duration(url)
+        if duration is not None and duration > MAX_DURATION_SECONDS:
+            raise ValueError("VIDEO_TOO_LONG")
+
         self.update_state(state="PROGRESS", meta={"step": "downloading"})
         downloader = get_downloader(url)
         downloader.download(url, tmp_path)
