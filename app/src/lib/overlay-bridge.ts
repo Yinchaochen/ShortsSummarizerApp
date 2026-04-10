@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from "react-native";
+import { NativeModules, Platform, DeviceEventEmitter, EmitterSubscription } from "react-native";
 
 const { BubbleModule } = NativeModules;
 
@@ -111,5 +111,22 @@ export const OverlayBridge = {
     assertAndroid();
     assertModule();
     return BubbleModule.updateConfig(config);
+  },
+
+  /**
+   * Phase 2: subscribe to subtitle text detected by SubtitleAccessibilityService.
+   * Returns an unsubscribe function — call it in useEffect cleanup.
+   *
+   * Safe to call on iOS — callback is never invoked.
+   */
+  onSubtitleDetected(
+    callback: (text: string, source: string) => void
+  ): () => void {
+    if (Platform.OS !== "android") return () => {};
+    const sub: EmitterSubscription = DeviceEventEmitter.addListener(
+      "onSubtitleDetected",
+      (e: { text: string; source: string }) => callback(e.text, e.source)
+    );
+    return () => sub.remove();
   },
 } as const;

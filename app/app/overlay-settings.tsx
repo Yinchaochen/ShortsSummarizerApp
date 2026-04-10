@@ -18,6 +18,8 @@ export default function OverlaySettingsScreen() {
   const [permissions, setPermissions] = useState<BubblePermissionStatus | null>(null);
   const [permLoading, setPermLoading] = useState(false);
   const [bubbleTest, setBubbleTest] = useState<BubbleTestState>("idle");
+  const [liveSubtitle, setLiveSubtitle] = useState<string | null>(null);
+  const [subtitleSource, setSubtitleSource] = useState("");
 
   const testBridge = useCallback(async () => {
     setBridgeState("loading");
@@ -58,6 +60,11 @@ export default function OverlaySettingsScreen() {
     if (Platform.OS === "android") {
       refreshPermissions();
     }
+    const unsub = OverlayBridge.onSubtitleDetected((text, source) => {
+      setLiveSubtitle(text);
+      setSubtitleSource(source.split(".").pop() ?? source);
+    });
+    return unsub;
   }, []);
 
   const stateColor = { idle: "#62666d", loading: "#7170ff", ok: "#4caf50", error: "#ff6b6b" };
@@ -173,6 +180,21 @@ export default function OverlaySettingsScreen() {
               <Text style={styles.secondaryButtonText}>{t.overlayRefresh}</Text>
             </TouchableOpacity>
           </View>
+          {/* Live subtitle monitor */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Live Subtitle Monitor</Text>
+            <Text style={styles.cardDesc}>
+              Open TikTok, YouTube or Instagram Reels — detected subtitles appear here in real time.
+            </Text>
+            {liveSubtitle ? (
+              <>
+                <Text style={styles.subtitleSource}>{subtitleSource}</Text>
+                <Text style={styles.subtitleText}>{liveSubtitle}</Text>
+              </>
+            ) : (
+              <Text style={styles.cardDesc}>Waiting for subtitles…</Text>
+            )}
+          </View>
         </>
       )}
     </View>
@@ -243,4 +265,6 @@ const styles = StyleSheet.create({
   permLabel: { color: "#d0d6e0", fontSize: 14 },
   grantText: { color: "#7170ff", fontSize: 13 },
   warningText: { color: "#ff6b6b", fontSize: 12, marginTop: 4 },
+  subtitleSource: { color: "#7170ff", fontSize: 11, letterSpacing: 0.1, textTransform: "uppercase" },
+  subtitleText: { color: "#f7f8f8", fontSize: 15, lineHeight: 22 },
 });
