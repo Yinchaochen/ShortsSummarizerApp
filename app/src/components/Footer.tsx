@@ -80,9 +80,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   appButtons: {
-    flexDirection: "row",
-    gap: 12,
+    flexDirection: "column",
+    gap: 10,
     marginBottom: 20,
+    alignSelf: "stretch",
   },
   appButton: {
     flexDirection: "row",
@@ -92,9 +93,8 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.12)",
     borderRadius: 10,
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 10,
-    minWidth: 140,
+    paddingVertical: 12,
+    gap: 12,
   },
   appIcon: {
     opacity: 0.9,
