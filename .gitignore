@@ -20,6 +20,10 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Claude Code project config (Windows-specific files break EAS Linux builds)
+.claude/
 
 # Logs
 *.log

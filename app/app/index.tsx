@@ -59,7 +59,12 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.hero}>
-        <Text style={styles.title}>{t.title}</Text>
+        <View style={styles.titleWrapper}>
+          {/* Ghost/shadow title — renders behind, offset to give depth */}
+          <Text style={styles.titleGhost} numberOfLines={3}>{t.titleAlt}</Text>
+          {/* Main title on top */}
+          <Text style={styles.title}>{t.title}</Text>
+        </View>
         <Text style={styles.subtitle}>{t.subtitle}</Text>
       </View>
 
@@ -117,13 +122,26 @@ const styles = StyleSheet.create({
   overlayButtonText: { color: "#7170ff", fontSize: 13, fontWeight: "600" },
   signOut: { color: "#62666d", fontSize: 14 },
   hero: { marginBottom: 48 },
+  titleWrapper: {
+    marginBottom: 12,
+  },
   title: {
     fontSize: 40,
     fontWeight: "600",
     color: "#f7f8f8",
     letterSpacing: -1.5,
     lineHeight: 48,
-    marginBottom: 12,
+  },
+  titleGhost: {
+    position: "absolute",
+    fontSize: 40,
+    fontWeight: "600",
+    color: "#7170ff",
+    letterSpacing: -1.5,
+    lineHeight: 48,
+    opacity: 0.2,
+    left: 5,
+    top: 5,
   },
   subtitle: { fontSize: 16, color: "#62666d", lineHeight: 24 },
   card: {

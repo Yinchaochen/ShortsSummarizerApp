@@ -38,7 +38,7 @@ yarn-error.*
 
 # generated native folders
 /ios
-/android
+# /android is intentionally NOT ignored — custom Kotlin modules require it in EAS Build
 
 # auth / session files
 auth.json

@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Platform, Switch,
+  ActivityIndicator, Platform, Switch, ScrollView, Alert,
 } from "react-native";
 import { router } from "expo-router";
 import BreathingBackground from "../src/components/BreathingBackground";
 import { OverlayBridge, BubblePermissionStatus } from "../src/lib/overlay-bridge";
+import { ScreenCaptureBridge, LiveSubtitleEvent } from "../src/lib/screen-capture-bridge";
 import LanguagePicker from "../src/components/LanguagePicker";
 import { useLanguage } from "./_layout";
 
@@ -23,6 +24,12 @@ export default function OverlaySettingsScreen() {
   const [subtitleSource, setSubtitleSource] = useState("");
   const [overlayEnabled, setOverlayEnabled] = useState(true);
   const [targetLang, setTargetLang] = useState(langCode);
+
+  // ── Screen Capture (Method 2) state ─────────────────────────────
+  const [captureAvailable] = useState(() => ScreenCaptureBridge.isAvailable());
+  const [captureRunning, setCaptureRunning] = useState(false);
+  const [captureSubtitle, setCaptureSubtitle] = useState<LiveSubtitleEvent | null>(null);
+  const [captureLoading, setCaptureLoading] = useState(false);
 
   const testBridge = useCallback(async () => {
     setBridgeState("loading");
@@ -73,6 +80,54 @@ export default function OverlaySettingsScreen() {
     }
   }, []);
 
+  const handleCaptureToggle = useCallback(async () => {
+    if (captureRunning) {
+      setCaptureLoading(true);
+      await ScreenCaptureBridge.stop();
+      setCaptureRunning(false);
+      setCaptureSubtitle(null);
+      setCaptureLoading(false);
+      return;
+    }
+    setCaptureLoading(true);
+    try {
+      // 1. Check "Display over other apps" permission (needed for positional bubbles)
+      const overlayGranted = await ScreenCaptureBridge.checkOverlayPermission();
+      if (!overlayGranted) {
+        Alert.alert(
+          "Permission Required",
+          "\"Display over other apps\" must be enabled so Uchia can show translation bubbles. Tap OK to open settings.",
+          [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Open Settings",
+              onPress: () => ScreenCaptureBridge.requestOverlayPermission(),
+            },
+          ]
+        );
+        setCaptureLoading(false);
+        return;
+      }
+
+      // 2. Request screen recording permission (MediaProjection dialog)
+      const granted = await ScreenCaptureBridge.requestPermission();
+      if (!granted) {
+        Alert.alert("Permission Denied", "Screen capture permission is required for live translation.");
+        setCaptureLoading(false);
+        return;
+      }
+
+      // 3. Start capture
+      const ocrScript = ScreenCaptureBridge.ocrScriptForLanguage(targetLang);
+      await ScreenCaptureBridge.start(targetLang, ocrScript);
+      setCaptureRunning(true);
+    } catch (e: any) {
+      Alert.alert("Error", e.message);
+    } finally {
+      setCaptureLoading(false);
+    }
+  }, [captureRunning, targetLang]);
+
   useEffect(() => {
     if (Platform.OS === "android") {
       refreshPermissions();
@@ -81,14 +136,17 @@ export default function OverlaySettingsScreen() {
       setLiveSubtitle(text);
       setSubtitleSource(source.split(".").pop() ?? source);
     });
-    return unsub;
+    const unsubCapture = ScreenCaptureBridge.onSubtitle((event) => {
+      setCaptureSubtitle(event);
+    });
+    return () => { unsub(); unsubCapture(); };
   }, []);
 
   const stateColor = { idle: "#62666d", loading: "#7170ff", ok: "#4caf50", error: "#ff6b6b" };
   const bubbleColor = { idle: "#62666d", loading: "#7170ff", ok: "#4caf50", error: "#ff6b6b" };
 
   return (
-    <View style={styles.root}>
+    <ScrollView style={styles.root} contentContainerStyle={styles.content}>
       <BreathingBackground />
 
       <TouchableOpacity style={styles.back} onPress={() => router.back()}>
@@ -223,9 +281,45 @@ export default function OverlaySettingsScreen() {
               <Text style={styles.secondaryButtonText}>{t.overlayRefresh}</Text>
             </TouchableOpacity>
           </View>
-          {/* Live subtitle monitor */}
+          {/* ── Screen Capture Mode (Method 2) ─────────────────── */}
+          {captureAvailable && (
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>🎬 Screen Capture Translation</Text>
+              <Text style={styles.cardDesc}>
+                Captures your screen and uses OCR to detect subtitles in any app.
+                No AccessibilityService needed — works everywhere.
+              </Text>
+
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  captureRunning && { backgroundColor: "#ff6b6b" },
+                  captureLoading && styles.buttonDisabled,
+                ]}
+                onPress={handleCaptureToggle}
+                disabled={captureLoading}
+              >
+                {captureLoading
+                  ? <ActivityIndicator color="#08090a" size="small" />
+                  : <Text style={styles.buttonText}>
+                      {captureRunning ? "Stop Capture" : "Start Live Translation"}
+                    </Text>
+                }
+              </TouchableOpacity>
+
+              {captureSubtitle && (
+                <View style={{ gap: 4, marginTop: 8 }}>
+                  <Text style={styles.subtitleSource}>OCR Detected</Text>
+                  <Text style={{ color: "#62666d", fontSize: 12 }}>{captureSubtitle.original}</Text>
+                  <Text style={styles.subtitleText}>{captureSubtitle.translated}</Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          {/* Live subtitle monitor (Method 1: Accessibility) */}
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Live Subtitle Monitor</Text>
+            <Text style={styles.cardTitle}>Live Subtitle Monitor (Accessibility)</Text>
             <Text style={styles.cardDesc}>
               Open TikTok, YouTube or Instagram Reels — detected subtitles appear here in real time.
             </Text>
@@ -240,7 +334,7 @@ export default function OverlaySettingsScreen() {
           </View>
         </>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -263,7 +357,8 @@ function PermissionRow({
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#08090a", paddingHorizontal: 24, paddingTop: 64 },
+  root: { flex: 1, backgroundColor: "#08090a" },
+  content: { paddingHorizontal: 24, paddingTop: 64, paddingBottom: 48 },
   back: { marginBottom: 24 },
   backText: { color: "#7170ff", fontSize: 15 },
   title: { fontSize: 32, fontWeight: "600", color: "#f7f8f8", letterSpacing: -1, marginBottom: 4 },

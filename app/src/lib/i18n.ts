@@ -38,6 +38,7 @@ export type Translations = {
   overlayGrant: string;
   overlayRefresh: string;
   overlayAndroidOnly: string;
+  titleAlt: string;
 };
 
 const translations: Record<string, Translations> = {
@@ -78,6 +79,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Grant \u2192",
     overlayRefresh: "Refresh status",
     overlayAndroidOnly: "Live Translation overlay is only available on Android.",
+    titleAlt: "Understand that person instantly",
   },
   "af": {
     appName: "Uchia",
@@ -116,6 +118,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Verleen \u2192",
     overlayRefresh: "Verfris status",
     overlayAndroidOnly: "Regstreekse Vertaling-oorleg is slegs op Android beskikbaar.",
+    titleAlt: "Understand that person instantly",
   },
   "sq": {
     appName: "Uchia",
@@ -154,6 +157,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Jep \u2192",
     overlayRefresh: "Rifresko statusin",
     overlayAndroidOnly: "Mbivendosja e P\u00ebrkthimit t\u00eb Drejtp\u00ebrdrejt\u00eb \u00ebsht\u00eb e disponueshme vet\u00ebm n\u00eb Android.",
+    titleAlt: "Understand that person instantly",
   },
   "am": {
     appName: "Uchia",
@@ -192,6 +196,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u134d\u1240\u12f5 \u2192",
     overlayRefresh: "\u1201\u1294\u1273\u1295 \u12a0\u12f5\u1235",
     overlayAndroidOnly: "\u12e8\u1240\u1325\u1273 \u1275\u122d\u1309\u121d \u1270\u12f0\u122b\u1262 \u1260\u12a0\u1295\u12f5\u122e\u12ed\u12f5 \u120b\u12ed \u1265\u127b \u12ed\u1308\u129b\u120d",
+    titleAlt: "Understand that person instantly",
   },
   "ar": {
     appName: "\u0645\u0644\u062e\u0635 \u0627\u0644\u0645\u0642\u0627\u0637\u0639 \u0627\u0644\u0642\u0635\u064a\u0631\u0629",
@@ -230,6 +235,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0645\u0646\u062d \u2192",
     overlayRefresh: "\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u062d\u0627\u0644\u0629",
     overlayAndroidOnly: "\u062a\u0631\u0627\u0643\u0628 \u0627\u0644\u062a\u0631\u062c\u0645\u0629 \u0627\u0644\u0645\u0628\u0627\u0634\u0631\u0629 \u0645\u062a\u0627\u062d \u0641\u0642\u0637 \u0639\u0644\u0649 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "hy": {
     appName: "\u053f\u0561\u0580\u0573 \u057f\u0565\u057d\u0561\u0576\u0575\u0578\u0582\u0569\u0565\u0580\u056b \u0561\u0574\u0583\u0578\u0583\u056b\u0579",
@@ -268,6 +274,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u054f\u0580\u0561\u0574\u0561\u0564\u0580\u0565\u056c \u2192",
     overlayRefresh: "\u0539\u0561\u0580\u0574\u0561\u0581\u0576\u0565\u056c \u056f\u0561\u0580\u0563\u0561\u057e\u056b\u0573\u0561\u056f\u0568",
     overlayAndroidOnly: "\u0548\u0582\u0572\u056b\u0572 \u0569\u0561\u0580\u0563\u0574\u0561\u0576\u0578\u0582\u0569\u0575\u0561\u0576 \u056e\u0561\u056e\u056f\u0578\u0582\u0575\u0569\u0568 \u0570\u0561\u057d\u0561\u0576\u0565\u056c\u056b \u0567 \u0574\u056b\u0561\u0575\u0576 Android-\u0578\u0582\u0574\u0589",
+    titleAlt: "Understand that person instantly",
   },
   "az": {
     appName: "Uchia",
@@ -306,6 +313,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0130caz\u0259 ver \u2192",
     overlayRefresh: "Statusu yenil\u0259",
     overlayAndroidOnly: "Canl\u0131 T\u0259rc\u00fcm\u0259 \u00f6rt\u00fcy\u00fc yaln\u0131z Android-d\u0259 m\u00f6vcuddur.",
+    titleAlt: "Understand that person instantly",
   },
   "eu": {
     appName: "Uchia",
@@ -344,6 +352,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Eman \u2192",
     overlayRefresh: "Egoera freskatu",
     overlayAndroidOnly: "Zuzeneko itzulpenaren gainjartzea Android-en bakarrik dago eskuragarri.",
+    titleAlt: "Understand that person instantly",
   },
   "be": {
     appName: "\u0420\u044d\u0437\u044e\u043c\u044d \u043a\u0430\u0440\u043e\u0442\u043a\u0456\u0445 \u0432\u0456\u0434\u044d\u0430",
@@ -382,6 +391,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0414\u0430\u0446\u044c \u2192",
     overlayRefresh: "\u0410\u0431\u043d\u0430\u0432\u0456\u0446\u044c \u0441\u0442\u0430\u0442\u0443\u0441",
     overlayAndroidOnly: "\u041d\u0430\u043a\u043b\u0430\u0434\u0430\u043d\u043d\u0435 \u0436\u044b\u0432\u043e\u0433\u0430 \u043f\u0435\u0440\u0430\u043a\u043b\u0430\u0434\u0443 \u0434\u0430\u0441\u0442\u0443\u043f\u043d\u0430 \u0442\u043e\u043b\u044c\u043a\u0456 \u043d\u0430 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "bn": {
     appName: "Uchia",
@@ -420,6 +430,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0985\u09a8\u09c1\u09ae\u09a4\u09bf \u09a6\u09bf\u09a8 \u2192",
     overlayRefresh: "\u0985\u09ac\u09b8\u09cd\u09a5\u09be \u09b0\u09bf\u09ab\u09cd\u09b0\u09c7\u09b6 \u0995\u09b0\u09c1\u09a8",
     overlayAndroidOnly: "\u09b2\u09be\u0987\u09ad \u0985\u09a8\u09c1\u09ac\u09be\u09a6 \u0993\u09ad\u09be\u09b0\u09b2\u09c7 \u09b6\u09c1\u09a7\u09c1\u09ae\u09be\u09a4\u09cd\u09b0 Android-\u098f \u0989\u09aa\u09b2\u09ac\u09cd\u09a7\u0964",
+    titleAlt: "Understand that person instantly",
   },
   "bs": {
     appName: "Uchia",
@@ -458,6 +469,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Dozvoli \u2192",
     overlayRefresh: "Osvje\u017ei status",
     overlayAndroidOnly: "Prevo\u0111enje u\u017eivo preklapanje je dostupno samo na Androidu.",
+    titleAlt: "Understand that person instantly",
   },
   "bg": {
     appName: "Uchia",
@@ -496,6 +508,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u041f\u0440\u0435\u0434\u043e\u0441\u0442\u0430\u0432\u0438 \u2192",
     overlayRefresh: "\u041e\u0431\u043d\u043e\u0432\u0438 \u0441\u0442\u0430\u0442\u0443\u0441\u0430",
     overlayAndroidOnly: "\u041d\u0430\u0441\u043b\u0430\u0433\u0432\u0430\u043d\u0435\u0442\u043e \u0437\u0430 \u043f\u0440\u0435\u0432\u043e\u0434 \u043d\u0430 \u0436\u0438\u0432\u043e \u0435 \u0434\u043e\u0441\u0442\u044a\u043f\u043d\u043e \u0441\u0430\u043c\u043e \u0437\u0430 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ca": {
     appName: "Resumidor de Shorts",
@@ -534,6 +547,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Concedeix \u2192",
     overlayRefresh: "Actualitza l'estat",
     overlayAndroidOnly: "La superposici\u00f3 de Traducci\u00f3 en directe nom\u00e9s est\u00e0 disponible a Android.",
+    titleAlt: "Understand that person instantly",
   },
   "zh": {
     appName: "Uchia",
@@ -572,6 +586,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u6388\u4e88 \u2192",
     overlayRefresh: "\u5237\u65b0\u72b6\u6001",
     overlayAndroidOnly: "\u5b9e\u65f6\u7ffb\u8bd1\u6d6e\u5c42\u4ec5\u5728 Android \u4e0a\u53ef\u7528\u3002",
+    titleAlt: "Understand that person instantly",
   },
   "zh-TW": {
     appName: "\u77ed\u7247\u6458\u8981\u5668",
@@ -610,6 +625,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u6388\u4e88 \u2192",
     overlayRefresh: "\u91cd\u65b0\u6574\u7406\u72c0\u614b",
     overlayAndroidOnly: "\u5373\u6642\u7ffb\u8b6f\u6d6e\u52d5\u8996\u7a97\u50c5\u9069\u7528\u65bc Android\u3002",
+    titleAlt: "Understand that person instantly",
   },
   "hr": {
     appName: "Sa\u017eima\u010d kratkih videozapisa",
@@ -648,6 +664,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Dopusti \u2192",
     overlayRefresh: "Osvje\u017ei status",
     overlayAndroidOnly: "Preklapanje prijevoda u\u017eivo dostupno je samo na Androidu.",
+    titleAlt: "Understand that person instantly",
   },
   "cs": {
     appName: "Uchia",
@@ -686,6 +703,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Ud\u011blit \u2192",
     overlayRefresh: "Obnovit stav",
     overlayAndroidOnly: "P\u0159ekryvn\u00e1 vrstva \u017eiv\u00e9ho p\u0159ekladu je dostupn\u00e1 pouze na Androidu.",
+    titleAlt: "Understand that person instantly",
   },
   "da": {
     appName: "Uchia",
@@ -724,6 +742,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Giv tilladelse \u2192",
     overlayRefresh: "Opdater status",
     overlayAndroidOnly: "Liveovers\u00e6ttelses-overlay er kun tilg\u00e6ngeligt p\u00e5 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "nl": {
     appName: "Uchia",
@@ -762,6 +781,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Verlenen \u2192",
     overlayRefresh: "Status vernieuwen",
     overlayAndroidOnly: "De Live Vertaling overlay is alleen beschikbaar op Android.",
+    titleAlt: "Understand that person instantly",
   },
   "et": {
     appName: "L\u00fchivideote Kokkuv\u00f5tja",
@@ -800,6 +820,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Anna luba \u2192",
     overlayRefresh: "V\u00e4rskenda olekut",
     overlayAndroidOnly: "Reaalajas t\u00f5lke \u00fclekatte on saadaval ainult Androidis.",
+    titleAlt: "Understand that person instantly",
   },
   "fi": {
     appName: "Uchia",
@@ -838,6 +859,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "My\u00f6nn\u00e4 \u2192",
     overlayRefresh: "P\u00e4ivit\u00e4 tila",
     overlayAndroidOnly: "Live-k\u00e4\u00e4nn\u00f6ksen peittokuva on saatavilla vain Androidilla.",
+    titleAlt: "Understand that person instantly",
   },
   "fr": {
     appName: "Uchia",
@@ -876,6 +898,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Accorder \u2192",
     overlayRefresh: "Actualiser le statut",
     overlayAndroidOnly: "La superposition de traduction en direct n'est disponible que sur Android.",
+    titleAlt: "Understand that person instantly",
   },
   "gl": {
     appName: "Resumidor de Shorts",
@@ -914,6 +937,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Conceder \u2192",
     overlayRefresh: "Actualizar estado",
     overlayAndroidOnly: "A superposici\u00f3n de Traduci\u00f3n en directo s\u00f3 est\u00e1 dispo\u00f1ible en Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ka": {
     appName: "Uchia",
@@ -952,6 +976,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u10db\u10d8\u10dc\u10d8\u10ed\u10d4\u10d1\u10d0 \u2192",
     overlayRefresh: "\u10e1\u10e2\u10d0\u10e2\u10e3\u10e1\u10d8\u10e1 \u10d2\u10d0\u10dc\u10d0\u10ee\u10da\u10d4\u10d1\u10d0",
     overlayAndroidOnly: "\u10ea\u10dd\u10ea\u10ee\u10d0\u10da\u10d8 \u10d7\u10d0\u10e0\u10d2\u10db\u10d0\u10dc\u10d8\u10e1 \u10d2\u10d0\u10d3\u10d0\u10e4\u10d0\u10e0\u10d5\u10d0 \u10ee\u10d4\u10da\u10db\u10d8\u10e1\u10d0\u10ec\u10d5\u10d3\u10dd\u10db\u10d8\u10d0 \u10db\u10ee\u10dd\u10da\u10dd\u10d3 Android-\u10d6\u10d4.",
+    titleAlt: "Understand that person instantly",
   },
   "de": {
     appName: "Uchia",
@@ -990,6 +1015,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Gew\u00e4hren \u2192",
     overlayRefresh: "Status aktualisieren",
     overlayAndroidOnly: "Das Live-\u00dcbersetzungs-Overlay ist nur auf Android verf\u00fcgbar.",
+    titleAlt: "Understand that person instantly",
   },
   "el": {
     appName: "Uchia",
@@ -1028,6 +1054,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u03a0\u03b1\u03c1\u03b1\u03c7\u03ce\u03c1\u03b7\u03c3\u03b7 \u2192",
     overlayRefresh: "\u0391\u03bd\u03b1\u03bd\u03ad\u03c9\u03c3\u03b7 \u03ba\u03b1\u03c4\u03ac\u03c3\u03c4\u03b1\u03c3\u03b7\u03c2",
     overlayAndroidOnly: "\u0397 \u03b5\u03c0\u03b9\u03ba\u03ac\u03bb\u03c5\u03c8\u03b7 \u0396\u03c9\u03bd\u03c4\u03b1\u03bd\u03ae\u03c2 \u039c\u03b5\u03c4\u03ac\u03c6\u03c1\u03b1\u03c3\u03b7\u03c2 \u03b5\u03af\u03bd\u03b1\u03b9 \u03b4\u03b9\u03b1\u03b8\u03ad\u03c3\u03b9\u03bc\u03b7 \u03bc\u03cc\u03bd\u03bf \u03c3\u03b5 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "gu": {
     appName: "Uchia",
@@ -1066,6 +1093,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0aae\u0a82\u0a9c\u0ac2\u0ab0\u0ac0 \u0a86\u0aaa\u0acb \u2192",
     overlayRefresh: "\u0ab8\u0acd\u0aa5\u0abf\u0aa4\u0abf \u0aa4\u0abe\u0a9c\u0ac0 \u0a95\u0ab0\u0acb",
     overlayAndroidOnly: "\u0ab2\u0abe\u0a87\u0ab5 \u0a85\u0aa8\u0ac1\u0ab5\u0abe\u0aa6 \u0a93\u0ab5\u0ab0\u0ab2\u0ac7 \u0aab\u0a95\u0acd\u0aa4 Android \u0aaa\u0ab0 \u0a89\u0aaa\u0ab2\u0aac\u0acd\u0aa7 \u0a9b\u0ac7.",
+    titleAlt: "Understand that person instantly",
   },
   "ht": {
     appName: "Uchia",
@@ -1104,6 +1132,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Ak\u00f2de \u2192",
     overlayRefresh: "Rafrechi estati",
     overlayAndroidOnly: "Kouch Tradiksyon An Dir\u00e8k la disponib s\u00e8lman sou Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ha": {
     appName: "Uchia",
@@ -1142,6 +1171,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Ba da \u2192",
     overlayRefresh: "Sake sabunta matsayi",
     overlayAndroidOnly: "Fassarar Kai Tsaye overlay yana samuwa ne kawai akan Android.",
+    titleAlt: "Understand that person instantly",
   },
   "he": {
     appName: "\u05de\u05e1\u05db\u05dd \u05e9\u05d5\u05e8\u05d8\u05e1",
@@ -1180,6 +1210,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u05d4\u05e2\u05e0\u05e7 \u2192",
     overlayRefresh: "\u05e8\u05e2\u05e0\u05df \u05e1\u05d8\u05d8\u05d5\u05e1",
     overlayAndroidOnly: "\u05e9\u05db\u05d1\u05ea-\u05e2\u05dc \u05e9\u05dc \u05ea\u05e8\u05d2\u05d5\u05dd \u05d7\u05d9 \u05d6\u05de\u05d9\u05e0\u05d4 \u05e8\u05e7 \u05d1\u05d0\u05e0\u05d3\u05e8\u05d5\u05d0\u05d9\u05d3.",
+    titleAlt: "Understand that person instantly",
   },
   "hi": {
     appName: "\u0936\u0949\u0930\u094d\u091f\u094d\u0938 \u0938\u093e\u0930\u093e\u0902\u0936\u0915\u0930\u094d\u0924\u093e",
@@ -1218,6 +1249,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0905\u0928\u0941\u092e\u0924\u093f \u0926\u0947\u0902 \u2192",
     overlayRefresh: "\u0938\u094d\u0925\u093f\u0924\u093f \u0930\u0940\u092b\u094d\u0930\u0947\u0936 \u0915\u0930\u0947\u0902",
     overlayAndroidOnly: "\u0932\u093e\u0907\u0935 \u0905\u0928\u0941\u0935\u093e\u0926 \u0913\u0935\u0930\u0932\u0947 \u0915\u0947\u0935\u0932 Android \u092a\u0930 \u0909\u092a\u0932\u092c\u094d\u0927 \u0939\u0948\u0964",
+    titleAlt: "Understand that person instantly",
   },
   "hu": {
     appName: "R\u00f6vid vide\u00f3 \u00f6sszefoglal\u00f3",
@@ -1256,6 +1288,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Enged\u00e9lyez\u00e9s \u2192",
     overlayRefresh: "\u00c1llapot friss\u00edt\u00e9se",
     overlayAndroidOnly: "Az \u00c9l\u0151 ford\u00edt\u00e1s \u00e1tfed\u00e9s csak Androidon \u00e9rhet\u0151 el.",
+    titleAlt: "Understand that person instantly",
   },
   "is": {
     appName: "Stuttmynda Samantekt",
@@ -1294,6 +1327,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Veita \u2192",
     overlayRefresh: "Endurn\u00fdja st\u00f6\u00f0u",
     overlayAndroidOnly: "Yfirlag fyrir beina \u00fe\u00fd\u00f0ingu er a\u00f0eins \u00ed bo\u00f0i \u00e1 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "id": {
     appName: "Uchia",
@@ -1332,6 +1366,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Berikan \u2192",
     overlayRefresh: "Segarkan status",
     overlayAndroidOnly: "Overlay Terjemahan Langsung hanya tersedia di Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ga": {
     appName: "Uchia",
@@ -1370,6 +1405,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Deonaigh \u2192",
     overlayRefresh: "Athnuaigh st\u00e1das",
     overlayAndroidOnly: "N\u00edl forleagan Aistri\u00fach\u00e1n Beo ar f\u00e1il ach ar Android.",
+    titleAlt: "Understand that person instantly",
   },
   "it": {
     appName: "Riassuntore di Shorts",
@@ -1408,6 +1444,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Concedi \u2192",
     overlayRefresh: "Aggiorna stato",
     overlayAndroidOnly: "L'overlay di Traduzione in tempo reale \u00e8 disponibile solo su Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ja": {
     appName: "Uchia",
@@ -1446,6 +1483,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u8a31\u53ef\u3059\u308b \u2192",
     overlayRefresh: "\u30b9\u30c6\u30fc\u30bf\u30b9\u3092\u66f4\u65b0",
     overlayAndroidOnly: "\u30e9\u30a4\u30d6\u7ffb\u8a33\u30aa\u30fc\u30d0\u30fc\u30ec\u30a4\u306fAndroid\u3067\u306e\u307f\u5229\u7528\u53ef\u80fd\u3067\u3059\u3002",
+    titleAlt: "Understand that person instantly",
   },
   "jv": {
     appName: "Uchia",
@@ -1484,6 +1522,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Wenehi \u2192",
     overlayRefresh: "Anyari status",
     overlayAndroidOnly: "Overlay Terjemahan Langsung mung kasedhiya ing Android.",
+    titleAlt: "Understand that person instantly",
   },
   "kn": {
     appName: "\u0cb6\u0cbe\u0cb0\u0ccd\u0c9f\u0ccd\u0cb8\u0ccd \u0cb8\u0cbe\u0cb0\u0cbe\u0c82\u0cb6\u0c95\u0cbe\u0cb0",
@@ -1522,6 +1561,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0c85\u0ca8\u0cc1\u0cae\u0ca4\u0cbf \u0ca8\u0cc0\u0ca1\u0cbf \u2192",
     overlayRefresh: "\u0cb8\u0ccd\u0ca5\u0cbf\u0ca4\u0cbf\u0caf\u0ca8\u0ccd\u0ca8\u0cc1 \u0cb0\u0cbf\u0cab\u0ccd\u0cb0\u0cc6\u0cb6\u0ccd \u0cae\u0cbe\u0ca1\u0cbf",
     overlayAndroidOnly: "\u0cb2\u0cc8\u0cb5\u0ccd \u0c85\u0ca8\u0cc1\u0cb5\u0cbe\u0ca6 \u0c93\u0cb5\u0cb0\u0ccd\u200c\u0cb2\u0cc7 Android \u0ca8\u0cb2\u0ccd\u0cb2\u0cbf \u0cae\u0cbe\u0ca4\u0ccd\u0cb0 \u0cb2\u0cad\u0ccd\u0caf\u0cb5\u0cbf\u0ca6\u0cc6.",
+    titleAlt: "Understand that person instantly",
   },
   "kk": {
     appName: "Uchia",
@@ -1560,6 +1600,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0420\u04b1\u049b\u0441\u0430\u0442 \u0431\u0435\u0440\u0443 \u2192",
     overlayRefresh: "\u041a\u04af\u0439\u0434\u0456 \u0436\u0430\u04a3\u0430\u0440\u0442\u0443",
     overlayAndroidOnly: "\u0422\u0456\u043a\u0435\u043b\u0435\u0439 \u0430\u0443\u0434\u0430\u0440\u043c\u0430 \u049b\u0430\u0431\u0430\u0442\u044b \u0442\u0435\u043a Android \u0436\u04af\u0439\u0435\u0441\u0456\u043d\u0434\u0435 \u049b\u043e\u043b\u0436\u0435\u0442\u0456\u043c\u0434\u0456.",
+    titleAlt: "Understand that person instantly",
   },
   "km": {
     appName: "Uchia",
@@ -1598,6 +1639,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u17a2\u1793\u17bb\u1789\u17d2\u1789\u17b6\u178f \u2192",
     overlayRefresh: "\u1792\u17d2\u179c\u17be\u17b1\u17d2\u1799\u179f\u17d2\u1790\u17b6\u1793\u1797\u17b6\u1796\u179f\u17d2\u179a\u179f\u17cb\u17a1\u17be\u1784\u179c\u17b7\u1789",
     overlayAndroidOnly: "\u1780\u17b6\u179a\u1794\u1780\u1794\u17d2\u179a\u17c2\u1795\u17d2\u1791\u17b6\u179b\u17cb overlay \u1798\u17b6\u1793\u178f\u17c2\u1793\u17c5\u179b\u17be Android \u1794\u17c9\u17bb\u178e\u17d2\u178e\u17c4\u17c7\u17d4",
+    titleAlt: "Understand that person instantly",
   },
   "ko": {
     appName: "Uchia",
@@ -1636,6 +1678,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\ud5c8\uc6a9 \u2192",
     overlayRefresh: "\uc0c1\ud0dc \uc0c8\ub85c\uace0\uce68",
     overlayAndroidOnly: "\uc2e4\uc2dc\uac04 \ubc88\uc5ed \uc624\ubc84\ub808\uc774\ub294 Android\uc5d0\uc11c\ub9cc \uc0ac\uc6a9\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+    titleAlt: "Understand that person instantly",
   },
   "ku": {
     appName: "\u06a9\u0648\u0631\u062a\u06d5 \u067e\u0648\u062e\u062a\u06d5\u06a9\u06d5\u0631",
@@ -1674,6 +1717,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u067e\u06ce\u062f\u0627\u0646 \u2192",
     overlayRefresh: "\u0646\u0648\u06ce\u06a9\u0631\u062f\u0646\u06d5\u0648\u06d5\u06cc \u0628\u0627\u0631\u0648\u062f\u06c6\u062e",
     overlayAndroidOnly: "\u0695\u0648\u0648\u067e\u06c6\u0634\u06cc \u0648\u06d5\u0631\u06af\u06ce\u0695\u0627\u0646\u06cc \u0695\u0627\u0633\u062a\u06d5\u0648\u062e\u06c6 \u062a\u06d5\u0646\u0647\u0627 \u0644\u06d5\u0633\u06d5\u0631 \u0626\u06d5\u0646\u062f\u0631\u06c6\u06cc\u062f \u0628\u06d5\u0631\u062f\u06d5\u0633\u062a\u06d5.",
+    titleAlt: "Understand that person instantly",
   },
   "lo": {
     appName: "Uchia",
@@ -1712,6 +1756,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0ead\u0eb0\u0e99\u0eb8\u0e8d\u0eb2\u0e94 \u2192",
     overlayRefresh: "\u0ec2\u0eab\u0ebc\u0e94\u0eaa\u0eb0\u0e96\u0eb2\u0e99\u0eb0\u0e84\u0eb7\u0e99\u0ec3\u0edd\u0ec8",
     overlayAndroidOnly: "\u0e81\u0eb2\u0e99\u0ec1\u0e9b\u0eaa\u0ebb\u0e94\u0ec1\u0e9a\u0e9a overlay \u0ea1\u0eb5\u0ec3\u0eab\u0ec9\u0ec3\u0e8a\u0ec9\u0eaa\u0eb0\u0ec0\u0e9e\u0eb2\u0eb0\u0ec3\u0e99 Android \u0ec0\u0e97\u0ebb\u0ec8\u0eb2\u0e99\u0eb1\u0ec9\u0e99.",
+    titleAlt: "Understand that person instantly",
   },
   "lv": {
     appName: "Uchia",
@@ -1750,6 +1795,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Pie\u0161\u0137irt \u2192",
     overlayRefresh: "Atsvaidzin\u0101t statusu",
     overlayAndroidOnly: "Tie\u0161raides tulko\u0161anas p\u0101rkl\u0101jums ir pieejams tikai Android ier\u012bc\u0113s.",
+    titleAlt: "Understand that person instantly",
   },
   "lt": {
     appName: "Trump\u0173j\u0173 vaizdo \u012fra\u0161\u0173 apibendrintojas",
@@ -1788,6 +1834,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Suteikti \u2192",
     overlayRefresh: "Atnaujinti b\u016bsen\u0105",
     overlayAndroidOnly: "Tiesioginio vertimo perdanga pasiekiama tik Android \u012frenginiuose.",
+    titleAlt: "Understand that person instantly",
   },
   "mk": {
     appName: "Uchia",
@@ -1826,6 +1873,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0414\u043e\u0434\u0435\u043b\u0438 \u2192",
     overlayRefresh: "\u041e\u0441\u0432\u0435\u0436\u0438 \u0441\u0442\u0430\u0442\u0443\u0441",
     overlayAndroidOnly: "\u041f\u0440\u0435\u043a\u043b\u043e\u043f\u043e\u0442 \u0437\u0430 \u043f\u0440\u0435\u0432\u043e\u0434 \u0432\u043e \u0436\u0438\u0432\u043e \u0435 \u0434\u043e\u0441\u0442\u0430\u043f\u0435\u043d \u0441\u0430\u043c\u043e \u043d\u0430 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ms": {
     appName: "Uchia",
@@ -1864,6 +1912,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Beri \u2192",
     overlayRefresh: "Muat semula status",
     overlayAndroidOnly: "Tindanan Terjemahan Langsung hanya tersedia pada Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ml": {
     appName: "\u0d37\u0d4b\u0d7c\u0d1f\u0d4d\u0d1f\u0d4d\u0d38\u0d4d \u0d38\u0d02\u0d17\u0d4d\u0d30\u0d39\u0d15\u0d7b",
@@ -1902,6 +1951,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0d05\u0d28\u0d41\u0d35\u0d26\u0d3f\u0d15\u0d4d\u0d15\u0d41\u0d15 \u2192",
     overlayRefresh: "\u0d28\u0d3f\u0d32 \u0d2a\u0d41\u0d24\u0d41\u0d15\u0d4d\u0d15\u0d41\u0d15",
     overlayAndroidOnly: "\u0d24\u0d24\u0d4d\u0d38\u0d2e\u0d2f \u0d35\u0d3f\u0d35\u0d7c\u0d24\u0d4d\u0d24\u0d28 \u0d13\u0d35\u0d7c\u0d32\u0d47 Android-\u0d7d \u0d2e\u0d3e\u0d24\u0d4d\u0d30\u0d2e\u0d47 \u0d32\u0d2d\u0d4d\u0d2f\u0d2e\u0d3e\u0d15\u0d42.",
+    titleAlt: "Understand that person instantly",
   },
   "mt": {
     appName: "Uchia",
@@ -1940,6 +1990,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Ag\u0127ti \u2192",
     overlayRefresh: "A\u0121\u0121orna l-istatus",
     overlayAndroidOnly: "L-overlay tat-Traduzzjoni Live huwa disponibbli biss fuq Android.",
+    titleAlt: "Understand that person instantly",
   },
   "mr": {
     appName: "Uchia",
@@ -1978,6 +2029,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0905\u0928\u0941\u092e\u0924\u0940 \u0926\u094d\u092f\u093e \u2192",
     overlayRefresh: "\u0938\u094d\u0925\u093f\u0924\u0940 \u0930\u0940\u092b\u094d\u0930\u0947\u0936 \u0915\u0930\u093e",
     overlayAndroidOnly: "\u0925\u0947\u091f \u092d\u093e\u0937\u093e\u0902\u0924\u0930 \u0906\u091a\u094d\u091b\u093e\u0926\u0928 (overlay) \u092b\u0915\u094d\u0924 Android \u0935\u0930 \u0909\u092a\u0932\u092c\u094d\u0927 \u0906\u0939\u0947.",
+    titleAlt: "Understand that person instantly",
   },
   "mn": {
     appName: "Uchia",
@@ -2016,6 +2068,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0417\u04e9\u0432\u0448\u04e9\u04e9\u0440\u04e9\u0445 \u2192",
     overlayRefresh: "\u0422\u04e9\u043b\u0432\u0438\u0439\u0433 \u0448\u0438\u043d\u044d\u0447\u043b\u044d\u0445",
     overlayAndroidOnly: "\u0428\u0443\u0443\u0434 \u043e\u0440\u0447\u0443\u0443\u043b\u0433\u044b\u043d \u0434\u0430\u0432\u0445\u0430\u0440\u0433\u0430 \u0437\u04e9\u0432\u0445\u04e9\u043d Android \u0434\u044d\u044d\u0440 \u0431\u043e\u043b\u043e\u043c\u0436\u0442\u043e\u0439.",
+    titleAlt: "Understand that person instantly",
   },
   "my": {
     appName: "Uchia",
@@ -2054,6 +2107,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u1001\u103d\u1004\u1037\u103a\u1015\u103c\u102f\u1015\u102b \u2192",
     overlayRefresh: "\u1021\u1001\u103c\u1031\u1021\u1014\u1031\u1000\u102d\u102f \u1015\u103c\u1014\u103a\u101c\u100a\u103a\u1005\u1010\u1004\u103a\u1015\u102b",
     overlayAndroidOnly: "\u1010\u102d\u102f\u1000\u103a\u101b\u102d\u102f\u1000\u103a\u1018\u102c\u101e\u102c\u1015\u103c\u1014\u103a\u1001\u103c\u1004\u103a\u1038 overlay \u1000\u102d\u102f Android \u1010\u103d\u1004\u103a\u101e\u102c \u101b\u101b\u103e\u102d\u1014\u102d\u102f\u1004\u103a\u101e\u100a\u103a\u104b",
+    titleAlt: "Understand that person instantly",
   },
   "ne": {
     appName: "\u0936\u0930\u094d\u091f\u094d\u0938 \u0938\u093e\u0930\u093e\u0902\u0936\u0915\u0930\u094d\u0924\u093e",
@@ -2092,6 +2146,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0905\u0928\u0941\u092e\u0924\u093f \u0926\u093f\u0928\u0941\u0939\u094b\u0938\u094d \u2192",
     overlayRefresh: "\u0938\u094d\u0925\u093f\u0924\u093f \u0924\u093e\u091c\u093e \u0917\u0930\u094d\u0928\u0941\u0939\u094b\u0938\u094d",
     overlayAndroidOnly: "\u092a\u094d\u0930\u0924\u094d\u092f\u0915\u094d\u0937 \u0905\u0928\u0941\u0935\u093e\u0926 \u0913\u092d\u0930\u0932\u0947 \u090f\u0928\u094d\u0921\u094d\u0930\u094b\u0907\u0921\u092e\u093e \u092e\u093e\u0924\u094d\u0930 \u0909\u092a\u0932\u092c\u094d\u0927 \u091b\u0964",
+    titleAlt: "Understand that person instantly",
   },
   "no": {
     appName: "Kortvideo Oppsummerer",
@@ -2130,6 +2185,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Gi tilgang \u2192",
     overlayRefresh: "Oppdater status",
     overlayAndroidOnly: "Direkteoversettelsesoverlegget er kun tilgjengelig p\u00e5 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ps": {
     appName: "Uchia",
@@ -2168,6 +2224,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0648\u0631\u06a9\u0693\u0626 \u2192",
     overlayRefresh: "\u062d\u0627\u0644\u062a \u062a\u0627\u0632\u0647 \u06a9\u0693\u0626",
     overlayAndroidOnly: "\u062f \u0698\u0648\u0646\u062f\u06cd \u0698\u0628\u0627\u0693\u06d0 \u0627\u0648\u0648\u0631\u0644\u06cc \u06cc\u0648\u0627\u0632\u06d0 \u067e\u0647 Android \u06a9\u06d0 \u0634\u062a\u0648\u0646 \u0644\u0631\u064a.",
+    titleAlt: "Understand that person instantly",
   },
   "fa": {
     appName: "Uchia",
@@ -2206,6 +2263,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0627\u0639\u0637\u0627 \u06a9\u0646 \u2192",
     overlayRefresh: "\u062a\u0627\u0632\u0647\u200c\u0633\u0627\u0632\u06cc \u0648\u0636\u0639\u06cc\u062a",
     overlayAndroidOnly: "\u067e\u0648\u0634\u0634 \u062a\u0631\u062c\u0645\u0647 \u0632\u0646\u062f\u0647 \u0641\u0642\u0637 \u062f\u0631 \u0627\u0646\u062f\u0631\u0648\u06cc\u062f \u0645\u0648\u062c\u0648\u062f \u0627\u0633\u062a.",
+    titleAlt: "Understand that person instantly",
   },
   "pl": {
     appName: "Uchia",
@@ -2244,6 +2302,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Przyznaj \u2192",
     overlayRefresh: "Od\u015bwie\u017c status",
     overlayAndroidOnly: "Nak\u0142adka T\u0142umaczenie na \u017cywo jest dost\u0119pna tylko na Androidzie.",
+    titleAlt: "Understand that person instantly",
   },
   "pt": {
     appName: "Resumidor de Shorts",
@@ -2282,6 +2341,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Conceder \u2192",
     overlayRefresh: "Atualizar status",
     overlayAndroidOnly: "A sobreposi\u00e7\u00e3o de Tradu\u00e7\u00e3o ao Vivo est\u00e1 dispon\u00edvel apenas no Android.",
+    titleAlt: "Understand that person instantly",
   },
   "pa": {
     appName: "Uchia",
@@ -2320,6 +2380,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0a07\u0a1c\u0a3e\u0a1c\u0a3c\u0a24 \u0a26\u0a3f\u0a13 \u2192",
     overlayRefresh: "\u0a38\u0a25\u0a3f\u0a24\u0a40 \u0a30\u0a3f\u0a2b\u0a4d\u0a30\u0a48\u0a38\u0a3c \u0a15\u0a30\u0a4b",
     overlayAndroidOnly: "\u0a32\u0a3e\u0a08\u0a35 \u0a05\u0a28\u0a41\u0a35\u0a3e\u0a26 \u0a13\u0a35\u0a30\u0a32\u0a47\u0a05 \u0a38\u0a3f\u0a30\u0a2b\u0a3c Android '\u0a24\u0a47 \u0a09\u0a2a\u0a32\u0a2c\u0a27 \u0a39\u0a48\u0964",
+    titleAlt: "Understand that person instantly",
   },
   "ro": {
     appName: "Uchia",
@@ -2358,6 +2419,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Acord\u0103 \u2192",
     overlayRefresh: "Re\u00eemprosp\u0103teaz\u0103 starea",
     overlayAndroidOnly: "Suprapunerea de Traducere Live este disponibil\u0103 doar pe Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ru": {
     appName: "\u0421\u0443\u043c\u043c\u0430\u0440\u0438\u0437\u0430\u0442\u043e\u0440 \u043a\u043e\u0440\u043e\u0442\u043a\u0438\u0445 \u0432\u0438\u0434\u0435\u043e",
@@ -2396,6 +2458,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u041f\u0440\u0435\u0434\u043e\u0441\u0442\u0430\u0432\u0438\u0442\u044c \u2192",
     overlayRefresh: "\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u0442\u0430\u0442\u0443\u0441",
     overlayAndroidOnly: "\u041e\u0432\u0435\u0440\u043b\u0435\u0439 \u0436\u0438\u0432\u043e\u0433\u043e \u043f\u0435\u0440\u0435\u0432\u043e\u0434\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "sr": {
     appName: "Sa\u017eima\u010d kratkih video zapisa",
@@ -2434,6 +2497,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Dozvoli \u2192",
     overlayRefresh: "Osve\u017ei status",
     overlayAndroidOnly: "Prevod u\u017eivo preklapanje je dostupno samo na Androidu.",
+    titleAlt: "Understand that person instantly",
   },
   "si": {
     appName: "Uchia",
@@ -2472,6 +2536,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0d85\u0dc0\u0dc3\u0dbb \u0daf\u0dd9\u0db1\u0dca\u0db1 \u2192",
     overlayRefresh: "\u0dad\u0dad\u0dca\u0dad\u0dca\u0dc0\u0dba \u0db1\u0dd0\u0dc0\u0dd4\u0db8\u0dca \u0d9a\u0dbb\u0db1\u0dca\u0db1",
     overlayAndroidOnly: "\u0dc3\u0da2\u0dd3\u0dc0\u0dd3 \u0db4\u0dbb\u0dd2\u0dc0\u0dbb\u0dca\u0dad\u0db1 \u0d86\u0dc0\u0dbb\u0dab\u0dba Android \u0db8\u0dad \u0db4\u0db8\u0dab\u0d9a\u0dca \u0dbd\u0db6\u0dcf \u0d9c\u0dad \u0dc4\u0dd0\u0d9a.",
+    titleAlt: "Understand that person instantly",
   },
   "sk": {
     appName: "Uchia",
@@ -2510,6 +2575,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Udeli\u0165 \u2192",
     overlayRefresh: "Obnovi\u0165 stav",
     overlayAndroidOnly: "Prekrytie \u017eiv\u00e9ho prekladu je dostupn\u00e9 iba na Androide.",
+    titleAlt: "Understand that person instantly",
   },
   "sl": {
     appName: "Uchia",
@@ -2548,6 +2614,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Dovoli \u2192",
     overlayRefresh: "Osve\u017ei status",
     overlayAndroidOnly: "Prekrivni element za prevajanje v \u017eivo je na voljo samo na Androidu.",
+    titleAlt: "Understand that person instantly",
   },
   "so": {
     appName: "Soo Koobaha Fiidyowyada Gaagaaban",
@@ -2586,6 +2653,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Sii \u2192",
     overlayRefresh: "Dib u cusboonaysii xaaladda",
     overlayAndroidOnly: "Dulmarista Tarjumaadda Tooska ah waxaa kaliya laga heli karaa Android.",
+    titleAlt: "Understand that person instantly",
   },
   "es": {
     appName: "Resumidor de Shorts",
@@ -2624,6 +2692,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Conceder \u2192",
     overlayRefresh: "Actualizar estado",
     overlayAndroidOnly: "La superposici\u00f3n de Traducci\u00f3n en vivo solo est\u00e1 disponible en Android.",
+    titleAlt: "Understand that person instantly",
   },
   "sw": {
     appName: "Uchia",
@@ -2662,6 +2731,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Ruhusu \u2192",
     overlayRefresh: "Onyesha upya hali",
     overlayAndroidOnly: "Kifuniko cha Tafsiri ya Moja kwa Moja kinapatikana tu kwenye Android.",
+    titleAlt: "Understand that person instantly",
   },
   "sv": {
     appName: "Uchia",
@@ -2700,6 +2770,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Bevilja \u2192",
     overlayRefresh: "Uppdatera status",
     overlayAndroidOnly: "Live\u00f6vers\u00e4ttnings\u00f6verl\u00e4gget \u00e4r endast tillg\u00e4ngligt p\u00e5 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "tl": {
     appName: "Tagabuod ng Shorts",
@@ -2738,6 +2809,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Ibigay \u2192",
     overlayRefresh: "I-refresh ang status",
     overlayAndroidOnly: "Ang overlay ng Live na Pagsasalin ay available lang sa Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ta": {
     appName: "\u0b95\u0bc1\u0bb1\u0bc1\u0bae\u0bcd\u0baa\u0b9f \u0b9a\u0bc1\u0bb0\u0bc1\u0b95\u0bcd\u0b95\u0bbf",
@@ -2776,6 +2848,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0b85\u0ba9\u0bc1\u0bae\u0ba4\u0bbf \u2192",
     overlayRefresh: "\u0ba8\u0bbf\u0bb2\u0bc8\u0baf\u0bc8 \u0baa\u0bc1\u0ba4\u0bc1\u0baa\u0bcd\u0baa\u0bbf",
     overlayAndroidOnly: "\u0ba8\u0bc7\u0bb0\u0b9f\u0bbf \u0bae\u0bca\u0bb4\u0bbf\u0baa\u0bc6\u0baf\u0bb0\u0bcd\u0baa\u0bcd\u0baa\u0bc1 \u0b93\u0bb5\u0bb0\u0bcd\u0bb2\u0bc7 Android \u0b87\u0bb2\u0bcd \u0bae\u0b9f\u0bcd\u0b9f\u0bc1\u0bae\u0bc7 \u0b95\u0bbf\u0b9f\u0bc8\u0b95\u0bcd\u0b95\u0bc1\u0bae\u0bcd.",
+    titleAlt: "Understand that person instantly",
   },
   "te": {
     appName: "Uchia",
@@ -2814,6 +2887,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0c2e\u0c02\u0c1c\u0c42\u0c30\u0c41 \u0c1a\u0c47\u0c2f\u0c02\u0c21\u0c3f \u2192",
     overlayRefresh: "\u0c38\u0c4d\u0c25\u0c3f\u0c24\u0c3f\u0c28\u0c3f \u0c30\u0c3f\u0c2b\u0c4d\u0c30\u0c46\u0c37\u0c4d \u0c1a\u0c47\u0c2f\u0c02\u0c21\u0c3f",
     overlayAndroidOnly: "\u0c2a\u0c4d\u0c30\u0c24\u0c4d\u0c2f\u0c15\u0c4d\u0c37 \u0c05\u0c28\u0c41\u0c35\u0c3e\u0c26 \u0c13\u0c35\u0c30\u0c4d\u200c\u0c32\u0c47 Android\u0c32\u0c4b \u0c2e\u0c3e\u0c24\u0c4d\u0c30\u0c2e\u0c47 \u0c05\u0c02\u0c26\u0c41\u0c2c\u0c3e\u0c1f\u0c41\u0c32\u0c4b \u0c09\u0c02\u0c26\u0c3f.",
+    titleAlt: "Understand that person instantly",
   },
   "th": {
     appName: "Uchia",
@@ -2852,6 +2926,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0e43\u0e2b\u0e49\u0e2a\u0e34\u0e17\u0e18\u0e34\u0e4c \u2192",
     overlayRefresh: "\u0e23\u0e35\u0e40\u0e1f\u0e23\u0e0a\u0e2a\u0e16\u0e32\u0e19\u0e30",
     overlayAndroidOnly: "\u0e42\u0e2d\u0e40\u0e27\u0e2d\u0e23\u0e4c\u0e40\u0e25\u0e22\u0e4c\u0e01\u0e32\u0e23\u0e41\u0e1b\u0e25\u0e2a\u0e14\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e44\u0e14\u0e49\u0e40\u0e09\u0e1e\u0e32\u0e30\u0e1a\u0e19 Android \u0e40\u0e17\u0e48\u0e32\u0e19\u0e31\u0e49\u0e19",
+    titleAlt: "Understand that person instantly",
   },
   "tr": {
     appName: "Shorts \u00d6zetleyici",
@@ -2890,6 +2965,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0130zin ver \u2192",
     overlayRefresh: "Durumu yenile",
     overlayAndroidOnly: "Canl\u0131 \u00c7eviri katman\u0131 yaln\u0131zca Android'de mevcuttur.",
+    titleAlt: "Understand that person instantly",
   },
   "uk": {
     appName: "\u041f\u0456\u0434\u0441\u0443\u043c\u043e\u0432\u0443\u0432\u0430\u0447 \u043a\u043e\u0440\u043e\u0442\u043a\u0438\u0445 \u0432\u0456\u0434\u0435\u043e",
@@ -2928,6 +3004,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u041d\u0430\u0434\u0430\u0442\u0438 \u2192",
     overlayRefresh: "\u041e\u043d\u043e\u0432\u0438\u0442\u0438 \u0441\u0442\u0430\u0442\u0443\u0441",
     overlayAndroidOnly: "\u041d\u0430\u043a\u043b\u0430\u0434\u0430\u043d\u043d\u044f \u0436\u0438\u0432\u043e\u0433\u043e \u043f\u0435\u0440\u0435\u043a\u043b\u0430\u0434\u0443 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0435 \u043b\u0438\u0448\u0435 \u043d\u0430 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "ur": {
     appName: "\u0634\u0627\u0631\u0679\u0633 \u062e\u0644\u0627\u0635\u06c1 \u0633\u0627\u0632",
@@ -2966,6 +3043,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u0627\u062c\u0627\u0632\u062a \u062f\u06cc\u06ba \u2192",
     overlayRefresh: "\u0627\u0633\u0679\u06cc\u0679\u0633 \u0631\u06cc\u0641\u0631\u06cc\u0634 \u06a9\u0631\u06cc\u06ba",
     overlayAndroidOnly: "\u0628\u0631\u0627\u06c1 \u0631\u0627\u0633\u062a \u062a\u0631\u062c\u0645\u06c1 \u0627\u0648\u0648\u0631\u0644\u06d2 \u0635\u0631\u0641 Android \u067e\u0631 \u062f\u0633\u062a\u06cc\u0627\u0628 \u06c1\u06d2\u06d4",
+    titleAlt: "Understand that person instantly",
   },
   "uz": {
     appName: "Uchia",
@@ -3004,6 +3082,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Ruxsat berish \u2192",
     overlayRefresh: "Holatni yangilash",
     overlayAndroidOnly: "Jonli tarjima qatlami faqat Android'da mavjud.",
+    titleAlt: "Understand that person instantly",
   },
   "vi": {
     appName: "T\u00f3m t\u1eaft video ng\u1eafn",
@@ -3042,6 +3121,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "C\u1ea5p quy\u1ec1n \u2192",
     overlayRefresh: "L\u00e0m m\u1edbi tr\u1ea1ng th\u00e1i",
     overlayAndroidOnly: "L\u1edbp ph\u1ee7 D\u1ecbch tr\u1ef1c ti\u1ebfp ch\u1ec9 kh\u1ea3 d\u1ee5ng tr\u00ean Android.",
+    titleAlt: "Understand that person instantly",
   },
   "cy": {
     appName: "Uchia",
@@ -3080,6 +3160,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Caniat\u00e1u \u2192",
     overlayRefresh: "Adnewyddu statws",
     overlayAndroidOnly: "Dim ond ar Android y mae'r haen Cyfieithu Byw ar gael.",
+    titleAlt: "Understand that person instantly",
   },
   "yi": {
     appName: "Uchia",
@@ -3118,6 +3199,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "\u05d2\u05e2\u05d1\u05df \u2192",
     overlayRefresh: "\u05d3\u05e2\u05e8\u05e4\u05e8\u05d9\u05e9\u05df \u05e1\u05d8\u05d0\u05b7\u05d8\u05d5\u05e1",
     overlayAndroidOnly: "\u05d3\u05d9 \u05d3\u05d9\u05e8\u05e2\u05e7\u05d8\u05e2 \u05d0\u05d9\u05d1\u05e2\u05e8\u05d6\u05e2\u05e6\u05d5\u05e0\u05d2 \u05d0\u05d9\u05d1\u05e2\u05e8\u05dc\u05d9\u05d9\u05d2 \u05d0\u05d9\u05d6 \u05e0\u05d0\u05b8\u05e8 \u05d1\u05e0\u05d9\u05de\u05e6\u05d0 \u05d0\u05d5\u05d9\u05e3 Android.",
+    titleAlt: "Understand that person instantly",
   },
   "yo": {
     appName: "Uchia",
@@ -3156,6 +3238,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Y\u1ecd\u0300\u01f9da \u2192",
     overlayRefresh: "T\u00fan ip\u00f2 s\u1ecd di tuntun",
     overlayAndroidOnly: "\u00ccb\u00f2j\u00fa \u00cctum\u1ecd\u0300 L\u00e1\u00e0y\u00e8 w\u00e0 n\u00ed \u00e0y\u00e8 l\u00f3r\u00ed Android n\u00eckan.",
+    titleAlt: "Understand that person instantly",
   },
   "zu": {
     appName: "Uchia",
@@ -3194,6 +3277,7 @@ const translations: Record<string, Translations> = {
     overlayGrant: "Nikeza \u2192",
     overlayRefresh: "Vuselela isimo",
     overlayAndroidOnly: "I-overlay yokuhumusha ebukhoma itholakala kuphela ku-Android.",
+    titleAlt: "Understand that person instantly",
   },
 };
 
