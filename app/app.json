@@ -34,8 +34,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6f9a5aad-23ad-451e-be41-afd1eadc976f"
+        "projectId": "e40fb18c-4ead-448b-955b-33a6120f6f51"
       }
-    }
+    },
+    "owner": "lisumchen"
   }
 }
