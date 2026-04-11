@@ -5,6 +5,7 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.graphics.Rect
 import android.util.Log
+import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.google.mlkit.nl.languageid.LanguageIdentification
@@ -12,11 +13,14 @@ import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
+import com.uchia.capture.PositionalOverlayView
+import java.util.Collections
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Phase 2+3: Reads subtitle text from the View layer of foreground video apps,
- * translates it with ML Kit (on-device, offline), and displays the result via
- * a TYPE_ACCESSIBILITY_OVERLAY window — no extra permissions required.
+ * Reads subtitle text from foreground video apps via the accessibility tree,
+ * translates each block with ML Kit (on-device), and renders positioned bubbles
+ * at the exact screen coordinates of the original subtitles.
  */
 class SubtitleAccessibilityService : AccessibilityService() {
 
@@ -26,16 +30,21 @@ class SubtitleAccessibilityService : AccessibilityService() {
         const val KEY_TARGET_LANGUAGE = "target_language"
         const val KEY_OVERLAY_ENABLED = "overlay_enabled"
 
+        /** Text stable for longer than this is a UI element, not a subtitle. */
+        private const val STABLE_THRESHOLD_MS = 3_000L
+        private const val CACHE_SIZE = 100
+        private const val MAX_BUBBLES = 5
+
         val TARGET_PACKAGES = setOf(
-            "com.zhiliaoapp.musically",        // TikTok (global)
-            "com.ss.android.ugc.trill",        // TikTok (some regions)
-            "com.instagram.android",            // Instagram Reels
-            "com.google.android.youtube",       // YouTube / Shorts
-            "com.netflix.mediaclient",          // Netflix
-            "com.amazon.avod.thirdpartyclient", // Prime Video
+            "com.zhiliaoapp.musically",
+            "com.ss.android.ugc.trill",
+            "com.instagram.android",
+            "com.google.android.youtube",
+            "com.netflix.mediaclient",
+            "com.amazon.avod.thirdpartyclient",
         )
 
-        /** BubbleModule registers here to receive raw subtitle events for JS layer. */
+        /** BubbleModule registers here to receive subtitle events for the JS layer. */
         var listener: SubtitleListener? = null
     }
 
@@ -45,12 +54,26 @@ class SubtitleAccessibilityService : AccessibilityService() {
 
     // ─── State ────────────────────────────────────────────────────────────────
 
-    private var lastText = ""
-    private val overlay by lazy { TranslationOverlay(this) }
+    /**
+     * Use TYPE_ACCESSIBILITY_OVERLAY — no SYSTEM_ALERT_WINDOW needed,
+     * permission is covered by the accessibility service grant itself.
+     */
+    private val overlay by lazy {
+        PositionalOverlayView(this, WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY)
+    }
 
-    /** Cached translator — reused while the language pair stays the same. */
-    private var translator: Translator? = null
-    private var activeLangPair = "" // "src->target"
+    /** text → first-seen timestamp. Text stable > STABLE_THRESHOLD_MS is treated as UI. */
+    private val stableTextTracker = Collections.synchronizedMap(mutableMapOf<String, Long>())
+
+    /** LRU cache: original text → translated text. Avoids re-calling ML Kit for repeated lines. */
+    private val translationCache = Collections.synchronizedMap(
+        object : LinkedHashMap<String, String>(CACHE_SIZE, 0.75f, true) {
+            override fun removeEldestEntry(eldest: Map.Entry<String, String>) = size > CACHE_SIZE
+        }
+    )
+
+    /** One Translator instance per language pair "src->target". */
+    private val translators = mutableMapOf<String, Translator>()
 
     // ─── Lifecycle ────────────────────────────────────────────────────────────
 
@@ -65,7 +88,8 @@ class SubtitleAccessibilityService : AccessibilityService() {
                     AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
             notificationTimeout = 100
         }
-        Log.d(TAG, "Service connected")
+        overlay.show()
+        Log.d(TAG, "Service connected — overlay ready")
     }
 
     override fun onInterrupt() {
@@ -76,7 +100,8 @@ class SubtitleAccessibilityService : AccessibilityService() {
     override fun onDestroy() {
         super.onDestroy()
         overlay.hide()
-        translator?.close()
+        translators.values.forEach { it.close() }
+        translators.clear()
     }
 
     // ─── Event handling ───────────────────────────────────────────────────────
@@ -89,120 +114,61 @@ class SubtitleAccessibilityService : AccessibilityService() {
         val root = rootInActiveWindow ?: return
         try {
             val screenHeight = resources.displayMetrics.heightPixels
-            val subtitle = findSubtitle(root, screenHeight)
+            val subtitles = findSubtitles(root, screenHeight)
 
-            if (subtitle != null && subtitle != lastText) {
-                lastText = subtitle
-                // Forward raw text to JS layer (Phase 2 monitor card)
-                listener?.onSubtitleDetected(subtitle, pkg)
-                // Translate and show overlay (Phase 3)
-                translateAndShow(subtitle)
+            if (subtitles.isNotEmpty()) {
+                listener?.onSubtitleDetected(subtitles.first().first, pkg)
+                translateAndShowAll(subtitles)
+            } else {
+                overlay.update(emptyList())
             }
         } finally {
             root.recycle()
         }
     }
 
-    // ─── Translation pipeline ─────────────────────────────────────────────────
-
-    private fun translateAndShow(text: String) {
-        val targetLang = getTargetLanguage()
-
-        LanguageIdentification.getClient()
-            .identifyLanguage(text)
-            .addOnSuccessListener { srcLang ->
-                when {
-                    srcLang == "und" -> {
-                        // Language undetectable — show original
-                        overlay.update(text)
-                    }
-                    srcLang == targetLang -> {
-                        // Already in the target language — show as-is
-                        overlay.update(text)
-                    }
-                    else -> {
-                        // Need translation
-                        val pair = "$srcLang->$targetLang"
-                        acquireTranslator(srcLang, targetLang, pair, text) { t ->
-                            t.translate(text)
-                                .addOnSuccessListener { translated ->
-                                    overlay.update(translated)
-                                }
-                                .addOnFailureListener {
-                                    overlay.update(text)
-                                }
-                        }
-                    }
-                }
-            }
-            .addOnFailureListener {
-                overlay.update(text)
-            }
-    }
-
-    /**
-     * Returns a ready-to-use [Translator] for the given language pair.
-     * Caches the instance — avoids recreating the translator on every subtitle update.
-     * Downloads the language model on first use (~30 MB per pair, needs internet once).
-     * Falls back to showing [fallbackText] while downloading or on failure.
-     */
-    private fun acquireTranslator(
-        src: String,
-        target: String,
-        pair: String,
-        fallbackText: String,
-        onReady: (Translator) -> Unit,
-    ) {
-        if (pair == activeLangPair && translator != null) {
-            onReady(translator!!)
-            return
-        }
-
-        translator?.close()
-        activeLangPair = pair
-
-        val options = TranslatorOptions.Builder()
-            .setSourceLanguage(src)
-            .setTargetLanguage(target)
-            .build()
-        val t = Translation.getClient(options)
-        translator = t
-
-        // Show original text immediately while the model downloads
-        overlay.update(fallbackText)
-
-        t.downloadModelIfNeeded()
-            .addOnSuccessListener { onReady(t) }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Model download failed for $pair: $e")
-                // Fallback: show original subtitle text so the overlay is still useful
-                overlay.update(fallbackText)
-            }
-    }
-
     // ─── Subtitle detection ───────────────────────────────────────────────────
 
-    private fun findSubtitle(root: AccessibilityNodeInfo, screenHeight: Int): String? {
-        // Collect (text, width) pairs; prefer the widest candidate (subtitle views span most of screen)
-        val candidates = mutableListOf<Triple<String, Int, Int>>() // text, top, width
+    /**
+     * Returns up to [MAX_BUBBLES] subtitle candidates as (text, screenBounds) pairs.
+     * Candidates are sorted by width (widest = most likely to be a subtitle).
+     */
+    private fun findSubtitles(root: AccessibilityNodeInfo, screenHeight: Int): List<Pair<String, Rect>> {
+        val candidates = mutableListOf<Triple<String, Rect, Int>>() // text, bounds, width
         collectCandidates(root, screenHeight, candidates)
-        if (candidates.isEmpty()) return null
-        // Primary sort: widest (subtitle spans screen); secondary: lowest on screen
-        return candidates.maxWithOrNull(
-            compareBy({ it.third }, { it.second })
-        )?.first
+
+        val screenWidth = resources.displayMetrics.widthPixels
+        val now = System.currentTimeMillis()
+
+        // Prune stale stable-text entries every cycle
+        if (stableTextTracker.size > 200) {
+            val cutoff = now - 30_000L
+            stableTextTracker.entries.removeIf { it.value < cutoff }
+        }
+
+        return candidates
+            .filter { (text, _, width) ->
+                // Must span at least 30% of screen width (subtitles span most of the screen)
+                width > screenWidth * 0.30f &&
+                // Ignore text that has been on-screen for > 3 s (UI element, not subtitle)
+                !isStableText(text, now)
+            }
+            .sortedByDescending { it.third }
+            .take(MAX_BUBBLES)
+            .map { Pair(it.first, it.second) }
     }
 
     private fun collectCandidates(
         node: AccessibilityNodeInfo,
         screenHeight: Int,
-        out: MutableList<Triple<String, Int, Int>>,
+        out: MutableList<Triple<String, Rect, Int>>,
     ) {
         val text = node.text?.toString()?.trim()
         if (!text.isNullOrEmpty() && isSubtitleCandidate(node, text, screenHeight)) {
             val bounds = Rect()
             node.getBoundsInScreen(bounds)
-            out.add(Triple(text, bounds.top, bounds.width()))
+            // Store a copy of bounds — the original Rect may be recycled
+            out.add(Triple(text, Rect(bounds), bounds.width()))
         }
         for (i in 0 until node.childCount) {
             val child = node.getChild(i) ?: continue
@@ -219,32 +185,125 @@ class SubtitleAccessibilityService : AccessibilityService() {
         text: String,
         screenHeight: Int,
     ): Boolean {
-        // Length gate: subtitles are rarely < 8 or > 200 chars
+        // Length gate
         if (text.length < 8 || text.length > 200) return false
-
-        // Must contain at least one letter (filters out timestamps, icon labels)
+        // Must contain at least one letter
         if (!text.any { it.isLetter() }) return false
-
-        // All-uppercase text is almost always a UI button or header, not a subtitle
+        // All-caps short text = UI button/header
         if (text == text.uppercase() && text.length < 30) return false
-
-        // Single-word with no punctuation is a UI label (button, tab, username etc.)
-        // Allow short text only if it ends with sentence punctuation like "Yes." "Okay."
+        // Single word with no sentence punctuation = UI label or username
         val hasSpace = text.contains(' ')
-        val hasSentencePunct = text.endsWith('.') || text.endsWith('?') || text.endsWith('!')
+        val hasSentencePunct = text.last() in ".?!…"
         if (!hasSpace && !hasSentencePunct) return false
 
-        // Must be in the bottom half of the screen
         val bounds = Rect()
         node.getBoundsInScreen(bounds)
         if (bounds.isEmpty) return false
+        // Must be in the bottom half of the screen
         if (bounds.top < screenHeight * 0.50f) return false
-
-        // Reject if the view spans the full width (likely a full-screen overlay UI element)
+        // Reject full-screen-width very tall views (full-screen overlays)
         val screenWidth = resources.displayMetrics.widthPixels
         if (bounds.width() > screenWidth * 0.95f && bounds.height() > screenHeight * 0.15f) return false
 
         return true
+    }
+
+    private fun isStableText(text: String, now: Long): Boolean {
+        val firstSeen = stableTextTracker.getOrPut(text) { now }
+        return (now - firstSeen) > STABLE_THRESHOLD_MS
+    }
+
+    // ─── Translation pipeline ─────────────────────────────────────────────────
+
+    /**
+     * Translates all [blocks] in parallel. When every block is resolved
+     * (from cache or ML Kit), updates the overlay with all bubbles at once.
+     */
+    private fun translateAndShowAll(blocks: List<Pair<String, Rect>>) {
+        val targetLang = getTargetLanguage()
+        val results = Collections.synchronizedList(
+            mutableListOf<PositionalOverlayView.TranslatedBlock>()
+        )
+        val pending = AtomicInteger(blocks.size)
+
+        fun commit(translatedText: String, bounds: Rect) {
+            results.add(
+                PositionalOverlayView.TranslatedBlock(
+                    translatedText,
+                    bounds.left, bounds.top, bounds.right, bounds.bottom,
+                )
+            )
+            if (pending.decrementAndGet() == 0) {
+                overlay.update(results)
+            }
+        }
+
+        for ((text, bounds) in blocks) {
+            // Cache hit — instant, no ML Kit call needed
+            val cached = translationCache[text]
+            if (cached != null) {
+                commit(cached, bounds)
+                continue
+            }
+
+            // Identify language, then translate
+            LanguageIdentification.getClient()
+                .identifyLanguage(text)
+                .addOnSuccessListener { srcLang ->
+                    if (srcLang == "und" || srcLang == targetLang) {
+                        // Already in target language or undetectable — show as-is
+                        translationCache[text] = text
+                        commit(text, bounds)
+                    } else {
+                        val pair = "$srcLang->$targetLang"
+                        acquireTranslator(srcLang, targetLang, pair) { translator ->
+                            translator.translate(text)
+                                .addOnSuccessListener { translated ->
+                                    translationCache[text] = translated
+                                    commit(translated, bounds)
+                                }
+                                .addOnFailureListener {
+                                    commit(text, bounds) // fallback: show original
+                                }
+                        }
+                    }
+                }
+                .addOnFailureListener {
+                    commit(text, bounds) // fallback: show original
+                }
+        }
+    }
+
+    /**
+     * Returns a ready [Translator] for the given language pair.
+     * Reuses cached instances to avoid recreating the ML Kit client on every event.
+     * Downloads the translation model on first use (~30 MB per pair, one-time).
+     */
+    private fun acquireTranslator(
+        src: String,
+        target: String,
+        pair: String,
+        onReady: (Translator) -> Unit,
+    ) {
+        val existing = translators[pair]
+        if (existing != null) {
+            onReady(existing)
+            return
+        }
+
+        val t = Translation.getClient(
+            TranslatorOptions.Builder()
+                .setSourceLanguage(src)
+                .setTargetLanguage(target)
+                .build()
+        )
+        translators[pair] = t
+
+        t.downloadModelIfNeeded()
+            .addOnSuccessListener { onReady(t) }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Model download failed for $pair: $e")
+            }
     }
 
     // ─── Preferences ─────────────────────────────────────────────────────────

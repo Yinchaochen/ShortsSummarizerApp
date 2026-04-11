@@ -15,13 +15,21 @@ import android.widget.TextView
 /**
  * A full-screen, touch-transparent overlay that renders one bubble per detected text block.
  *
- * Each bubble is positioned at the exact screen coordinates returned by ML Kit OCR,
- * sized to match the original text bounds. All touch events fall through to the app
- * underneath — the user can interact normally while bubbles are visible.
+ * Each bubble is positioned at the exact screen coordinates returned by ML Kit OCR or
+ * the AccessibilityService bounds, sized to match the original text bounds.
+ * All touch events fall through to the app underneath.
  *
- * Requires android.permission.SYSTEM_ALERT_WINDOW (declared in AndroidManifest).
+ * [windowType] defaults to TYPE_APPLICATION_OVERLAY (requires SYSTEM_ALERT_WINDOW).
+ * Pass TYPE_ACCESSIBILITY_OVERLAY when instantiated from an AccessibilityService — no
+ * extra permission needed in that case.
  */
-class PositionalOverlayView(private val context: Context) {
+class PositionalOverlayView(
+    private val context: Context,
+    private val windowType: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+    else
+        @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+) {
 
     // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -44,10 +52,7 @@ class PositionalOverlayView(private val context: Context) {
     private val layoutParams = WindowManager.LayoutParams(
         WindowManager.LayoutParams.MATCH_PARENT,
         WindowManager.LayoutParams.MATCH_PARENT,
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        else
-            @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+        windowType,
         // Touch-transparent: taps fall through to the underlying app
         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
