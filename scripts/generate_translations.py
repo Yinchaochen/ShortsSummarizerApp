@@ -4,7 +4,14 @@ Generate UI translations for all languages in languages.ts using Gemini.
 Usage:
     cd "E:/Shorts Summarizer"
     pip install google-genai python-dotenv
-    python scripts/generate_translations.py
+    python scripts/generate_translations.py                        # full regeneration (all keys, all languages)
+    python scripts/generate_translations.py --patch titleAlt       # patch one key
+    python scripts/generate_translations.py --patch key1,key2      # patch multiple keys
+
+Workflow when adding new UI text:
+    1. Add the new key + English string to the ENGLISH dict below.
+    2. Run: python scripts/generate_translations.py --patch <new_key>
+    3. Commit the updated i18n.ts.
 
 Output: app/src/lib/i18n.ts (overwrites existing file)
 """
@@ -13,6 +20,7 @@ import os
 import json
 import time
 import re
+import argparse
 from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
@@ -21,12 +29,17 @@ from google.genai import types
 load_dotenv(Path(__file__).parent.parent / "backend" / ".env")
 
 # ─── Source strings (English) ────────────────────────────────────────────────
-# Keep this in sync with the Translations type in i18n.ts
+# This is the single source of truth for all UI strings.
+# To add new UI text:
+#   1. Add the key and English value here.
+#   2. Run: python scripts/generate_translations.py --patch <key_name>
+# Never edit i18n.ts directly — it is auto-generated from this dict.
 
 ENGLISH = {
     "appName": "Uchia",
     "tagline": "Understand any video instantly",
     "title": "Understand any\nshort video instantly",
+    "titleAlt": "Understand that person instantly",
     "subtitle": "Paste a video link and get a detailed summary",
     "urlPlaceholder": "Paste the video URL/Link here...",
     "summaryLanguageLabel": "Summary language",
@@ -98,7 +111,7 @@ def translate_batch(client, lang_code: str, lang_name: str, strings: dict) -> di
 
 Rules:
 - Keep the JSON keys exactly as-is (do not translate keys)
-- Keep special characters like →, ←, ↔, \n, ... exactly as-is
+- Keep special characters like →, ←, ↔, \\n, ... exactly as-is
 - Keep "Gemini" and "React Native" and "Kotlin" untranslated (they are brand/tech names)
 - For "appName" use the most natural translation or keep "Shorts Summarizer" if no good translation exists
 - Return ONLY valid JSON, no explanation, no markdown
@@ -132,6 +145,37 @@ Source JSON:
     return result
 
 
+# ─── i18n.ts parser ──────────────────────────────────────────────────────────
+
+def parse_existing_i18n(path: Path) -> dict[str, dict]:
+    """
+    Parse the auto-generated i18n.ts and return all current translations.
+    Returns a dict: { lang_code: { key: value, ... }, ... }
+    """
+    content = path.read_text(encoding="utf-8")
+    result = {}
+
+    # Match each language block: "lang_code": {\n...\n  },
+    lang_re = re.compile(r'"([\w-]+)":\s*\{\n(.*?)\n  \},?', re.DOTALL)
+    # Match individual key-value pairs: "    key: "value","
+    kv_re = re.compile(r'    (\w+):\s*("(?:[^"\\]|\\.)*"),')
+
+    for m in lang_re.finditer(content):
+        lang_code = m.group(1)
+        block = m.group(2)
+        translations = {}
+        for kv in kv_re.finditer(block):
+            key = kv.group(1)
+            try:
+                value = json.loads(kv.group(2))
+                translations[key] = value
+            except json.JSONDecodeError:
+                pass
+        result[lang_code] = translations
+
+    return result
+
+
 # ─── TypeScript file generator ────────────────────────────────────────────────
 
 def build_ts_file(all_translations: dict[str, dict]) -> str:
@@ -151,7 +195,8 @@ def build_ts_file(all_translations: dict[str, dict]) -> str:
 
     for lang_code, strings in all_translations.items():
         lines.append(f"  {json.dumps(lang_code)}: {{")
-        for key, value in strings.items():
+        for key in ENGLISH:  # Only output keys defined in ENGLISH (keeps TypeScript type in sync)
+            value = strings.get(key, ENGLISH[key])  # Fall back to English if key missing
             escaped = json.dumps(value, ensure_ascii=False)
             lines.append(f"    {key}: {escaped},")
         lines.append("  },")
@@ -167,23 +212,15 @@ def build_ts_file(all_translations: dict[str, dict]) -> str:
     return "\n".join(lines)
 
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+# ─── Full regeneration mode ───────────────────────────────────────────────────
 
-def main():
-    api_key = os.environ.get("GOOGLE_API_KEY", "")
-    if not api_key:
-        raise SystemExit("GOOGLE_API_KEY not set in backend/.env")
-
-    client = genai.Client(api_key=api_key)
+def full_mode(client, out_path: Path) -> None:
+    """Translate all keys for all languages from scratch."""
     all_translations: dict[str, dict] = {}
-
-    # English is the source — no translation needed
     all_translations["en"] = ENGLISH
 
-    skip = {"en"}  # already done
-
     for lang_code, lang_name in LANGUAGES:
-        if lang_code in skip:
+        if lang_code == "en":
             continue
 
         print(f"Translating -> {lang_name} ({lang_code})...", end=" ", flush=True)
@@ -195,14 +232,88 @@ def main():
             print(f"FAILED ({e}) - using English fallback")
             all_translations[lang_code] = ENGLISH.copy()
 
-        # Be polite to the API
         time.sleep(0.5)
 
-    # Write output
-    out_path = Path(__file__).parent.parent / "app" / "src" / "lib" / "i18n.ts"
     out_path.write_text(build_ts_file(all_translations), encoding="utf-8")
     print(f"\nDone. Written to {out_path}")
     print(f"   {len(all_translations)} languages, {len(ENGLISH)} strings each")
+
+
+# ─── Patch mode (translate only specified keys) ───────────────────────────────
+
+def patch_mode(client, out_path: Path, keys_to_patch: list[str]) -> None:
+    """
+    Translate only the specified keys for all languages, merging into the
+    existing translations. Much faster than a full regeneration.
+    """
+    # Validate keys
+    invalid = [k for k in keys_to_patch if k not in ENGLISH]
+    if invalid:
+        raise SystemExit(f"Keys not found in ENGLISH dict: {invalid}\nAdd them to ENGLISH first.")
+
+    patch_english = {k: ENGLISH[k] for k in keys_to_patch}
+    print(f"Patching keys: {keys_to_patch}")
+    print(f"English values: {patch_english}\n")
+
+    # Load existing translations
+    if not out_path.exists():
+        raise SystemExit(f"Output file not found: {out_path}\nRun without --patch first to do a full generation.")
+
+    existing = parse_existing_i18n(out_path)
+    if not existing:
+        raise SystemExit("Could not parse existing i18n.ts. Run without --patch to regenerate.")
+
+    print(f"Loaded existing translations for {len(existing)} languages.")
+
+    all_translations: dict[str, dict] = {}
+
+    for lang_code, lang_name in LANGUAGES:
+        base = existing.get(lang_code, ENGLISH.copy())
+
+        if lang_code == "en":
+            all_translations["en"] = {**base, **patch_english}
+            continue
+
+        print(f"Patching {lang_name} ({lang_code})...", end=" ", flush=True)
+        try:
+            new_vals = translate_batch(client, lang_code, lang_name, patch_english)
+            all_translations[lang_code] = {**base, **new_vals}
+            print("OK")
+        except Exception as e:
+            print(f"FAILED ({e}) - keeping English fallback for patched keys")
+            all_translations[lang_code] = {**base, **patch_english}
+
+        time.sleep(0.5)
+
+    out_path.write_text(build_ts_file(all_translations), encoding="utf-8")
+    print(f"\nDone. Patched {keys_to_patch} across {len(all_translations)} languages.")
+    print(f"Written to {out_path}")
+
+
+# ─── Main ─────────────────────────────────────────────────────────────────────
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate/update i18n.ts translations via Gemini.")
+    parser.add_argument(
+        "--patch",
+        metavar="KEY[,KEY...]",
+        help="Translate only these comma-separated keys and merge into existing i18n.ts. "
+             "Much faster than a full run. Example: --patch titleAlt",
+    )
+    args = parser.parse_args()
+
+    api_key = os.environ.get("GOOGLE_API_KEY", "")
+    if not api_key:
+        raise SystemExit("GOOGLE_API_KEY not set in backend/.env")
+
+    client = genai.Client(api_key=api_key)
+    out_path = Path(__file__).parent.parent / "app" / "src" / "lib" / "i18n.ts"
+
+    if args.patch:
+        keys = [k.strip() for k in args.patch.split(",") if k.strip()]
+        patch_mode(client, out_path, keys)
+    else:
+        full_mode(client, out_path)
 
 
 if __name__ == "__main__":
