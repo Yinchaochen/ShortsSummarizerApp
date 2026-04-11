@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
+import { useLanguage } from "../../app/_layout";
 
 type Detection = "yes" | "no" | "uncertain";
 type Confidence = "high" | "medium" | "low";
@@ -16,19 +17,7 @@ const VERDICT_CONFIG = {
   uncertain: { color: "#facc15", bg: "rgba(250,204,21,0.08)",  border: "rgba(250,204,21,0.25)",  dot: "#facc15" },
 };
 
-const VERDICT_LABEL: Record<Detection, string> = {
-  yes: "Detected",
-  no: "Not detected",
-  uncertain: "Uncertain",
-};
-
-const CONFIDENCE_LABEL: Record<Confidence, string> = {
-  high: "High confidence",
-  medium: "Medium confidence",
-  low: "Low confidence",
-};
-
-function DetectionRow({ label, verdict }: { label: string; verdict: Detection }) {
+function DetectionRow({ label, verdict, verdictLabel }: { label: string; verdict: Detection; verdictLabel: string }) {
   const cfg = VERDICT_CONFIG[verdict];
   return (
     <View style={[styles.row, { backgroundColor: cfg.bg, borderColor: cfg.border }]}>
@@ -36,24 +25,36 @@ function DetectionRow({ label, verdict }: { label: string; verdict: Detection })
         <View style={[styles.dot, { backgroundColor: cfg.dot }]} />
         <Text style={styles.rowLabel}>{label}</Text>
       </View>
-      <Text style={[styles.verdict, { color: cfg.color }]}>{VERDICT_LABEL[verdict]}</Text>
+      <Text style={[styles.verdict, { color: cfg.color }]}>{verdictLabel}</Text>
     </View>
   );
 }
 
 export default function AIDetectionCard({ isAiGenerated, isDeepfake, confidence, reason }: Props) {
-  const allClear = isAiGenerated === "no" && isDeepfake === "no";
+  const { t } = useLanguage();
+
+  const verdictLabel: Record<Detection, string> = {
+    yes: t.verdictDetected,
+    no: t.verdictNotDetected,
+    uncertain: t.verdictUncertain,
+  };
+
+  const confidenceLabel: Record<Confidence, string> = {
+    high: t.confidenceHigh,
+    medium: t.confidenceMedium,
+    low: t.confidenceLow,
+  };
 
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.title}>AI & Deepfake Analysis</Text>
-        <Text style={styles.confidence}>{CONFIDENCE_LABEL[confidence]}</Text>
+        <Text style={styles.title}>{t.aiAnalysisTitle}</Text>
+        <Text style={styles.confidence}>{confidenceLabel[confidence]}</Text>
       </View>
 
       <View style={styles.rows}>
-        <DetectionRow label="AI-Generated Content" verdict={isAiGenerated} />
-        <DetectionRow label="Deepfake" verdict={isDeepfake} />
+        <DetectionRow label={t.aiGeneratedLabel} verdict={isAiGenerated} verdictLabel={verdictLabel[isAiGenerated]} />
+        <DetectionRow label={t.deepfakeLabel} verdict={isDeepfake} verdictLabel={verdictLabel[isDeepfake]} />
       </View>
 
       {reason ? (

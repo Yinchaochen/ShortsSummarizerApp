@@ -73,6 +73,15 @@ ENGLISH = {
     "overlayGrant": "Grant →",
     "overlayRefresh": "Refresh status",
     "overlayAndroidOnly": "Live Translation overlay is only available on Android.",
+    "aiAnalysisTitle": "AI & Deepfake Analysis",
+    "confidenceHigh": "High confidence",
+    "confidenceMedium": "Medium confidence",
+    "confidenceLow": "Low confidence",
+    "verdictDetected": "Detected",
+    "verdictNotDetected": "Not detected",
+    "verdictUncertain": "Uncertain",
+    "aiGeneratedLabel": "AI-Generated Content",
+    "deepfakeLabel": "Deepfake",
 }
 
 # ─── All languages (from languages.ts) ───────────────────────────────────────
