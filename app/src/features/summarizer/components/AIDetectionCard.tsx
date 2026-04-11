@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useLanguage } from "../../app/_layout";
+import { useLanguage } from "../../../shared/context/LanguageContext";
 
 type Detection = "yes" | "no" | "uncertain";
 type Confidence = "high" | "medium" | "low";
@@ -76,24 +76,10 @@ const styles = StyleSheet.create({
     gap: 16,
     marginTop: 16,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  title: {
-    color: "#f7f8f8",
-    fontSize: 14,
-    fontWeight: "600",
-    letterSpacing: 0.2,
-  },
-  confidence: {
-    color: "#62666d",
-    fontSize: 12,
-  },
-  rows: {
-    gap: 8,
-  },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  title: { color: "#f7f8f8", fontSize: 14, fontWeight: "600", letterSpacing: 0.2 },
+  confidence: { color: "#62666d", fontSize: 12 },
+  rows: { gap: 8 },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -103,32 +89,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
-  rowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-  },
-  rowLabel: {
-    color: "#d0d6e0",
-    fontSize: 13,
-  },
-  verdict: {
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  reasonBox: {
-    backgroundColor: "rgba(255,255,255,0.03)",
-    borderRadius: 8,
-    padding: 12,
-  },
-  reasonText: {
-    color: "#62666d",
-    fontSize: 12,
-    lineHeight: 18,
-  },
+  rowLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
+  dot: { width: 7, height: 7, borderRadius: 4 },
+  rowLabel: { color: "#d0d6e0", fontSize: 13 },
+  verdict: { fontSize: 13, fontWeight: "600" },
+  reasonBox: { backgroundColor: "rgba(255,255,255,0.03)", borderRadius: 8, padding: 12 },
+  reasonText: { color: "#62666d", fontSize: 12, lineHeight: 18 },
 });

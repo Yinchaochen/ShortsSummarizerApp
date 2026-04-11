@@ -22,22 +22,18 @@ def _get_video_duration(url: str) -> float | None:
     Returns None if the platform does not expose duration.
     Raises yt_dlp.utils.DownloadError on hard failures (blocked, not found).
     """
-    opts = {
-        "quiet": True,
-        "no_warnings": True,
-        "skip_download": True,
-    }
+    opts = {"quiet": True, "no_warnings": True, "skip_download": True}
     with yt_dlp.YoutubeDL(opts) as ydl:
         info = ydl.extract_info(url, download=False)
         if info is None:
             return None
-        # Unwrap single-entry playlists (e.g. YouTube Shorts share URLs)
         if info.get("_type") == "playlist":
             entries = info.get("entries") or []
             info = next(iter(entries), None)
             if info is None:
                 return None
         return info.get("duration")
+
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
@@ -61,17 +57,16 @@ def summarize_video(self, url: str, language: str = "en", user_id: str | None = 
     tmp_path = os.path.join(tempfile.gettempdir(), f"shorts_{uuid.uuid4().hex}.mp4")
 
     try:
+        # URL validation — unsupported platforms are caught here too (belt-and-suspenders)
+        platform = BasePlatform.detect(url)
+        if platform == "unknown":
+            raise ValueError("UNSUPPORTED_PLATFORM")
+
         try:
             duration = _get_video_duration(url)
         except yt_dlp.utils.DownloadError:
-            # yt-dlp hard failure (bot detection, private video, etc.)
-            # Let the download attempt proceed — the downloader will also fail
-            # with a cleaner error if the URL is truly inaccessible.
             duration = None
 
-        # If duration is known and exceeds the limit, reject immediately.
-        # If duration is unknown (platform doesn't expose it), proceed and
-        # rely on the file-size guard below.
         if duration is not None and duration > MAX_DURATION_SECONDS:
             raise ValueError("VIDEO_TOO_LONG")
 
@@ -79,7 +74,6 @@ def summarize_video(self, url: str, language: str = "en", user_id: str | None = 
         downloader = get_downloader(url)
         downloader.download(url, tmp_path)
 
-        # Secondary size guard: catches cases where duration was unknown
         file_size_mb = os.path.getsize(tmp_path) / (1024 * 1024)
         if file_size_mb > MAX_FILE_SIZE_MB:
             raise ValueError("VIDEO_TOO_LONG")
@@ -89,11 +83,9 @@ def summarize_video(self, url: str, language: str = "en", user_id: str | None = 
 
         result = analyze_video(tmp_path, language=language, on_progress=on_progress)
 
-        # Save to Supabase and increment usage
         if user_id:
             from services.supabase_client import get_client
             from api.middleware.auth import increment_usage
-            platform = BasePlatform.detect(url)
             get_client().table("summaries").insert({
                 "user_id": user_id,
                 "url": url,

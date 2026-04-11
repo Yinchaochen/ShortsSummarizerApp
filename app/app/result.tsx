@@ -4,27 +4,20 @@ import {
   StyleSheet, Animated, Clipboard,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { pollJob } from "../src/lib/api";
-import BreathingBackground from "../src/components/BreathingBackground";
-import AIDetectionCard from "../src/components/AIDetectionCard";
-import Footer from "../src/components/Footer";
-import { useLanguage } from "./_layout";
+import { pollJob, ApiError } from "../src/features/summarizer/api";
+import { JobResult } from "../src/features/summarizer/types";
+import { useAppStore } from "../src/shared/store/useAppStore";
+import BreathingBackground from "../src/shared/components/BreathingBackground";
+import AIDetectionCard from "../src/features/summarizer/components/AIDetectionCard";
+import Footer from "../src/shared/components/Footer";
+import { useLanguage } from "../src/shared/context/LanguageContext";
 
 const STEPS = ["downloading", "uploading", "processing", "analyzing"];
-
-type JobResult = {
-  summary: string;
-  is_ai_generated: "yes" | "no" | "uncertain";
-  is_deepfake: "yes" | "no" | "uncertain";
-  ai_confidence: "high" | "medium" | "low";
-  ai_reason: string;
-};
 
 function parseResult(raw: any): JobResult {
   if (raw && typeof raw === "object" && "summary" in raw) {
     return raw as JobResult;
   }
-  // Legacy plain text result
   return {
     summary: typeof raw === "string" ? raw : String(raw),
     is_ai_generated: "uncertain",
@@ -37,6 +30,8 @@ function parseResult(raw: any): JobResult {
 export default function ResultScreen() {
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
   const { t } = useLanguage();
+  const addSummary = useAppStore((s) => s.addSummary);
+
   const [step, setStep] = useState("downloading");
   const [result, setResult] = useState<JobResult | null>(null);
   const [error, setError] = useState("");
@@ -44,6 +39,13 @@ export default function ResultScreen() {
   const [showToast, setShowToast] = useState(false);
   const progressAnim = useRef(new Animated.Value(0)).current;
   const toastOpacity = useRef(new Animated.Value(0)).current;
+
+  const STEP_LABELS: Record<string, string> = {
+    downloading: t.downloading,
+    uploading: t.uploading,
+    processing: t.processing,
+    analyzing: t.analyzing,
+  };
 
   const showVideoTooLongToast = useCallback(() => {
     setShowToast(true);
@@ -57,18 +59,12 @@ export default function ResultScreen() {
     });
   }, [toastOpacity]);
 
-  const STEP_LABELS: Record<string, string> = {
-    downloading: t.downloading,
-    uploading: t.uploading,
-    processing: t.processing,
-    analyzing: t.analyzing,
-  };
-
   useEffect(() => {
     if (!jobId) return;
     const interval = setInterval(async () => {
       try {
         const data = await pollJob(jobId);
+
         if (data.state === "progress" && data.label) {
           const newStep = data.label.toLowerCase().includes("download") ? "downloading"
             : data.label.toLowerCase().includes("upload") ? "uploading"
@@ -77,22 +73,32 @@ export default function ResultScreen() {
           setStep(newStep);
           const progress = (STEPS.indexOf(newStep) + 1) / STEPS.length;
           Animated.timing(progressAnim, { toValue: progress, duration: 400, useNativeDriver: false }).start();
+
         } else if (data.state === "done") {
           clearInterval(interval);
           Animated.timing(progressAnim, { toValue: 1, duration: 300, useNativeDriver: false }).start();
-          setResult(parseResult(data.result));
+          const parsed = parseResult(data.result);
+          setResult(parsed);
           setDone(true);
+          // Store in history for future history screen
+          if (jobId) {
+            addSummary({ id: jobId, url: "", platform: "", language: "", result: parsed });
+          }
+
         } else if (data.state === "error") {
           clearInterval(interval);
-          if (data.detail === "VIDEO_TOO_LONG") {
+          const code = data.code ?? data.detail ?? "";
+          if (code === "VIDEO_TOO_LONG") {
             showVideoTooLongToast();
+          } else if (code === "UNSUPPORTED_PLATFORM") {
+            setError(t.videoTooLong); // reuse closest existing translation; add dedicated key when needed
           } else {
             setError(data.detail ?? "Unknown error");
           }
         }
-      } catch {
+      } catch (e) {
         clearInterval(interval);
-        setError(t.failedToConnect);
+        setError(e instanceof ApiError ? e.message : t.failedToConnect);
       }
     }, 2000);
     return () => clearInterval(interval);
@@ -139,7 +145,6 @@ export default function ResultScreen() {
                 <Text style={styles.copyText}>{t.copySummary}</Text>
               </TouchableOpacity>
             </View>
-
             <AIDetectionCard
               isAiGenerated={result.is_ai_generated}
               isDeepfake={result.is_deepfake}
@@ -180,22 +185,14 @@ const styles = StyleSheet.create({
   copyText: { color: "#62666d", fontSize: 13 },
   toast: {
     position: "absolute",
-    bottom: 48,
-    left: 24,
-    right: 24,
-    backgroundColor: "rgba(18, 10, 10, 0.96)",
+    bottom: 48, left: 24, right: 24,
+    backgroundColor: "rgba(18,10,10,0.96)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 107, 107, 0.35)",
+    borderColor: "rgba(255,107,107,0.35)",
     paddingVertical: 14,
     paddingHorizontal: 18,
     alignItems: "center",
   },
-  toastText: {
-    color: "#ff8585",
-    fontSize: 14,
-    fontWeight: "500",
-    textAlign: "center",
-    lineHeight: 20,
-  },
+  toastText: { color: "#ff8585", fontSize: 14, fontWeight: "500", textAlign: "center", lineHeight: 20 },
 });

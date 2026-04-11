@@ -4,33 +4,40 @@ import {
   ActivityIndicator, Platform, Switch, ScrollView, Alert,
 } from "react-native";
 import { router } from "expo-router";
-import BreathingBackground from "../src/components/BreathingBackground";
-import { OverlayBridge, BubblePermissionStatus } from "../src/lib/overlay-bridge";
-import { ScreenCaptureBridge, LiveSubtitleEvent } from "../src/lib/screen-capture-bridge";
-import LanguagePicker from "../src/components/LanguagePicker";
-import { useLanguage } from "./_layout";
+import BreathingBackground from "../src/shared/components/BreathingBackground";
+import { OverlayBridge, BubblePermissionStatus } from "../src/features/live-translation/overlay-bridge";
+import {
+  getAvailableStrategies,
+  LiveTranslationStrategy,
+  SubtitleEvent,
+} from "../src/features/live-translation";
+import LanguagePicker from "../src/shared/components/LanguagePicker";
+import { useLanguage } from "../src/shared/context/LanguageContext";
 
 type BridgeState = "idle" | "loading" | "ok" | "error";
-type BubbleTestState = "idle" | "loading" | "ok" | "error";
 
 export default function OverlaySettingsScreen() {
   const { t, langCode } = useLanguage();
+
+  // Bridge debug
   const [bridgeState, setBridgeState] = useState<BridgeState>("idle");
   const [bridgeMsg, setBridgeMsg] = useState("");
+
+  // Permissions
   const [permissions, setPermissions] = useState<BubblePermissionStatus | null>(null);
   const [permLoading, setPermLoading] = useState(false);
-  const [bubbleTest, setBubbleTest] = useState<BubbleTestState>("idle");
-  const [liveSubtitle, setLiveSubtitle] = useState<string | null>(null);
-  const [subtitleSource, setSubtitleSource] = useState("");
-  const [overlayEnabled, setOverlayEnabled] = useState(true);
+
+  // Live Translation (strategy-based)
+  const [strategies] = useState(() => getAvailableStrategies());
+  const [activeStrategy, setActiveStrategy] = useState<LiveTranslationStrategy | null>(
+    () => strategies[0] ?? null
+  );
+  const [running, setRunning] = useState(false);
+  const [runLoading, setRunLoading] = useState(false);
+  const [subtitle, setSubtitle] = useState<SubtitleEvent | null>(null);
   const [targetLang, setTargetLang] = useState(langCode);
 
-  // ── Screen Capture (Method 2) state ─────────────────────────────
-  const [captureAvailable] = useState(() => ScreenCaptureBridge.isAvailable());
-  const [captureRunning, setCaptureRunning] = useState(false);
-  const [captureSubtitle, setCaptureSubtitle] = useState<LiveSubtitleEvent | null>(null);
-  const [captureLoading, setCaptureLoading] = useState(false);
-
+  // ── Bridge test ───────────────────────────────────────────────────────────
   const testBridge = useCallback(async () => {
     setBridgeState("loading");
     setBridgeMsg("");
@@ -44,106 +51,63 @@ export default function OverlaySettingsScreen() {
     }
   }, []);
 
+  // ── Permissions ───────────────────────────────────────────────────────────
   const refreshPermissions = useCallback(async () => {
+    if (Platform.OS !== "android") return;
     setPermLoading(true);
     try {
       const status = await OverlayBridge.checkPermissions();
       setPermissions(status);
-    } catch (e: any) {
-      setBridgeMsg(e.message ?? t.failedToConnect);
     } finally {
       setPermLoading(false);
     }
-  }, [t]);
-
-  const handleOverlayToggle = useCallback(async (val: boolean) => {
-    setOverlayEnabled(val);
-    if (Platform.OS === "android") {
-      await OverlayBridge.setOverlayEnabled(val).catch(() => {});
-    }
   }, []);
 
-  const handleTargetLangChange = useCallback(async (lang: { code: string }) => {
-    setTargetLang(lang.code);
-    if (Platform.OS === "android") {
-      await OverlayBridge.setTargetLanguage(lang.code).catch(() => {});
-    }
-  }, []);
+  // ── Live Translation toggle ───────────────────────────────────────────────
+  const handleToggle = useCallback(async () => {
+    if (!activeStrategy) return;
 
-  const testBubble = useCallback(async () => {
-    setBubbleTest("loading");
-    try {
-      await OverlayBridge.showTranslationBubble("Hello from Uchia! 👋 This is a test bubble.");
-      setBubbleTest("ok");
-    } catch (e: any) {
-      setBubbleTest("error");
-    }
-  }, []);
-
-  const handleCaptureToggle = useCallback(async () => {
-    if (captureRunning) {
-      setCaptureLoading(true);
-      await ScreenCaptureBridge.stop();
-      setCaptureRunning(false);
-      setCaptureSubtitle(null);
-      setCaptureLoading(false);
+    if (running) {
+      setRunLoading(true);
+      await activeStrategy.stop().catch(() => {});
+      setRunning(false);
+      setSubtitle(null);
+      setRunLoading(false);
       return;
     }
-    setCaptureLoading(true);
+
+    setRunLoading(true);
     try {
-      // 1. Check "Display over other apps" permission (needed for positional bubbles)
-      const overlayGranted = await ScreenCaptureBridge.checkOverlayPermission();
-      if (!overlayGranted) {
-        Alert.alert(
-          "Permission Required",
-          "\"Display over other apps\" must be enabled so Uchia can show translation bubbles. Tap OK to open settings.",
-          [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Open Settings",
-              onPress: () => ScreenCaptureBridge.requestOverlayPermission(),
-            },
-          ]
-        );
-        setCaptureLoading(false);
-        return;
-      }
-
-      // 2. Request screen recording permission (MediaProjection dialog)
-      const granted = await ScreenCaptureBridge.requestPermission();
+      const granted = await activeStrategy.requestPermissions();
       if (!granted) {
-        Alert.alert("Permission Denied", "Screen capture permission is required for live translation.");
-        setCaptureLoading(false);
+        if (activeStrategy.id === "screen-capture") {
+          Alert.alert("Permission Required", "Grant the required permissions, then tap Start again.");
+        } else {
+          Alert.alert("Enable Accessibility Service", "Enable Uchia in Accessibility Settings, then tap Start again.");
+        }
         return;
       }
-
-      // 3. Start capture
-      const ocrScript = ScreenCaptureBridge.ocrScriptForLanguage(targetLang);
-      await ScreenCaptureBridge.start(targetLang, ocrScript);
-      setCaptureRunning(true);
+      await activeStrategy.start(targetLang);
+      setRunning(true);
     } catch (e: any) {
       Alert.alert("Error", e.message);
     } finally {
-      setCaptureLoading(false);
+      setRunLoading(false);
     }
-  }, [captureRunning, targetLang]);
+  }, [activeStrategy, running, targetLang]);
+
+  // ── Subtitle subscription — re-subscribe when strategy changes ────────────
+  useEffect(() => {
+    if (!activeStrategy) return;
+    const unsub = activeStrategy.onSubtitle(setSubtitle);
+    return unsub;
+  }, [activeStrategy]);
 
   useEffect(() => {
-    if (Platform.OS === "android") {
-      refreshPermissions();
-    }
-    const unsub = OverlayBridge.onSubtitleDetected((text, source) => {
-      setLiveSubtitle(text);
-      setSubtitleSource(source.split(".").pop() ?? source);
-    });
-    const unsubCapture = ScreenCaptureBridge.onSubtitle((event) => {
-      setCaptureSubtitle(event);
-    });
-    return () => { unsub(); unsubCapture(); };
+    if (Platform.OS === "android") refreshPermissions();
   }, []);
 
   const stateColor = { idle: "#62666d", loading: "#7170ff", ok: "#4caf50", error: "#ff6b6b" };
-  const bubbleColor = { idle: "#62666d", loading: "#7170ff", ok: "#4caf50", error: "#ff6b6b" };
 
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
@@ -155,35 +119,32 @@ export default function OverlaySettingsScreen() {
       <Text style={styles.title}>{t.overlayTitle}</Text>
       <Text style={styles.subtitle}>Bubbles · Phase 1</Text>
 
-      {/* ── iOS placeholder ─────────────────────────────── */}
+      {/* ── iOS placeholder ───────────────────────────────────────────── */}
       {Platform.OS !== "android" && (
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Picture-in-Picture</Text>
           <Text style={styles.cardDesc}>
-            On iOS, floating bubbles are delivered via Picture-in-Picture mode.
+            On iOS, floating bubbles will be delivered via Picture-in-Picture.
             Full PiP support is coming in a future update.
           </Text>
         </View>
       )}
 
-      {/* ── Android content ─────────────────────────────── */}
+      {/* ── Android content ───────────────────────────────────────────── */}
       {Platform.OS === "android" && (
         <>
-          {/* Bridge test */}
+          {/* Native Bridge test */}
           <View style={styles.card}>
             <Text style={styles.cardTitle}>{t.overlayBridgeTitle}</Text>
             <Text style={styles.cardDesc}>{t.overlayBridgeDesc}</Text>
-
             <View style={styles.statusRow}>
               <View style={[styles.dot, { backgroundColor: stateColor[bridgeState] }]} />
               <Text style={[styles.statusText, { color: stateColor[bridgeState] }]}>
                 {bridgeState === "idle" && t.overlayBridgeIdle}
                 {bridgeState === "loading" && t.overlayBridgePinging}
-                {bridgeState === "ok" && bridgeMsg}
-                {bridgeState === "error" && bridgeMsg}
+                {(bridgeState === "ok" || bridgeState === "error") && bridgeMsg}
               </Text>
             </View>
-
             <TouchableOpacity
               style={[styles.button, bridgeState === "loading" && styles.buttonDisabled]}
               onPress={testBridge}
@@ -196,141 +157,94 @@ export default function OverlaySettingsScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Bubble test */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Bubble Test</Text>
-            <Text style={styles.cardDesc}>
-              Posts a floating bubble on screen. Requires Android 11+ and notification permission.
-            </Text>
-
-            <View style={styles.statusRow}>
-              <View style={[styles.dot, { backgroundColor: bubbleColor[bubbleTest] }]} />
-              <Text style={[styles.statusText, { color: bubbleColor[bubbleTest] }]}>
-                {bubbleTest === "idle" && "Not tested yet"}
-                {bubbleTest === "loading" && "Posting bubble…"}
-                {bubbleTest === "ok" && "Bubble posted — check your screen"}
-                {bubbleTest === "error" && "Failed (Android 11+ required)"}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              style={[styles.button, bubbleTest === "loading" && styles.buttonDisabled]}
-              onPress={testBubble}
-              disabled={bubbleTest === "loading"}
-            >
-              {bubbleTest === "loading"
-                ? <ActivityIndicator color="#08090a" size="small" />
-                : <Text style={styles.buttonText}>Show bubble →</Text>
-              }
-            </TouchableOpacity>
-          </View>
-
-          {/* Translation settings */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Live Translation</Text>
-
-            <View style={styles.toggleRow}>
-              <Text style={styles.toggleLabel}>Enable overlay</Text>
-              <Switch
-                value={overlayEnabled}
-                onValueChange={handleOverlayToggle}
-                trackColor={{ false: "rgba(255,255,255,0.1)", true: "#7170ff" }}
-                thumbColor="#f7f8f8"
-              />
-            </View>
-
-            <Text style={styles.label}>Translate to</Text>
-            <LanguagePicker
-              value={targetLang}
-              onChange={handleTargetLangChange}
-              searchPlaceholder={t.searchLanguage}
-            />
-
-            <Text style={styles.cardDesc}>
-              First use downloads a ~30 MB language model. Translation runs fully on-device — no internet needed.
-            </Text>
-          </View>
-
-          {/* Permissions */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>{t.overlayPermissionsTitle}</Text>
-
-            {permLoading
-              ? <ActivityIndicator color="#7170ff" style={{ marginVertical: 8 }} />
-              : permissions && (
-                <>
-                  <PermissionRow
-                    label={t.overlayAccessibilityPerm}
-                    grantLabel={t.overlayGrant}
-                    granted={permissions.hasAccessibilityPermission}
-                    onRequest={() => {
-                      OverlayBridge.requestAccessibilityPermission();
-                      setTimeout(refreshPermissions, 3000);
-                    }}
-                  />
-                  {!permissions.supported && (
-                    <Text style={styles.warningText}>
-                      Bubbles require Android 11 or later.
-                    </Text>
-                  )}
-                </>
-              )
-            }
-
-            <TouchableOpacity style={styles.secondaryButton} onPress={refreshPermissions}>
-              <Text style={styles.secondaryButtonText}>{t.overlayRefresh}</Text>
-            </TouchableOpacity>
-          </View>
-          {/* ── Screen Capture Mode (Method 2) ─────────────────── */}
-          {captureAvailable && (
+          {/* Live Translation */}
+          {strategies.length > 0 && (
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>🎬 Screen Capture Translation</Text>
+              <Text style={styles.cardTitle}>{t.overlayTitle}</Text>
+
+              {/* Strategy selector — only visible when multiple strategies available */}
+              {strategies.length > 1 && (
+                <View style={styles.strategyRow}>
+                  {strategies.map((s) => (
+                    <TouchableOpacity
+                      key={s.id}
+                      style={[styles.strategyChip, activeStrategy?.id === s.id && styles.strategyChipActive]}
+                      onPress={() => {
+                        if (running) return; // prevent switching while active
+                        setActiveStrategy(s);
+                        setSubtitle(null);
+                      }}
+                    >
+                      <Text style={[styles.strategyChipText, activeStrategy?.id === s.id && styles.strategyChipTextActive]}>
+                        {s.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+
+              <Text style={styles.label}>Translate to</Text>
+              <LanguagePicker
+                value={targetLang}
+                onChange={(lang) => setTargetLang(lang.code)}
+                searchPlaceholder={t.searchLanguage}
+              />
+
               <Text style={styles.cardDesc}>
-                Captures your screen and uses OCR to detect subtitles in any app.
-                No AccessibilityService needed — works everywhere.
+                {activeStrategy?.id === "screen-capture"
+                  ? "Captures your screen and uses OCR to detect subtitles. No AccessibilityService needed — works in any app."
+                  : "Reads subtitles via Accessibility APIs. First use downloads a ~30 MB on-device translation model."}
               </Text>
 
               <TouchableOpacity
                 style={[
                   styles.button,
-                  captureRunning && { backgroundColor: "#ff6b6b" },
-                  captureLoading && styles.buttonDisabled,
+                  running && { backgroundColor: "#ff6b6b" },
+                  runLoading && styles.buttonDisabled,
                 ]}
-                onPress={handleCaptureToggle}
-                disabled={captureLoading}
+                onPress={handleToggle}
+                disabled={runLoading}
               >
-                {captureLoading
+                {runLoading
                   ? <ActivityIndicator color="#08090a" size="small" />
-                  : <Text style={styles.buttonText}>
-                      {captureRunning ? "Stop Capture" : "Start Live Translation"}
-                    </Text>
+                  : <Text style={styles.buttonText}>{running ? "Stop" : "Start Live Translation"}</Text>
                 }
               </TouchableOpacity>
 
-              {captureSubtitle && (
-                <View style={{ gap: 4, marginTop: 8 }}>
-                  <Text style={styles.subtitleSource}>OCR Detected</Text>
-                  <Text style={{ color: "#62666d", fontSize: 12 }}>{captureSubtitle.original}</Text>
-                  <Text style={styles.subtitleText}>{captureSubtitle.translated}</Text>
+              {subtitle && (
+                <View style={styles.subtitleBox}>
+                  <Text style={styles.subtitleSource}>
+                    {activeStrategy?.id === "screen-capture" ? "OCR" : "Accessibility"}
+                  </Text>
+                  {subtitle.original !== subtitle.translated && (
+                    <Text style={styles.subtitleOriginal}>{subtitle.original}</Text>
+                  )}
+                  <Text style={styles.subtitleTranslated}>{subtitle.translated}</Text>
                 </View>
               )}
             </View>
           )}
 
-          {/* Live subtitle monitor (Method 1: Accessibility) */}
+          {/* Permissions */}
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Live Subtitle Monitor (Accessibility)</Text>
-            <Text style={styles.cardDesc}>
-              Open TikTok, YouTube or Instagram Reels — detected subtitles appear here in real time.
-            </Text>
-            {liveSubtitle ? (
-              <>
-                <Text style={styles.subtitleSource}>{subtitleSource}</Text>
-                <Text style={styles.subtitleText}>{liveSubtitle}</Text>
-              </>
-            ) : (
-              <Text style={styles.cardDesc}>Waiting for subtitles…</Text>
-            )}
+            <Text style={styles.cardTitle}>{t.overlayPermissionsTitle}</Text>
+            {permLoading
+              ? <ActivityIndicator color="#7170ff" style={{ marginVertical: 8 }} />
+              : permissions && (
+                <PermissionRow
+                  label={t.overlayAccessibilityPerm}
+                  grantLabel={t.overlayGrant}
+                  granted={permissions.hasAccessibilityPermission}
+                  onRequest={() => {
+                    OverlayBridge.requestAccessibilityPermission();
+                    setTimeout(refreshPermissions, 3000);
+                  }}
+                />
+              )
+            }
+            <TouchableOpacity style={styles.secondaryButton} onPress={refreshPermissions}>
+              <Text style={styles.secondaryButtonText}>{t.overlayRefresh}</Text>
+            </TouchableOpacity>
           </View>
         </>
       )}
@@ -338,9 +252,9 @@ export default function OverlaySettingsScreen() {
   );
 }
 
-function PermissionRow({
-  label, grantLabel, granted, onRequest,
-}: { label: string; grantLabel: string; granted: boolean; onRequest: () => void }) {
+function PermissionRow({ label, grantLabel, granted, onRequest }: {
+  label: string; grantLabel: string; granted: boolean; onRequest: () => void;
+}) {
   return (
     <View style={styles.permRow}>
       <View style={styles.permLeft}>
@@ -393,19 +307,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   secondaryButtonText: { color: "#62666d", fontSize: 13 },
-  permRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 4,
+  strategyRow: { flexDirection: "row", gap: 8 },
+  strategyChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
+  strategyChipActive: { borderColor: "#7170ff", backgroundColor: "rgba(113,112,255,0.12)" },
+  strategyChipText: { color: "#62666d", fontSize: 12 },
+  strategyChipTextActive: { color: "#7170ff" },
+  label: { color: "#d0d6e0", fontSize: 13, fontWeight: "500" },
+  subtitleBox: { gap: 4, paddingTop: 4 },
+  subtitleSource: { color: "#7170ff", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5 },
+  subtitleOriginal: { color: "#62666d", fontSize: 12 },
+  subtitleTranslated: { color: "#f7f8f8", fontSize: 15, lineHeight: 22 },
+  permRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 4 },
   permLeft: { flexDirection: "row", alignItems: "center", gap: 8 },
   permLabel: { color: "#d0d6e0", fontSize: 14 },
   grantText: { color: "#7170ff", fontSize: 13 },
-  warningText: { color: "#ff6b6b", fontSize: 12, marginTop: 4 },
-  subtitleSource: { color: "#7170ff", fontSize: 11, letterSpacing: 0.1, textTransform: "uppercase" },
-  subtitleText: { color: "#f7f8f8", fontSize: 15, lineHeight: 22 },
-  toggleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  toggleLabel: { color: "#d0d6e0", fontSize: 14 },
-  label: { color: "#d0d6e0", fontSize: 13, fontWeight: "500" },
 });

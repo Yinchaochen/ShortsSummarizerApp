@@ -121,65 +121,84 @@ def _parse_gemini_response(text: str) -> dict:
         }
 
 
+_PROCESSING_TIMEOUT_SECONDS = 120  # abort if Gemini hasn't finished processing after 2 min
+
+
 def analyze_video(video_path: str, language: str = "en", on_progress=None) -> dict:
     """
     Upload video to Gemini, return structured result with summary + AI detection.
-    on_progress(msg): optional callback to push progress to frontend.
+    on_progress(step): optional callback to push progress labels to the frontend.
     """
     api_key = os.environ.get("GOOGLE_API_KEY", "")
     if not api_key:
         raise EnvironmentError("GOOGLE_API_KEY not set")
 
     client = genai.Client(api_key=api_key)
+    video_file = None
 
-    if on_progress:
-        on_progress("uploading")
+    try:
+        if on_progress:
+            on_progress("uploading")
 
-    with open(video_path, "rb") as f:
-        video_file = client.files.upload(
-            file=f,
-            config=types.UploadFileConfig(mime_type="video/mp4"),
-        )
-
-    if on_progress:
-        on_progress("processing")
-
-    while video_file.state.name == "PROCESSING":
-        time.sleep(2)
-        video_file = client.files.get(name=video_file.name)
-
-    if video_file.state.name != "ACTIVE":
-        raise RuntimeError(f"Gemini video processing failed: {video_file.state.name}")
-
-    lang_instruction = LANG_PROMPTS.get(language, f"Reply in {language}.")
-    prompt = "\n".join([
-        f"Watch this short video completely. {lang_instruction}",
-        "",
-        "Return a JSON object with EXACTLY these fields (no markdown, no extra text):",
-        "{",
-        '  "summary": "<structured analysis in the target language with these 4 sections:',
-        "1) All visuals and actions: Describe every visual element, scene change, person appearance, setting, camera movement, and on-screen action in detail.",
-        "2) All visible text and subtitles: List every subtitle or text overlay with its timestamp, e.g. 0:00 - 0:03: 'spoken or displayed text' (spoken by / overlay).",
-        "3) Core theme: Explain the main message, joke, or purpose. If it is a meme or humorous, explain the joke.",
-        '4) Overall impression: Summarize the tone, quality, target audience, and what makes this video effective or notable.>",',
-        '  "is_ai_generated": "<yes | no | uncertain>",',
-        '  "is_deepfake": "<yes | no | uncertain>",',
-        '  "ai_confidence": "<high | medium | low>",',
-        '  "ai_reason": "<one sentence explanation of AI/deepfake assessment, always in English>"',
-        "}",
-    ])
-
-    last_err = None
-    for model_name in GEMINI_MODELS:
-        try:
-            if on_progress:
-                on_progress("analyzing")
-            response = client.models.generate_content(
-                model=model_name,
-                contents=[video_file, prompt],
+        with open(video_path, "rb") as f:
+            video_file = client.files.upload(
+                file=f,
+                config=types.UploadFileConfig(mime_type="video/mp4"),
             )
-            return _parse_gemini_response(response.text)
-        except Exception as e:
-            last_err = str(e)
 
-    raise RuntimeError(f"All Gemini models failed: {last_err}")
+        if on_progress:
+            on_progress("processing")
+
+        # Poll until ACTIVE, with a hard timeout to prevent worker stall
+        waited = 0
+        while video_file.state.name == "PROCESSING":
+            if waited >= _PROCESSING_TIMEOUT_SECONDS:
+                raise RuntimeError("Gemini video processing timed out.")
+            time.sleep(2)
+            waited += 2
+            video_file = client.files.get(name=video_file.name)
+
+        if video_file.state.name != "ACTIVE":
+            raise RuntimeError(f"Gemini video processing failed: {video_file.state.name}")
+
+        lang_instruction = LANG_PROMPTS.get(language, f"Reply in {language}.")
+        prompt = "\n".join([
+            f"Watch this short video completely. {lang_instruction}",
+            "",
+            "Return a JSON object with EXACTLY these fields (no markdown, no extra text):",
+            "{",
+            '  "summary": "<structured analysis in the target language with these 4 sections:',
+            "1) All visuals and actions: Describe every visual element, scene change, person appearance, setting, camera movement, and on-screen action in detail.",
+            "2) All visible text and subtitles: List every subtitle or text overlay with its timestamp, e.g. 0:00 - 0:03: 'spoken or displayed text' (spoken by / overlay).",
+            "3) Core theme: Explain the main message, joke, or purpose. If it is a meme or humorous, explain the joke.",
+            '4) Overall impression: Summarize the tone, quality, target audience, and what makes this video effective or notable.>",',
+            '  "is_ai_generated": "<yes | no | uncertain>",',
+            '  "is_deepfake": "<yes | no | uncertain>",',
+            '  "ai_confidence": "<high | medium | low>",',
+            # ai_reason now follows the selected language so users see it in their language
+            '  "ai_reason": "<one sentence explanation of the AI/deepfake assessment in the target language>"',
+            "}",
+        ])
+
+        last_err = None
+        for model_name in GEMINI_MODELS:
+            try:
+                if on_progress:
+                    on_progress("analyzing")
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=[video_file, prompt],
+                )
+                return _parse_gemini_response(response.text)
+            except Exception as e:
+                last_err = str(e)
+
+        raise RuntimeError(f"All Gemini models failed: {last_err}")
+
+    finally:
+        # Always delete the uploaded file to avoid quota accumulation
+        if video_file is not None:
+            try:
+                client.files.delete(name=video_file.name)
+            except Exception:
+                pass  # Best-effort cleanup — don't mask the real error

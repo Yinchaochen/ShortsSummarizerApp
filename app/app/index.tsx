@@ -4,13 +4,13 @@ import {
   StyleSheet, ScrollView, ActivityIndicator,
 } from "react-native";
 import { router } from "expo-router";
-import { supabase } from "../src/lib/supabase";
-import { submitSummarize } from "../src/lib/api";
-import BreathingBackground from "../src/components/BreathingBackground";
-import LanguagePicker from "../src/components/LanguagePicker";
-import Footer from "../src/components/Footer";
-import { useLanguage } from "./_layout";
-import { LANGUAGES } from "../src/lib/languages";
+import { supabase } from "../src/shared/lib/supabase";
+import { submitSummarize, ApiError } from "../src/features/summarizer/api";
+import BreathingBackground from "../src/shared/components/BreathingBackground";
+import LanguagePicker from "../src/shared/components/LanguagePicker";
+import Footer from "../src/shared/components/Footer";
+import { useLanguage } from "../src/shared/context/LanguageContext";
+import { LANGUAGES } from "../src/shared/lib/languages";
 
 export default function HomeScreen() {
   const { langCode, t, setLangCode } = useLanguage();
@@ -36,8 +36,8 @@ export default function HomeScreen() {
     try {
       const jobId = await submitSummarize(url.trim(), langCode);
       router.push({ pathname: "/result", params: { jobId } });
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -60,9 +60,7 @@ export default function HomeScreen() {
 
       <View style={styles.hero}>
         <View style={styles.titleWrapper}>
-          {/* Ghost/shadow title — renders behind, offset to give depth */}
           <Text style={styles.titleGhost} numberOfLines={3}>{t.titleAlt}</Text>
-          {/* Main title on top */}
           <Text style={styles.title}>{t.title}</Text>
         </View>
         <Text style={styles.subtitle}>{t.subtitle}</Text>
@@ -122,9 +120,7 @@ const styles = StyleSheet.create({
   overlayButtonText: { color: "#7170ff", fontSize: 13, fontWeight: "600" },
   signOut: { color: "#62666d", fontSize: 14 },
   hero: { marginBottom: 48 },
-  titleWrapper: {
-    marginBottom: 12,
-  },
+  titleWrapper: { marginBottom: 12 },
   title: {
     fontSize: 40,
     fontWeight: "600",

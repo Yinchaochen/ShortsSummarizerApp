@@ -13,7 +13,7 @@ Workflow when adding new UI text:
     2. Run: python scripts/generate_translations.py --patch <new_key>
     3. Commit the updated i18n.ts.
 
-Output: app/src/lib/i18n.ts (overwrites existing file)
+Output: app/src/shared/lib/i18n.ts (overwrites existing file)
 """
 
 import os
@@ -316,7 +316,7 @@ def main():
         raise SystemExit("GOOGLE_API_KEY not set in backend/.env")
 
     client = genai.Client(api_key=api_key)
-    out_path = Path(__file__).parent.parent / "app" / "src" / "lib" / "i18n.ts"
+    out_path = Path(__file__).parent.parent / "app" / "src" / "shared" / "lib" / "i18n.ts"
 
     if args.patch:
         keys = [k.strip() for k in args.patch.split(",") if k.strip()]

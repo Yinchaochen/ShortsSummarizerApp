@@ -4,10 +4,10 @@ import {
   StyleSheet, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from "react-native";
 import { router } from "expo-router";
-import { supabase } from "../src/lib/supabase";
-import BreathingBackground from "../src/components/BreathingBackground";
-import Footer from "../src/components/Footer";
-import { useLanguage } from "./_layout";
+import { supabase } from "../src/shared/lib/supabase";
+import BreathingBackground from "../src/shared/components/BreathingBackground";
+import Footer from "../src/shared/components/Footer";
+import { useLanguage } from "../src/shared/context/LanguageContext";
 
 export default function LoginScreen() {
   const { t } = useLanguage();

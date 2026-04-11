@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from celery.result import AsyncResult
 from workers.tasks import celery_app
 
@@ -27,6 +27,12 @@ def get_job(job_id: str):
         return {"state": "done", "result": result.result.get("result")}
 
     if result.state == "FAILURE":
-        return {"state": "error", "detail": str(result.info)}
+        exc = result.info
+        # Structured errors raised with AppError-style detail dict
+        if hasattr(exc, "detail") and isinstance(exc.detail, dict):
+            return {"state": "error", "code": exc.detail.get("code", "ERROR"), "detail": exc.detail.get("message", str(exc))}
+        # Plain ValueError (e.g. VIDEO_TOO_LONG) — keep backward compat
+        detail = str(exc)
+        return {"state": "error", "code": detail, "detail": detail}
 
     return {"state": result.state.lower()}

@@ -94,16 +94,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  selectorText: {
-    color: "#f7f8f8",
-    fontSize: 14,
-    flex: 1,
-  },
-  arrow: {
-    color: "#62666d",
-    fontSize: 16,
-    marginLeft: 8,
-  },
+  selectorText: { color: "#f7f8f8", fontSize: 14, flex: 1 },
+  arrow: { color: "#62666d", fontSize: 16, marginLeft: 8 },
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
@@ -130,9 +122,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 15,
   },
-  list: {
-    maxHeight: 400,
-  },
+  list: { maxHeight: 400 },
   item: {
     flexDirection: "row",
     alignItems: "center",
@@ -141,26 +131,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.04)",
   },
-  itemActive: {
-    backgroundColor: "rgba(113,112,255,0.1)",
-  },
-  nativeName: {
-    color: "#f7f8f8",
-    fontSize: 14,
-    fontWeight: "500",
-    flex: 1,
-  },
-  activeText: {
-    color: "#7170ff",
-  },
-  langName: {
-    color: "#62666d",
-    fontSize: 13,
-  },
-  noResult: {
-    color: "#62666d",
-    textAlign: "center",
-    padding: 24,
-    fontSize: 14,
-  },
+  itemActive: { backgroundColor: "rgba(113,112,255,0.1)" },
+  nativeName: { color: "#f7f8f8", fontSize: 14, fontWeight: "500", flex: 1 },
+  activeText: { color: "#7170ff" },
+  langName: { color: "#62666d", fontSize: 13 },
+  noResult: { color: "#62666d", textAlign: "center", padding: 24, fontSize: 14 },
 });
