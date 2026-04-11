@@ -13,9 +13,21 @@ import { useLanguage } from "../src/shared/context/LanguageContext";
 import { LANGUAGES } from "../src/shared/lib/languages";
 import { useAppStore } from "../src/shared/store/useAppStore";
 
+function formatTimeUntil(isoString: string): string {
+  const diff = new Date(isoString).getTime() - Date.now();
+  if (diff <= 0) return "";
+  const totalMins = Math.ceil(diff / 60000);
+  const hours = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
+  if (hours === 0) return `${mins}m`;
+  if (mins === 0) return `${hours}h`;
+  return `${hours}h ${mins}m`;
+}
+
 export default function HomeScreen() {
   const { langCode, t, setLangCode } = useLanguage();
   const { usageRemaining, setUsageRemaining } = useAppStore();
+  const [resetsAt, setResetsAt] = useState<string | null>(null);
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,7 +37,10 @@ export default function HomeScreen() {
       if (!data.session) {
         router.replace("/login");
       } else {
-        getUsage().then((u) => setUsageRemaining(u.remaining)).catch(() => {});
+        getUsage().then((u) => {
+          setUsageRemaining(u.remaining);
+          setResetsAt(u.resets_at ?? null);
+        }).catch(() => {});
       }
     });
   }, []);
@@ -41,7 +56,10 @@ export default function HomeScreen() {
     setError("");
     try {
       const jobId = await submitSummarize(url.trim(), langCode);
-      getUsage().then((u) => setUsageRemaining(u.remaining)).catch(() => {});
+      getUsage().then((u) => {
+        setUsageRemaining(u.remaining);
+        setResetsAt(u.resets_at ?? null);
+      }).catch(() => {});
       router.push({ pathname: "/result", params: { jobId } });
     } catch (e) {
       setError(e instanceof ApiError ? e.message : String(e));
@@ -92,7 +110,14 @@ export default function HomeScreen() {
         />
 
         {usageRemaining !== null && (
-          <Text style={styles.usage}>{usageRemaining} {t.usageFreeLeft}</Text>
+          <View style={styles.usageRow}>
+            <Text style={styles.usage}>{usageRemaining} {t.usageFreeLeft}</Text>
+            {resetsAt && (
+              <Text style={styles.usageReset}>
+                {t.usageResetsIn} {formatTimeUntil(resetsAt)}
+              </Text>
+            )}
+          </View>
         )}
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -177,6 +202,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: { color: "#08090a", fontWeight: "600", fontSize: 15 },
-  usage: { color: "#62666d", fontSize: 12, textAlign: "right" },
+  usageRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  usage: { color: "#62666d", fontSize: 12 },
+  usageReset: { color: "#62666d", fontSize: 12 },
   error: { color: "#ff6b6b", fontSize: 13 },
 });

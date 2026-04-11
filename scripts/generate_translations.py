@@ -83,6 +83,7 @@ ENGLISH = {
     "aiGeneratedLabel": "AI-Generated Content",
     "deepfakeLabel": "Deepfake",
     "usageFreeLeft": "free uses left",
+    "usageResetsIn": "Resets in",
 }
 
 # ─── All languages (from languages.ts) ───────────────────────────────────────

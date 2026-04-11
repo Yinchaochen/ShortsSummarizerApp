@@ -73,6 +73,7 @@ export async function getUsage(): Promise<{
   free_limit: number;
   used: number;
   remaining: number;
+  resets_at?: string;
 }> {
   const headers = await getAuthHeader();
   const res = await fetch(`${API_V1}/usage`, { headers });

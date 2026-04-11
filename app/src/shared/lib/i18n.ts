@@ -49,6 +49,7 @@ export type Translations = {
   aiGeneratedLabel: string;
   deepfakeLabel: string;
   usageFreeLeft: string;
+  usageResetsIn: string;
 };
 
 const translations: Record<string, Translations> = {
@@ -100,6 +101,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-Gegenereerde Inhoud",
     deepfakeLabel: "Diepnabootsing",
     usageFreeLeft: "gratis gebruike oor",
+    usageResetsIn: "Herstel oor",
   },
   "sq": {
     appName: "Uchia",
@@ -149,6 +151,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Përmbajtje e gjeneruar nga AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "përdorime falas të mbetura",
+    usageResetsIn: "Rivendoset në",
   },
   "am": {
     appName: "Uchia",
@@ -198,6 +201,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "በAI የተፈጠረ ይዘት",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "ነጻ አጠቃቀሞች ቀርተዋል",
+    usageResetsIn: "ዳግም የሚጀመረው በ",
   },
   "ar": {
     appName: "ملخص المقاطع القصيرة",
@@ -247,6 +251,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "محتوى تم إنشاؤه بواسطة الذكاء الاصطناعي",
     deepfakeLabel: "التزييف العميق",
     usageFreeLeft: "استخدامات مجانية متبقية",
+    usageResetsIn: "يعاد الضبط في",
   },
   "hy": {
     appName: "Կարճ տեսանյութերի ամփոփիչ",
@@ -296,6 +301,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-ով ստեղծված բովանդակություն",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "մնացել է անվճար օգտագործումներ",
+    usageResetsIn: "Կզրոյացուի",
   },
   "az": {
     appName: "Uchia",
@@ -345,6 +351,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Süni İntellektlə Yaradılmış Məzmun",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "pulsuz istifadə qalıb",
+    usageResetsIn: "Sıfırlanır",
   },
   "eu": {
     appName: "Uchia",
@@ -394,6 +401,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-k sortutako edukia",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "geratzen diren doako erabilerak",
+    usageResetsIn: "Berrezartzen da",
   },
   "be": {
     appName: "Рэзюмэ кароткіх відэа",
@@ -443,6 +451,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Змест, згенераваны AI",
     deepfakeLabel: "Дыпфэйк",
     usageFreeLeft: "засталося бясплатных выкарыстанняў",
+    usageResetsIn: "Скід праз",
   },
   "bn": {
     appName: "Uchia",
@@ -492,6 +501,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "এআই-জেনারেটেড কন্টেন্ট",
     deepfakeLabel: "ডিপফেক",
     usageFreeLeft: "বিনামূল্যে ব্যবহার বাকি",
+    usageResetsIn: "রিসেট হবে",
   },
   "bs": {
     appName: "Uchia",
@@ -541,6 +551,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Sadržaj generiran AI-jem",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "preostalo besplatnih korištenja",
+    usageResetsIn: "Resetuje se za",
   },
   "bg": {
     appName: "Uchia",
@@ -590,6 +601,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Съдържание, генерирано от AI",
     deepfakeLabel: "Дийпфейк",
     usageFreeLeft: "остават безплатни използвания",
+    usageResetsIn: "Нулира се след",
   },
   "ca": {
     appName: "Resumidor de Shorts",
@@ -639,6 +651,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Contingut generat per IA",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "usos gratuïts restants",
+    usageResetsIn: "Es reinicia en",
   },
   "zh": {
     appName: "Uchia",
@@ -688,6 +701,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI 生成内容",
     deepfakeLabel: "深度伪造",
     usageFreeLeft: "剩余免费使用次数",
+    usageResetsIn: "重置于",
   },
   "zh-TW": {
     appName: "短片摘要器",
@@ -737,6 +751,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI 生成內容",
     deepfakeLabel: "深度偽造",
     usageFreeLeft: "剩餘免費使用次數",
+    usageResetsIn: "將在",
   },
   "hr": {
     appName: "Sažimač kratkih videozapisa",
@@ -786,6 +801,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Sadržaj generiran umjetnom inteligencijom",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "preostalo besplatnih korištenja",
+    usageResetsIn: "Resetira se za",
   },
   "cs": {
     appName: "Uchia",
@@ -835,6 +851,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Obsah generovaný AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "zbývá volných použití",
+    usageResetsIn: "Resetuje se za",
   },
   "da": {
     appName: "Uchia",
@@ -884,6 +901,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-genereret indhold",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "gratis brug tilbage",
+    usageResetsIn: "Nulstilles om",
   },
   "nl": {
     appName: "Uchia",
@@ -933,6 +951,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-gegenereerde inhoud",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "gratis gebruiken over",
+    usageResetsIn: "Reset over",
   },
   "en": {
     appName: "Uchia",
@@ -982,6 +1001,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-Generated Content",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "free uses left",
+    usageResetsIn: "Resets in",
   },
   "et": {
     appName: "Lühivideote Kokkuvõtja",
@@ -1031,6 +1051,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI loodud sisu",
     deepfakeLabel: "Süvavõltsing",
     usageFreeLeft: "jäänud tasuta kasutuskorrad",
+    usageResetsIn: "Lähtestub",
   },
   "fi": {
     appName: "Uchia",
@@ -1080,6 +1101,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Tekoälyn luoma sisältö",
     deepfakeLabel: "Syväväärennös",
     usageFreeLeft: "ilmaisia käyttökertoja jäljellä",
+    usageResetsIn: "Nollaantuu",
   },
   "fr": {
     appName: "Uchia",
@@ -1129,6 +1151,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Contenu généré par l'IA",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "utilisations gratuites restantes",
+    usageResetsIn: "Réinitialisation dans",
   },
   "gl": {
     appName: "Resumidor de Shorts",
@@ -1178,6 +1201,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Contido xerado por IA",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "usos gratuítos restantes",
+    usageResetsIn: "Restablécese en",
   },
   "ka": {
     appName: "Uchia",
@@ -1227,6 +1251,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-ის მიერ გენერირებული კონტენტი",
     deepfakeLabel: "ღრმა ფეიკი",
     usageFreeLeft: "უფასო გამოყენებები დარჩა",
+    usageResetsIn: "განახლდება",
   },
   "de": {
     appName: "Uchia",
@@ -1276,6 +1301,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "KI-generierter Inhalt",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "kostenlose Nutzungen übrig",
+    usageResetsIn: "Setzt zurück in",
   },
   "el": {
     appName: "Uchia",
@@ -1325,6 +1351,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Περιεχόμενο που δημιουργήθηκε από AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "απομένουν δωρεάν χρήσεις",
+    usageResetsIn: "Επαναφέρεται σε",
   },
   "gu": {
     appName: "Uchia",
@@ -1374,6 +1401,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-જનરેટેડ સામગ્રી",
     deepfakeLabel: "ડીપફેક",
     usageFreeLeft: "બાકી રહેલા મફત ઉપયોગો",
+    usageResetsIn: "માં રીસેટ થાય છે",
   },
   "ht": {
     appName: "Uchia",
@@ -1423,6 +1451,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Kontni AI-Jenere",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "itilizasyon gratis ki rete",
+    usageResetsIn: "Reyajiste nan",
   },
   "ha": {
     appName: "Uchia",
@@ -1472,6 +1501,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Abun ciki da AI ta samar",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "saura amfani kyauta",
+    usageResetsIn: "Zai sake farawa a cikin",
   },
   "he": {
     appName: "מסכם שורטס",
@@ -1521,6 +1551,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "תוכן שנוצר על ידי AI",
     deepfakeLabel: "דיפ-פייק",
     usageFreeLeft: "שימושים חינם נותרו",
+    usageResetsIn: "מתאפס בעוד",
   },
   "hi": {
     appName: "शॉर्ट्स सारांशकर्ता",
@@ -1570,6 +1601,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "एआई-जनित सामग्री",
     deepfakeLabel: "डीपफेक",
     usageFreeLeft: "शेष निःशुल्क उपयोग",
+    usageResetsIn: "में रीसेट होता है",
   },
   "hu": {
     appName: "Rövid videó összefoglaló",
@@ -1619,6 +1651,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI által generált tartalom",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "hátralévő ingyenes használat",
+    usageResetsIn: "Visszaáll",
   },
   "is": {
     appName: "Stuttmynda Samantekt",
@@ -1668,6 +1701,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Efni búið til af gervigreind",
     deepfakeLabel: "Djúpfölsun",
     usageFreeLeft: "ókeypis notkun eftir",
+    usageResetsIn: "Endurstillist eftir",
   },
   "id": {
     appName: "Uchia",
@@ -1717,6 +1751,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Konten Buatan AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "sisa penggunaan gratis",
+    usageResetsIn: "Reset dalam",
   },
   "ga": {
     appName: "Uchia",
@@ -1766,6 +1801,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Ábhar Ginte ag AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "úsáidí saor in aisce fágtha",
+    usageResetsIn: "Athshocraíonn i",
   },
   "it": {
     appName: "Riassuntore di Shorts",
@@ -1815,6 +1851,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Contenuto generato da AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "usi gratuiti rimanenti",
+    usageResetsIn: "Si ripristina tra",
   },
   "ja": {
     appName: "Uchia",
@@ -1864,6 +1901,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI生成コンテンツ",
     deepfakeLabel: "ディープフェイク",
     usageFreeLeft: "残り無料使用回数",
+    usageResetsIn: "リセットまで",
   },
   "jv": {
     appName: "Uchia",
@@ -1913,6 +1951,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Konten sing digawe AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "sisa panggunaan gratis",
+    usageResetsIn: "Mbaleni ing",
   },
   "kn": {
     appName: "ಶಾರ್ಟ್ಸ್ ಸಾರಾಂಶಕಾರ",
@@ -1962,6 +2001,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-ರಚಿತ ವಿಷಯ",
     deepfakeLabel: "ಡೀಪ್‌ಫೇಕ್",
     usageFreeLeft: "ಉಚಿತ ಬಳಕೆಗಳು ಉಳಿದಿವೆ",
+    usageResetsIn: "ಮರುಹೊಂದಿಸುತ್ತದೆ",
   },
   "kk": {
     appName: "Uchia",
@@ -2011,6 +2051,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI жасаған мазмұн",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "қалған тегін қолданыстар",
+    usageResetsIn: "Қалпына келеді",
   },
   "km": {
     appName: "Uchia",
@@ -2060,6 +2101,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "មាតិកាដែលបង្កើតដោយ AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "ការប្រើប្រាស់ឥតគិតថ្លៃនៅសល់",
+    usageResetsIn: "កំណត់ឡើងវិញក្នុង",
   },
   "ko": {
     appName: "Uchia",
@@ -2109,6 +2151,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI 생성 콘텐츠",
     deepfakeLabel: "딥페이크",
     usageFreeLeft: "남은 무료 사용 횟수",
+    usageResetsIn: "초기화까지",
   },
   "ku": {
     appName: "کورتە پوختەکەر",
@@ -2158,6 +2201,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "ناوەڕۆکی دروستکراوی AI",
     deepfakeLabel: "دیپفەیک",
     usageFreeLeft: "بەکارهێنانی خۆڕایی ماوە",
+    usageResetsIn: "دووبارە دەستپێدەکاتەوە لە",
   },
   "lo": {
     appName: "Uchia",
@@ -2207,6 +2251,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "ເນື້ອຫາທີ່ສ້າງໂດຍ AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "ການນຳໃຊ້ຟຣີທີ່ເຫຼືອ",
+    usageResetsIn: "ຣີເຊັດໃນ",
   },
   "lv": {
     appName: "Uchia",
@@ -2256,6 +2301,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI ģenerēts saturs",
     deepfakeLabel: "Dīpfeks",
     usageFreeLeft: "atlikušās bezmaksas lietošanas reizes",
+    usageResetsIn: "Atiestatās pēc",
   },
   "lt": {
     appName: "Trumpųjų vaizdo įrašų apibendrintojas",
@@ -2305,6 +2351,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI sugeneruotas turinys",
     deepfakeLabel: "Gilioji klastotė",
     usageFreeLeft: "likę nemokami naudojimai",
+    usageResetsIn: "Atnaujinama po",
   },
   "mk": {
     appName: "Uchia",
@@ -2354,6 +2401,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Содржина генерирана од АИ",
     deepfakeLabel: "Дипфејк",
     usageFreeLeft: "останати бесплатни користења",
+    usageResetsIn: "Се ресетира за",
   },
   "ms": {
     appName: "Uchia",
@@ -2403,6 +2451,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Kandungan Dijana AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "baki penggunaan percuma",
+    usageResetsIn: "Set semula dalam",
   },
   "ml": {
     appName: "ഷോർട്ട്സ് സംഗ്രഹകൻ",
@@ -2452,6 +2501,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-നിർമ്മിത ഉള്ളടക്കം",
     deepfakeLabel: "ഡീപ്ഫേക്ക്",
     usageFreeLeft: "സൗജന്യ ഉപയോഗങ്ങൾ ബാക്കിയുണ്ട്",
+    usageResetsIn: "റീസെറ്റ് ആകുന്നു",
   },
   "mt": {
     appName: "Uchia",
@@ -2501,6 +2551,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Kontenut Ġenerat mill-AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "użi b'xejn li fadal",
+    usageResetsIn: "Jerġa' jibda fi",
   },
   "mr": {
     appName: "Uchia",
@@ -2550,6 +2601,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "एआय-निर्मित सामग्री",
     deepfakeLabel: "डीपफेक",
     usageFreeLeft: "उरलेले विनामूल्य वापर",
+    usageResetsIn: "यामध्ये रीसेट होईल",
   },
   "mn": {
     appName: "Uchia",
@@ -2599,6 +2651,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-ээр Үүсгэгдсэн Агуулга",
     deepfakeLabel: "Дийпфэйк",
     usageFreeLeft: "үнэгүй ашиглалт үлдсэн",
+    usageResetsIn: "Сэргээгдэнэ",
   },
   "my": {
     appName: "Uchia",
@@ -2648,6 +2701,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI မှ ဖန်တီးထားသော အကြောင်းအရာ",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "အခမဲ့အသုံးပြုခွင့် ကျန်ရှိသည်",
+    usageResetsIn: "ပြန်လည်သတ်မှတ်မည်",
   },
   "ne": {
     appName: "शर्ट्स सारांशकर्ता",
@@ -2697,6 +2751,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "एआई-उत्पन्न सामग्री",
     deepfakeLabel: "डीपफेक",
     usageFreeLeft: "बाँकी निःशुल्क प्रयोगहरू",
+    usageResetsIn: "मा रिसेट हुन्छ",
   },
   "no": {
     appName: "Kortvideo Oppsummerer",
@@ -2746,6 +2801,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-generert innhold",
     deepfakeLabel: "Dybdefake",
     usageFreeLeft: "gratis bruk igjen",
+    usageResetsIn: "Tilbakestilles om",
   },
   "ps": {
     appName: "Uchia",
@@ -2795,6 +2851,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "د AI لخوا تولید شوی مینځپانګه",
     deepfakeLabel: "ډیپ فیک",
     usageFreeLeft: "وړیا کارونې پاتې دي",
+    usageResetsIn: "په کې بیا تنظیم کیږي",
   },
   "fa": {
     appName: "Uchia",
@@ -2844,6 +2901,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "محتوای تولید شده توسط هوش مصنوعی",
     deepfakeLabel: "دیپ‌فیک",
     usageFreeLeft: "استفاده رایگان باقی مانده",
+    usageResetsIn: "بازنشانی در",
   },
   "pl": {
     appName: "Uchia",
@@ -2893,6 +2951,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Treść generowana przez AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "pozostało darmowych użyć",
+    usageResetsIn: "Resetuje się za",
   },
   "pt": {
     appName: "Resumidor de Shorts",
@@ -2942,6 +3001,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Conteúdo Gerado por IA",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "usos gratuitos restantes",
+    usageResetsIn: "Redefine em",
   },
   "pa": {
     appName: "Uchia",
@@ -2991,6 +3051,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-ਤਿਆਰ ਸਮੱਗਰੀ",
     deepfakeLabel: "ਡੀਪਫੇਕ",
     usageFreeLeft: "ਮੁਫ਼ਤ ਵਰਤੋਂ ਬਾਕੀ",
+    usageResetsIn: "ਇਸ ਵਿੱਚ ਰੀਸੈਟ",
   },
   "ro": {
     appName: "Uchia",
@@ -3040,6 +3101,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Conținut generat de AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "utilizări gratuite rămase",
+    usageResetsIn: "Se resetează în",
   },
   "ru": {
     appName: "Суммаризатор коротких видео",
@@ -3089,6 +3151,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Контент, сгенерированный ИИ",
     deepfakeLabel: "Дипфейк",
     usageFreeLeft: "осталось бесплатных использований",
+    usageResetsIn: "Сброс через",
   },
   "sr": {
     appName: "Sažimač kratkih video zapisa",
@@ -3138,6 +3201,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Sadržaj generisan veštačkom inteligencijom",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "preostalo besplatnih korišćenja",
+    usageResetsIn: "Resetuje se za",
   },
   "si": {
     appName: "Uchia",
@@ -3187,6 +3251,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-ජනනය කළ අන්තර්ගතය",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "නොමිලේ භාවිතයන් ඉතිරිව ඇත",
+    usageResetsIn: "නැවත සකසයි",
   },
   "sk": {
     appName: "Uchia",
@@ -3236,6 +3301,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Obsah generovaný AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "zostáva bezplatných použití",
+    usageResetsIn: "Resetuje sa za",
   },
   "sl": {
     appName: "Uchia",
@@ -3285,6 +3351,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Vsebina, ustvarjena z umetno inteligenco",
     deepfakeLabel: "Globoki ponaredek",
     usageFreeLeft: "preostalo brezplačnih uporab",
+    usageResetsIn: "Ponastavi se čez",
   },
   "so": {
     appName: "Soo Koobaha Fiidyowyada Gaagaaban",
@@ -3334,6 +3401,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Waxyaabaha ay AI-du samaysay",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "isticmaalo bilaash ah oo ka harsan",
+    usageResetsIn: "Dib u bilaabmayaa",
   },
   "es": {
     appName: "Resumidor de Shorts",
@@ -3383,6 +3451,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Contenido generado por IA",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "usos gratuitos restantes",
+    usageResetsIn: "Se reinicia en",
   },
   "sw": {
     appName: "Uchia",
@@ -3432,6 +3501,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Maudhui Yanayotokana na AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "matumizi ya bure yaliyobaki",
+    usageResetsIn: "Inaweka upya baada ya",
   },
   "sv": {
     appName: "Uchia",
@@ -3481,6 +3551,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-genererat innehåll",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "gratis användningar kvar",
+    usageResetsIn: "Återställs om",
   },
   "tl": {
     appName: "Tagabuod ng Shorts",
@@ -3530,6 +3601,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Nilalaman na Binuo ng AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "natitirang libreng paggamit",
+    usageResetsIn: "Magre-reset sa",
   },
   "ta": {
     appName: "குறும்பட சுருக்கி",
@@ -3579,6 +3651,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-உருவாக்கப்பட்ட உள்ளடக்கம்",
     deepfakeLabel: "டீப்ஃபேக்",
     usageFreeLeft: "மீதமுள்ள இலவசப் பயன்பாடுகள்",
+    usageResetsIn: "மீண்டும் தொடங்கும்",
   },
   "te": {
     appName: "Uchia",
@@ -3628,6 +3701,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI- రూపొందించిన కంటెంట్",
     deepfakeLabel: "డీప్‌ఫేక్",
     usageFreeLeft: "ఉచిత ఉపయోగాలు మిగిలి ఉన్నాయి",
+    usageResetsIn: "లో రీసెట్ అవుతుంది",
   },
   "th": {
     appName: "Uchia",
@@ -3677,6 +3751,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "เนื้อหาที่สร้างโดย AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "เหลือการใช้งานฟรี",
+    usageResetsIn: "รีเซ็ตใน",
   },
   "tr": {
     appName: "Shorts Özetleyici",
@@ -3726,6 +3801,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Yapay Zeka Üretimi İçerik",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "kalan ücretsiz kullanım",
+    usageResetsIn: "Sıfırlanır",
   },
   "uk": {
     appName: "Підсумовувач коротких відео",
@@ -3775,6 +3851,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Контент, згенерований ШІ",
     deepfakeLabel: "Діпфейк",
     usageFreeLeft: "залишилося безкоштовних використань",
+    usageResetsIn: "Скидається через",
   },
   "ur": {
     appName: "شارٹس خلاصہ ساز",
@@ -3824,6 +3901,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI سے تیار کردہ مواد",
     deepfakeLabel: "ڈیپ فیک",
     usageFreeLeft: "باقی مفت استعمالات",
+    usageResetsIn: "ری سیٹ ہوگا",
   },
   "uz": {
     appName: "Uchia",
@@ -3873,6 +3951,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI tomonidan yaratilgan kontent",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "qolgan bepul foydalanishlar",
+    usageResetsIn: "Qayta tiklanadi",
   },
   "vi": {
     appName: "Tóm tắt video ngắn",
@@ -3922,6 +4001,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Nội dung do AI tạo",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "lượt sử dụng miễn phí còn lại",
+    usageResetsIn: "Đặt lại sau",
   },
   "cy": {
     appName: "Uchia",
@@ -3971,6 +4051,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Cynnwys a Gynhyrchwyd gan AI",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "defnyddiau am ddim ar ôl",
+    usageResetsIn: "Ailosod mewn",
   },
   "yi": {
     appName: "Uchia",
@@ -4020,6 +4101,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "AI-גענערירטער אינהאַלט",
     deepfakeLabel: "דיפּפייק",
     usageFreeLeft: "פרייע באנוצונגען איבערגעבליבן",
+    usageResetsIn: "באַשטעטיקט אין",
   },
   "yo": {
     appName: "Uchia",
@@ -4069,6 +4151,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Àkóónú tí AI ṣe",
     deepfakeLabel: "Deepfake",
     usageFreeLeft: "awọn lilo ọfẹ to ku",
+    usageResetsIn: "Tun bẹrẹ ni",
   },
   "zu": {
     appName: "Uchia",
@@ -4118,6 +4201,7 @@ const translations: Record<string, Translations> = {
     aiGeneratedLabel: "Okuqukethwe okukhiqizwe yi-AI",
     deepfakeLabel: "I-Deepfake",
     usageFreeLeft: "Ukusebenzisa kwamahhala okusele",
+    usageResetsIn: "Izosetha kabusha ngo",
   },
 };
 
