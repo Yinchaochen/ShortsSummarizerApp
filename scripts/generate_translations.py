@@ -82,6 +82,7 @@ ENGLISH = {
     "verdictUncertain": "Uncertain",
     "aiGeneratedLabel": "AI-Generated Content",
     "deepfakeLabel": "Deepfake",
+    "usageFreeLeft": "free uses left",
 }
 
 # ─── All languages (from languages.ts) ───────────────────────────────────────

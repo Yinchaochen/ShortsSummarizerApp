@@ -5,22 +5,28 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { supabase } from "../src/shared/lib/supabase";
-import { submitSummarize, ApiError } from "../src/features/summarizer/api";
+import { submitSummarize, getUsage, ApiError } from "../src/features/summarizer/api";
 import BreathingBackground from "../src/shared/components/BreathingBackground";
 import LanguagePicker from "../src/shared/components/LanguagePicker";
 import Footer from "../src/shared/components/Footer";
 import { useLanguage } from "../src/shared/context/LanguageContext";
 import { LANGUAGES } from "../src/shared/lib/languages";
+import { useAppStore } from "../src/shared/store/useAppStore";
 
 export default function HomeScreen() {
   const { langCode, t, setLangCode } = useLanguage();
+  const { usageRemaining, setUsageRemaining } = useAppStore();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) router.replace("/login");
+      if (!data.session) {
+        router.replace("/login");
+      } else {
+        getUsage().then((u) => setUsageRemaining(u.remaining)).catch(() => {});
+      }
     });
   }, []);
 
@@ -35,6 +41,7 @@ export default function HomeScreen() {
     setError("");
     try {
       const jobId = await submitSummarize(url.trim(), langCode);
+      getUsage().then((u) => setUsageRemaining(u.remaining)).catch(() => {});
       router.push({ pathname: "/result", params: { jobId } });
     } catch (e) {
       setError(e instanceof ApiError ? e.message : String(e));
@@ -83,6 +90,10 @@ export default function HomeScreen() {
           onChange={(lang) => setLangCode(lang.code)}
           searchPlaceholder={t.searchLanguage}
         />
+
+        {usageRemaining !== null && (
+          <Text style={styles.usage}>{usageRemaining} {t.usageFreeLeft}</Text>
+        )}
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
@@ -166,5 +177,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: { color: "#08090a", fontWeight: "600", fontSize: 15 },
+  usage: { color: "#62666d", fontSize: 12, textAlign: "right" },
   error: { color: "#ff6b6b", fontSize: 13 },
 });
