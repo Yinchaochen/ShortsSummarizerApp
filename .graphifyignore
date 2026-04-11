@@ -1,0 +1,13 @@
+node_modules/
+.git/
+android/.gradle/
+android/build/
+android/.idea/
+ios/
+graphify-out/
+__pycache__/
+*.pyc
+*.generated.py
+dist/
+.expo/
+*.lock

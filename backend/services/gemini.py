@@ -163,21 +163,21 @@ def analyze_video(video_path: str, language: str = "en", on_progress=None) -> di
 
         lang_instruction = LANG_PROMPTS.get(language, f"Reply in {language}.")
         prompt = "\n".join([
-            f"Watch this short video completely. {lang_instruction}",
+            f"Watch this video completely. {lang_instruction}",
             "",
-            "Return a JSON object with EXACTLY these fields (no markdown, no extra text):",
-            "{",
-            '  "summary": "<structured analysis in the target language with these 4 sections:',
-            "1) All visuals and actions: Describe every visual element, scene change, person appearance, setting, camera movement, and on-screen action in detail.",
-            "2) All visible text and subtitles: List every subtitle or text overlay with its timestamp, e.g. 0:00 - 0:03: 'spoken or displayed text' (spoken by / overlay).",
-            "3) Core theme: Explain the main message, joke, or purpose. If it is a meme or humorous, explain the joke.",
-            '4) Overall impression: Summarize the tone, quality, target audience, and what makes this video effective or notable.>",',
-            '  "is_ai_generated": "<yes | no | uncertain>",',
-            '  "is_deepfake": "<yes | no | uncertain>",',
-            '  "ai_confidence": "<high | medium | low>",',
-            # ai_reason now follows the selected language so users see it in their language
-            '  "ai_reason": "<one sentence explanation of the AI/deepfake assessment in the target language>"',
-            "}",
+            "Return ONLY a valid JSON object — no markdown fences, no text outside the JSON.",
+            "",
+            "Fields:",
+            '  "summary": Write a detailed description entirely in the target language.',
+            "    Go through the video chronologically. For each segment use the format",
+            "    '0:00-0:05 — <what happens, who appears, setting, actions>'.",
+            "    Also note every subtitle or on-screen text with its timestamp.",
+            "    End with the main message or joke (explain it if it is a meme),",
+            "    and a brief overall impression of tone and target audience.",
+            '  "is_ai_generated": "yes" or "no" or "uncertain"',
+            '  "is_deepfake": "yes" or "no" or "uncertain"',
+            '  "ai_confidence": "high" or "medium" or "low"',
+            '  "ai_reason": one sentence in the target language explaining the AI/deepfake verdict.',
         ])
 
         last_err = None
@@ -188,6 +188,9 @@ def analyze_video(video_path: str, language: str = "en", on_progress=None) -> di
                 response = client.models.generate_content(
                     model=model_name,
                     contents=[video_file, prompt],
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                    ),
                 )
                 return _parse_gemini_response(response.text)
             except Exception as e:
