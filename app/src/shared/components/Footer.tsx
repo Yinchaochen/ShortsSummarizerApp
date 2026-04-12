@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Linking } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Linking, Platform } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
 const SOCIAL_LINKS = [
@@ -35,22 +35,24 @@ export default function Footer() {
     <View style={styles.footer}>
       <View style={styles.divider} />
 
-      <View style={styles.appButtons}>
-        {APP_LINKS.map((item) => (
-          <TouchableOpacity
-            key={item.store}
-            style={styles.appButton}
-            onPress={() => Linking.openURL(item.url)}
-            accessibilityLabel={`${item.sub} ${item.store}`}
-          >
-            <FontAwesome name={item.icon} size={22} color="#f7f8f8" style={styles.appIcon} />
-            <View>
-              <Text style={styles.appSub}>{item.sub}</Text>
-              <Text style={styles.appStore}>{item.store}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+      {Platform.OS === "web" && (
+        <View style={styles.appButtons}>
+          {APP_LINKS.map((item) => (
+            <TouchableOpacity
+              key={item.store}
+              style={styles.appButton}
+              onPress={() => Linking.openURL(item.url)}
+              accessibilityLabel={`${item.sub} ${item.store}`}
+            >
+              <FontAwesome name={item.icon} size={22} color="#f7f8f8" style={styles.appIcon} />
+              <View>
+                <Text style={styles.appSub}>{item.sub}</Text>
+                <Text style={styles.appStore}>{item.store}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
 
       <View style={styles.icons}>
         {SOCIAL_LINKS.map((item) => (

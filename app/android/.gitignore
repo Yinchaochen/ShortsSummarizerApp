@@ -14,3 +14,7 @@ local.properties
 
 # Bundle artifacts
 *.jsbundle
+
+# Release keystore and signing credentials — never commit these
+app/uchia-release.keystore
+gradle.properties

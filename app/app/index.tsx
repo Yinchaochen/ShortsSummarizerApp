@@ -74,9 +74,10 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Text style={styles.logo}>{t.appName}</Text>
         <View style={styles.headerActions}>
-          <TouchableOpacity onPress={() => router.push("/overlay-settings")} style={styles.overlayButton}>
+          {/* Live Translation — hidden until feature is ready for public release */}
+          {/* <TouchableOpacity onPress={() => router.push("/overlay-settings")} style={styles.overlayButton}>
             <Text style={styles.overlayButtonText}>Live ✦</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity onPress={handleSignOut}>
             <Text style={styles.signOut}>{t.signOut}</Text>
           </TouchableOpacity>
