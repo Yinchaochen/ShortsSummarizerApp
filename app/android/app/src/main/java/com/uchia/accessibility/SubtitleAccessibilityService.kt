@@ -31,7 +31,7 @@ class SubtitleAccessibilityService : AccessibilityService() {
         const val KEY_OVERLAY_ENABLED = "overlay_enabled"
 
         /** Text stable for longer than this is a UI element, not a subtitle. */
-        private const val STABLE_THRESHOLD_MS = 3_000L
+        private const val STABLE_THRESHOLD_MS = 1_500L
         private const val CACHE_SIZE = 100
         private const val MAX_BUBBLES = 5
 
@@ -42,6 +42,19 @@ class SubtitleAccessibilityService : AccessibilityService() {
             "com.google.android.youtube",
             "com.netflix.mediaclient",
             "com.amazon.avod.thirdpartyclient",
+        )
+
+        /**
+         * ML Kit Translation supported language codes.
+         * Languages not in this set cannot be translated — show original text instead.
+         */
+        private val SUPPORTED_TRANSLATE_LANGS = setOf(
+            "af", "sq", "ar", "be", "bn", "bg", "ca", "zh", "hr", "cs",
+            "da", "nl", "en", "eo", "et", "fi", "fr", "gl", "ka", "de",
+            "el", "gu", "ht", "he", "hi", "hu", "is", "id", "ga", "it",
+            "ja", "kn", "ko", "lv", "lt", "mk", "ms", "mt", "mr", "no",
+            "fa", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sw", "sv",
+            "tl", "ta", "te", "th", "tr", "uk", "ur", "vi", "cy",
         )
 
         /** BubbleModule registers here to receive subtitle events for the JS layer. */
@@ -147,10 +160,8 @@ class SubtitleAccessibilityService : AccessibilityService() {
         }
 
         return candidates
-            .filter { (text, _, width) ->
-                // Must span at least 30% of screen width (subtitles span most of the screen)
-                width > screenWidth * 0.30f &&
-                // Ignore text that has been on-screen for > 3 s (UI element, not subtitle)
+            .filter { (text, _, _) ->
+                // Ignore text that has been on-screen too long (UI element, not subtitle)
                 !isStableText(text, now)
             }
             .sortedByDescending { it.third }
@@ -186,21 +197,15 @@ class SubtitleAccessibilityService : AccessibilityService() {
         screenHeight: Int,
     ): Boolean {
         // Length gate
-        if (text.length < 8 || text.length > 200) return false
+        if (text.length < 4 || text.length > 300) return false
         // Must contain at least one letter
         if (!text.any { it.isLetter() }) return false
         // All-caps short text = UI button/header
         if (text == text.uppercase() && text.length < 30) return false
-        // Single word with no sentence punctuation = UI label or username
-        val hasSpace = text.contains(' ')
-        val hasSentencePunct = text.last() in ".?!…"
-        if (!hasSpace && !hasSentencePunct) return false
 
         val bounds = Rect()
         node.getBoundsInScreen(bounds)
         if (bounds.isEmpty) return false
-        // Must be in the bottom half of the screen
-        if (bounds.top < screenHeight * 0.50f) return false
         // Reject full-screen-width very tall views (full-screen overlays)
         val screenWidth = resources.displayMetrics.widthPixels
         if (bounds.width() > screenWidth * 0.95f && bounds.height() > screenHeight * 0.15f) return false
@@ -221,6 +226,8 @@ class SubtitleAccessibilityService : AccessibilityService() {
      */
     private fun translateAndShowAll(blocks: List<Pair<String, Rect>>) {
         val targetLang = getTargetLanguage()
+        Log.d(TAG, "translateAndShowAll: ${blocks.size} blocks, targetLang=$targetLang")
+
         val results = Collections.synchronizedList(
             mutableListOf<PositionalOverlayView.TranslatedBlock>()
         )
@@ -250,32 +257,68 @@ class SubtitleAccessibilityService : AccessibilityService() {
             LanguageIdentification.getClient()
                 .identifyLanguage(text)
                 .addOnSuccessListener { srcLang ->
-                    if (srcLang == "und" || srcLang == targetLang) {
-                        // Already in target language or undetectable — show as-is
-                        translationCache[text] = text
-                        commit(text, bounds)
-                    } else {
-                        val pair = "$srcLang->$targetLang"
-                        acquireTranslator(srcLang, targetLang, pair) { translator ->
-                            translator.translate(text)
-                                .addOnSuccessListener { translated ->
-                                    translationCache[text] = translated
-                                    commit(translated, bounds)
-                                }
-                                .addOnFailureListener {
-                                    commit(text, bounds) // fallback: show original
-                                }
+                    Log.d(TAG, "Identified lang='$srcLang' for: ${text.take(40)}")
+                    when {
+                        // Undetectable language — show as-is
+                        srcLang == "und" -> {
+                            translationCache[text] = text
+                            commit(text, bounds)
+                        }
+                        // Already in target language — show as-is
+                        srcLang == targetLang -> {
+                            translationCache[text] = text
+                            commit(text, bounds)
+                        }
+                        // Source language not supported by ML Kit Translation — show as-is
+                        srcLang !in SUPPORTED_TRANSLATE_LANGS -> {
+                            Log.w(TAG, "Unsupported src lang '$srcLang', showing original")
+                            translationCache[text] = text
+                            commit(text, bounds)
+                        }
+                        // Target language not supported by ML Kit Translation — show as-is
+                        targetLang !in SUPPORTED_TRANSLATE_LANGS -> {
+                            Log.w(TAG, "Unsupported target lang '$targetLang', showing original")
+                            translationCache[text] = text
+                            commit(text, bounds)
+                        }
+                        else -> {
+                            val pair = "$srcLang->$targetLang"
+                            acquireTranslator(
+                                src = srcLang,
+                                target = targetLang,
+                                pair = pair,
+                                onReady = { translator ->
+                                    translator.translate(text)
+                                        .addOnSuccessListener { translated ->
+                                            Log.d(TAG, "Translated [$pair]: ${text.take(30)} → ${translated.take(30)}")
+                                            translationCache[text] = translated
+                                            commit(translated, bounds)
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.e(TAG, "Translation failed for $pair: $e")
+                                            commit(text, bounds) // fallback: show original
+                                        }
+                                },
+                                onFailure = {
+                                    // Model download failed — show original text so bubble still appears
+                                    commit(text, bounds)
+                                },
+                            )
                         }
                     }
                 }
-                .addOnFailureListener {
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Language identification failed: $e")
                     commit(text, bounds) // fallback: show original
                 }
         }
     }
 
     /**
-     * Returns a ready [Translator] for the given language pair.
+     * Returns a ready [Translator] for the given language pair via [onReady].
+     * Calls [onFailure] if the model cannot be downloaded, so callers always
+     * receive a callback and the pending counter is never left dangling.
+     *
      * Reuses cached instances to avoid recreating the ML Kit client on every event.
      * Downloads the translation model on first use (~30 MB per pair, one-time).
      */
@@ -284,6 +327,7 @@ class SubtitleAccessibilityService : AccessibilityService() {
         target: String,
         pair: String,
         onReady: (Translator) -> Unit,
+        onFailure: () -> Unit = {},
     ) {
         val existing = translators[pair]
         if (existing != null) {
@@ -303,6 +347,9 @@ class SubtitleAccessibilityService : AccessibilityService() {
             .addOnSuccessListener { onReady(t) }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Model download failed for $pair: $e")
+                translators.remove(pair) // remove so we retry next time
+                t.close()
+                onFailure()
             }
     }
 
@@ -310,8 +357,8 @@ class SubtitleAccessibilityService : AccessibilityService() {
 
     private fun getTargetLanguage(): String =
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getString(KEY_TARGET_LANGUAGE, TranslateLanguage.ENGLISH)
-            ?: TranslateLanguage.ENGLISH
+            .getString(KEY_TARGET_LANGUAGE, TranslateLanguage.CHINESE)
+            ?: TranslateLanguage.CHINESE
 
     private fun isOverlayEnabled(): Boolean =
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

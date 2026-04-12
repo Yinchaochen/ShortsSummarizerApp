@@ -138,8 +138,8 @@ class PositionalOverlayView(
         val bubbleH = ((block.bottom - block.top) + padV * 2).coerceAtLeast(minHeight)
 
         tv.layoutParams = FrameLayout.LayoutParams(bubbleW, bubbleH).apply {
-            leftMargin = block.left
-            topMargin = block.top
+            leftMargin = (block.left - padH).coerceAtLeast(0)
+            topMargin = (block.top - padV).coerceAtLeast(0)
         }
 
         return tv

@@ -65,8 +65,11 @@ class AccessibilityServiceStrategy implements LiveTranslationStrategy {
   }
 
   async requestPermissions(): Promise<boolean> {
+    // If already granted, return true immediately so start() is called.
+    const already = await this.checkPermissions();
+    if (already) return true;
+    // Not yet granted — open system settings for the user to enable it.
     OverlayBridge.requestAccessibilityPermission();
-    // Opens system settings — user must toggle the service and come back.
     return false;
   }
 
