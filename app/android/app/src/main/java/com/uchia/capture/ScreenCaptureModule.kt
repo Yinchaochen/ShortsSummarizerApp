@@ -11,16 +11,21 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 
 /**
- * React Native bridge for screen-capture-based live translation.
+ * React Native bridge for live translation.
  *
- * JS API:
- *   ScreenCaptureModule.requestPermission()   → triggers MediaProjection consent dialog
- *   ScreenCaptureModule.start(targetLang, ocrScript) → starts capture + OCR + overlay
- *   ScreenCaptureModule.stop()                → stops capture
- *   ScreenCaptureModule.isRunning()           → returns boolean
+ * JS API surface (intentionally minimal):
+ *   requestPermission()                    → Promise<boolean>
+ *   checkOverlayPermission()               → Promise<boolean>
+ *   requestOverlayPermission()             → void
+ *   start(targetLang, enableAudio, apiKey) → Promise<void>
+ *   stop()                                 → Promise<void>
+ *   isRunning()                            → Promise<boolean>
+ *   areAsrModelsReady()                    → Promise<boolean>
+ *   downloadAsrModels()                    → Promise<void>  (emits onAsrModelDownloadProgress)
  *
  * Events emitted:
- *   "onLiveSubtitle" → { original: string, translated: string }
+ *   "onLiveSubtitle"           → { original: string, translated: string }
+ *   "onAsrModelDownloadProgress" → { downloaded: number, total: number }
  */
 class ScreenCaptureModule(private val reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext),
@@ -36,9 +41,10 @@ class ScreenCaptureModule(private val reactContext: ReactApplicationContext) :
     private var resultData: Intent? = null
     private var isCapturing = false
 
+    private val sherpaModelManager by lazy { SherpaModelManager(reactContext) }
+
     init {
         reactContext.addActivityEventListener(this)
-        // Register subtitle callback
         ScreenCaptureService.subtitleCallback = { original, translated ->
             val params = Arguments.createMap().apply {
                 putString("original", original)
@@ -52,12 +58,8 @@ class ScreenCaptureModule(private val reactContext: ReactApplicationContext) :
 
     override fun getName() = NAME
 
-    // ─── Permission request ───────────────────────────────────────────────────
+    // ─── Permission ───────────────────────────────────────────────────────────
 
-    /**
-     * Shows the system "Start recording?" consent dialog.
-     * Resolves with true if user approved, false if denied.
-     */
     @ReactMethod
     fun requestPermission(promise: Promise) {
         val activity = reactApplicationContext.currentActivity
@@ -74,49 +76,54 @@ class ScreenCaptureModule(private val reactContext: ReactApplicationContext) :
         if (requestCode != REQUEST_CODE) return
         this.resultCode = resultCode
         this.resultData = data
-
-        val granted = resultCode == Activity.RESULT_OK && data != null
-        pendingPromise?.resolve(granted)
+        pendingPromise?.resolve(resultCode == Activity.RESULT_OK && data != null)
         pendingPromise = null
     }
 
     override fun onNewIntent(intent: Intent) {}
 
+    @ReactMethod
+    fun checkOverlayPermission(promise: Promise) {
+        promise.resolve(Settings.canDrawOverlays(reactContext))
+    }
+
+    @ReactMethod
+    fun requestOverlayPermission() {
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:${reactContext.packageName}")
+        ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+        reactContext.startActivity(intent)
+    }
+
     // ─── Start / Stop ─────────────────────────────────────────────────────────
 
     /**
-     * Start screen capture + live translation.
-     * Must call requestPermission() first and get a true result.
-     *
-     * Rejects with "NO_OVERLAY_PERMISSION" if the user hasn't granted
-     * SYSTEM_ALERT_WINDOW — the JS layer should then call requestOverlayPermission()
-     * to guide the user to the system settings page.
-     *
-     * @param targetLang BCP 47 language code to translate into (e.g. "zh", "en", "de")
-     * @param ocrScript  OCR recognizer script: "latin", "chinese", "japanese", "korean"
+     * @param targetLang  BCP-47 target language code (e.g. "zh", "de")
+     * @param sourceLang  BCP-47 code of the video subtitle language — drives OCR script selection
+     *                    (e.g. "zh" → Chinese recognizer, "ja" → Japanese, "auto" → Latin)
+     * @param enableAudio true to also run the ASR → translate audio path
+     * @param apiKey      Anthropic API key for [CloudStreamingTranslator]
      */
     @ReactMethod
-    fun start(targetLang: String, ocrScript: String, promise: Promise) {
+    fun start(targetLang: String, sourceLang: String, enableAudio: Boolean, apiKey: String, promise: Promise) {
         if (resultCode != Activity.RESULT_OK || resultData == null) {
-            promise.reject("NO_PERMISSION", "Screen capture permission not granted. Call requestPermission() first.")
+            promise.reject("NO_PERMISSION", "Call requestPermission() first")
             return
         }
-
-        // Overlay permission check — required for PositionalOverlayView
         if (!Settings.canDrawOverlays(reactContext)) {
-            promise.reject(
-                "NO_OVERLAY_PERMISSION",
-                "Display over other apps permission is required. Call requestOverlayPermission() to open settings."
-            )
+            promise.reject("NO_OVERLAY_PERMISSION", "Call requestOverlayPermission() first")
             return
         }
 
         val intent = Intent(reactContext, ScreenCaptureService::class.java).apply {
             action = ScreenCaptureService.ACTION_START
-            putExtra(ScreenCaptureService.EXTRA_RESULT_CODE, resultCode)
-            putExtra(ScreenCaptureService.EXTRA_RESULT_DATA, resultData)
-            putExtra(ScreenCaptureService.EXTRA_TARGET_LANG, targetLang)
-            putExtra(ScreenCaptureService.EXTRA_OCR_SCRIPT, ocrScript)
+            putExtra(ScreenCaptureService.EXTRA_RESULT_CODE,  resultCode)
+            putExtra(ScreenCaptureService.EXTRA_RESULT_DATA,  resultData)
+            putExtra(ScreenCaptureService.EXTRA_TARGET_LANG,  targetLang)
+            putExtra(ScreenCaptureService.EXTRA_SOURCE_LANG,  sourceLang)
+            putExtra(ScreenCaptureService.EXTRA_ENABLE_AUDIO, enableAudio)
+            putExtra(ScreenCaptureService.EXTRA_API_KEY,      apiKey)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -129,47 +136,46 @@ class ScreenCaptureModule(private val reactContext: ReactApplicationContext) :
         promise.resolve(null)
     }
 
-    /**
-     * Stop the screen capture service.
-     */
     @ReactMethod
     fun stop(promise: Promise) {
-        val intent = Intent(reactContext, ScreenCaptureService::class.java).apply {
-            action = ScreenCaptureService.ACTION_STOP
-        }
-        reactContext.startService(intent)
+        reactContext.startService(
+            Intent(reactContext, ScreenCaptureService::class.java).apply {
+                action = ScreenCaptureService.ACTION_STOP
+            }
+        )
         isCapturing = false
         promise.resolve(null)
     }
 
-    /**
-     * Check if capture is currently running.
-     */
     @ReactMethod
     fun isRunning(promise: Promise) {
         promise.resolve(isCapturing)
     }
 
-    /**
-     * Check whether SYSTEM_ALERT_WINDOW ("Display over other apps") is granted.
-     * Call this before start() to decide whether to show a permission prompt in JS.
-     */
+    // ─── ASR model management ─────────────────────────────────────────────────
+
     @ReactMethod
-    fun checkOverlayPermission(promise: Promise) {
-        promise.resolve(Settings.canDrawOverlays(reactContext))
+    fun areAsrModelsReady(promise: Promise) {
+        promise.resolve(sherpaModelManager.areModelsReady())
     }
 
-    /**
-     * Open the system "Display over other apps" settings page for this app.
-     * Call this when checkOverlayPermission() returns false.
-     */
     @ReactMethod
-    fun requestOverlayPermission() {
-        val intent = Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:${reactContext.packageName}")
-        ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-        reactContext.startActivity(intent)
+    fun downloadAsrModels(promise: Promise) {
+        sherpaModelManager.downloadModels(
+            onProgress = { downloaded, total ->
+                val params = Arguments.createMap().apply {
+                    putInt("downloaded", downloaded)
+                    putInt("total", total)
+                }
+                reactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                    .emit("onAsrModelDownloadProgress", params)
+            },
+            onComplete = { success ->
+                if (success) promise.resolve(null)
+                else promise.reject("DOWNLOAD_FAILED", "One or more ASR model files failed")
+            }
+        )
     }
 
     // Required by RN event emitter contract

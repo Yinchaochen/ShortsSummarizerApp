@@ -49,6 +49,12 @@ class PositionalOverlayView(
     private val container = FrameLayout(context)
     private var added = false
 
+    /** Status bar height in px — overlay window starts below it, so we subtract this from topMargin. */
+    private val statusBarHeight: Int by lazy {
+        val id = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (id > 0) context.resources.getDimensionPixelSize(id) else 0
+    }
+
     private val layoutParams = WindowManager.LayoutParams(
         WindowManager.LayoutParams.MATCH_PARENT,
         WindowManager.LayoutParams.MATCH_PARENT,
@@ -97,6 +103,24 @@ class PositionalOverlayView(
     }
 
     /**
+     * Show or clear the audio subtitle bar at the bottom of the screen.
+     * Pass null or blank string to hide the bar.
+     * Thread-safe — can be called from any thread.
+     */
+    fun updateSubtitleBar(text: String?) {
+        mainHandler.post {
+            if (!added) return@post
+            // Remove existing subtitle bar (tag = "subtitle_bar")
+            container.findViewWithTag<android.view.View>("subtitle_bar")?.let {
+                container.removeView(it)
+            }
+            val clean = text?.trim()
+            if (clean.isNullOrEmpty()) return@post
+            container.addView(buildSubtitleBar(clean))
+        }
+    }
+
+    /**
      * Remove all bubbles and detach the overlay window.
      * Thread-safe — can be called from any thread.
      */
@@ -106,6 +130,37 @@ class PositionalOverlayView(
             if (added) {
                 try { wm.removeView(container) } catch (_: Exception) {}
                 added = false
+            }
+        }
+    }
+
+    // ─── Subtitle bar (audio translation output) ──────────────────────────────
+
+    private fun buildSubtitleBar(text: String): TextView {
+        val dp = context.resources.displayMetrics.density
+        val metrics = context.resources.displayMetrics
+
+        val bg = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = 8 * dp
+            setColor(0xEE0F0F1A.toInt())   // near-opaque dark
+        }
+
+        return TextView(context).apply {
+            tag = "subtitle_bar"
+            this.text = text
+            setTextColor(Color.WHITE)
+            textSize = 15f
+            gravity = android.view.Gravity.CENTER
+            setPadding((16 * dp).toInt(), (10 * dp).toInt(), (16 * dp).toInt(), (10 * dp).toInt())
+            background = bg
+
+            layoutParams = FrameLayout.LayoutParams(
+                (metrics.widthPixels * 0.92f).toInt(),
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL,
+            ).apply {
+                bottomMargin = (80 * dp).toInt()   // above navigation bar
             }
         }
     }
@@ -139,7 +194,7 @@ class PositionalOverlayView(
 
         tv.layoutParams = FrameLayout.LayoutParams(bubbleW, bubbleH).apply {
             leftMargin = (block.left - padH).coerceAtLeast(0)
-            topMargin = (block.top - padV).coerceAtLeast(0)
+            topMargin = (block.top - padV - statusBarHeight).coerceAtLeast(0)
         }
 
         return tv

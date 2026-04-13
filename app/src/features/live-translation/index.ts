@@ -1,106 +1,75 @@
 /**
- * Unified Live Translation interface.
+ * Live Translation public API.
  *
- * Strategy pattern: each method encapsulates one way of capturing and
- * translating subtitles (Accessibility Service, Screen Capture, …).
- * All strategies implement the same interface, so callers (overlay-settings.tsx,
- * future bubble UI, iOS PiP, etc.) don't need to know which method is active.
+ * Single strategy: ScreenCapture (MediaProjection → MLKit OCR + Sherpa ASR → Cloud translate).
+ * No AccessibilityService — the pipeline is entirely self-contained.
  *
- * To add a new platform/method:
- *   1. Create a class that implements LiveTranslationStrategy.
- *   2. Add an instance to the `strategies` array below.
- *   That's it — getAvailableStrategies() will pick it up automatically.
+ * Usage:
+ *   const lt = getLiveTranslation();
+ *   await lt.requestPermissions();
+ *   await lt.start({ targetLang: "zh", enableAudio: true, apiKey: "sk-..." });
+ *   const unsub = lt.onSubtitle(({ original, translated }) => { ... });
+ *   await lt.stop();
+ *   unsub();
  */
 
-import { Platform, Alert } from "react-native";
-import { OverlayBridge } from "./overlay-bridge";
+import { Platform } from "react-native";
 import { ScreenCaptureBridge, LiveSubtitleEvent } from "./screen-capture-bridge";
 
-// ─── Shared types ─────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-export type SubtitleEvent = {
-  original: string;
-  translated: string;
-};
+export type { LiveSubtitleEvent };
 
-export interface LiveTranslationStrategy {
-  /** Stable machine-readable identifier. */
-  readonly id: "accessibility" | "screen-capture";
-  /** Human-readable label for UI. */
-  readonly label: string;
-  /** Returns true if this strategy can run on the current device/OS. */
-  isAvailable(): boolean;
-  /** Returns true if all required permissions are already granted. */
-  checkPermissions(): Promise<boolean>;
+export interface StartOptions {
+  /** BCP-47 target language code, e.g. "zh", "de", "en" */
+  targetLang: string;
   /**
-   * Request permissions. Returns true if all permissions were granted.
-   * May show system dialogs or open settings — call only in response to a user tap.
+   * BCP-47 code of the language used in the video subtitles.
+   * Selects the MLKit OCR recognizer script on the native side.
+   * "auto" (default) falls back to Latin / A–Z text.
+   * Use "zh" for Chinese, "ja" for Japanese, "ko" for Korean, etc.
    */
+  sourceLang?: string;
+  /** Also run the audio ASR path alongside video OCR. Default: false */
+  enableAudio?: boolean;
+  /** Anthropic API key for cloud streaming translation */
+  apiKey: string;
+}
+
+export interface LiveTranslation {
+  /** True if this feature is available on the current device */
+  isAvailable(): boolean;
+
+  /** Request both screen capture and overlay permissions. Returns true if all granted. */
   requestPermissions(): Promise<boolean>;
-  /** Start capturing and translating. Permissions must be granted first. */
-  start(targetLang: string): Promise<void>;
-  /** Stop the active capture session. */
+
+  /** Start the live translation session. */
+  start(options: StartOptions): Promise<void>;
+
+  /** Stop the running session. */
   stop(): Promise<void>;
-  /** Subscribe to subtitle events. Returns an unsubscribe function. */
-  onSubtitle(callback: (event: SubtitleEvent) => void): () => void;
+
+  /** True if a session is currently running. */
+  isRunning(): Promise<boolean>;
+
+  /** Subscribe to translated subtitle events. Returns an unsubscribe function. */
+  onSubtitle(callback: (event: LiveSubtitleEvent) => void): () => void;
+
+  // ─── ASR model management ────────────────────────────────────────────────
+  /** True if Sherpa-ONNX ASR models are downloaded. Needed for enableAudio. */
+  areAsrModelsReady(): Promise<boolean>;
+  /** Download ASR models (~44 MB, one-time). */
+  downloadAsrModels(): Promise<void>;
+  /** Subscribe to ASR model download progress. */
+  onAsrModelDownloadProgress(cb: (downloaded: number, total: number) => void): () => void;
 }
 
-// ─── Accessibility Service strategy ──────────────────────────────────────────
+// ─── Implementation ───────────────────────────────────────────────────────────
 
-class AccessibilityServiceStrategy implements LiveTranslationStrategy {
-  readonly id = "accessibility" as const;
-  readonly label = "Accessibility Service";
-
-  isAvailable(): boolean {
-    return Platform.OS === "android";
-  }
-
-  async checkPermissions(): Promise<boolean> {
-    try {
-      const status = await OverlayBridge.checkPermissions();
-      return status.hasAccessibilityPermission;
-    } catch {
-      return false;
-    }
-  }
-
-  async requestPermissions(): Promise<boolean> {
-    // If already granted, return true immediately so start() is called.
-    const already = await this.checkPermissions();
-    if (already) return true;
-    // Not yet granted — open system settings for the user to enable it.
-    OverlayBridge.requestAccessibilityPermission();
-    return false;
-  }
-
-  async start(targetLang: string): Promise<void> {
-    await OverlayBridge.setTargetLanguage(targetLang);
-    await OverlayBridge.setOverlayEnabled(true);
-  }
-
-  async stop(): Promise<void> {
-    await OverlayBridge.setOverlayEnabled(false);
-  }
-
-  onSubtitle(callback: (event: SubtitleEvent) => void): () => void {
-    return OverlayBridge.onSubtitleDetected((text) =>
-      callback({ original: text, translated: text })
-    );
-  }
-}
-
-// ─── Screen Capture strategy ──────────────────────────────────────────────────
-
-class ScreenCaptureStrategy implements LiveTranslationStrategy {
-  readonly id = "screen-capture" as const;
-  readonly label = "Screen Capture";
+class ScreenCaptureLiveTranslation implements LiveTranslation {
 
   isAvailable(): boolean {
     return ScreenCaptureBridge.isAvailable();
-  }
-
-  async checkPermissions(): Promise<boolean> {
-    return ScreenCaptureBridge.checkOverlayPermission();
   }
 
   async requestPermissions(): Promise<boolean> {
@@ -112,36 +81,41 @@ class ScreenCaptureStrategy implements LiveTranslationStrategy {
     return ScreenCaptureBridge.requestPermission();
   }
 
-  async start(targetLang: string): Promise<void> {
-    const ocrScript = ScreenCaptureBridge.ocrScriptForLanguage(targetLang);
-    await ScreenCaptureBridge.start(targetLang, ocrScript);
+  async start(options: StartOptions): Promise<void> {
+    const { targetLang, sourceLang = "auto", enableAudio = false, apiKey } = options;
+    return ScreenCaptureBridge.start(targetLang, sourceLang, enableAudio, apiKey);
   }
 
   async stop(): Promise<void> {
-    await ScreenCaptureBridge.stop();
+    return ScreenCaptureBridge.stop();
   }
 
-  onSubtitle(callback: (event: SubtitleEvent) => void): () => void {
-    return ScreenCaptureBridge.onSubtitle((e: LiveSubtitleEvent) =>
-      callback({ original: e.original, translated: e.translated })
-    );
+  async isRunning(): Promise<boolean> {
+    return ScreenCaptureBridge.isRunning();
+  }
+
+  onSubtitle(callback: (event: LiveSubtitleEvent) => void): () => void {
+    return ScreenCaptureBridge.onSubtitle(callback);
+  }
+
+  async areAsrModelsReady(): Promise<boolean> {
+    return ScreenCaptureBridge.areAsrModelsReady();
+  }
+
+  async downloadAsrModels(): Promise<void> {
+    return ScreenCaptureBridge.downloadAsrModels();
+  }
+
+  onAsrModelDownloadProgress(cb: (downloaded: number, total: number) => void): () => void {
+    return ScreenCaptureBridge.onAsrModelDownloadProgress(cb);
   }
 }
 
-// ─── Registry ─────────────────────────────────────────────────────────────────
+// ─── Singleton ────────────────────────────────────────────────────────────────
 
-// Order matters: first available strategy is the default.
-const ALL_STRATEGIES: LiveTranslationStrategy[] = [
-  new ScreenCaptureStrategy(),       // Preferred: no Accessibility Service needed
-  new AccessibilityServiceStrategy(), // Fallback
-];
+const instance = new ScreenCaptureLiveTranslation();
 
-/** All strategies that can run on this device. */
-export function getAvailableStrategies(): LiveTranslationStrategy[] {
-  return ALL_STRATEGIES.filter((s) => s.isAvailable());
-}
-
-/** The best (first available) strategy, or null if none available. */
-export function getBestStrategy(): LiveTranslationStrategy | null {
-  return getAvailableStrategies()[0] ?? null;
+/** Get the live translation controller. Returns the same instance every call. */
+export function getLiveTranslation(): LiveTranslation {
+  return instance;
 }
