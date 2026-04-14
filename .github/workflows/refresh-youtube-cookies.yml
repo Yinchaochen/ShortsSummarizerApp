@@ -14,6 +14,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Close stale cookie-refresh-failed issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // The old Playwright-based auto-refresh workflow created issues with the
+            // 'cookie-refresh-failed' label referencing a PLAYWRIGHT_AUTH secret that
+            // no longer exists. Close any that are still open and redirect to current steps.
+            const { data: staleIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'cookie-refresh-failed',
+            });
+
+            for (const issue of staleIssues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: [
+                  '## ⚠️ This issue is outdated',
+                  '',
+                  'The Playwright-based auto-refresh approach (`PLAYWRIGHT_AUTH`) has been replaced.',
+                  'Please use the current manual method instead:',
+                  '',
+                  '1. Open Chrome and make sure you are logged into YouTube',
+                  '2. Click the **Get cookies.txt LOCALLY** extension',
+                  '3. Export cookies for `youtube.com`',
+                  '4. Go to [Railway](https://railway.com) → your project → **celeryworker** service → **Variables**',
+                  '5. Update `YOUTUBE_COOKIES` with the new content → Save → Redeploy',
+                  '',
+                  '*Closing automatically — a fresh monthly reminder will be created by this workflow.*',
+                ].join('\n'),
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+              });
+              console.log(`Closed stale issue #${issue.number}: ${issue.title}`);
+            }
+
       - name: Create reminder issue
         uses: actions/github-script@v7
         with:
