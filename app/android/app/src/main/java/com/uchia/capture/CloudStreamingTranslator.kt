@@ -30,12 +30,15 @@ class CloudStreamingTranslator(
     private val model: String = "claude-haiku-4-5-20251001",
 ) : ITranslator {
 
+    override val supportsBatch: Boolean = true
+
     companion object {
         private const val TAG = "Translator"
     }
 
     private val client = OkHttpClient.Builder()
-        .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .connectTimeout(8, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
         .build()
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -99,6 +102,15 @@ class CloudStreamingTranslator(
             })
         }
 
+        if (response.code == 429) {
+            response.close()
+            // Rate limited — back off and let the orchestrator's cooldown gate future requests.
+            val retryAfterMs = response.header("retry-after")?.toLongOrNull()?.times(1000) ?: 5_000L
+            Log.w(TAG, "Rate limited (429), backing off ${retryAfterMs}ms")
+            delay(retryAfterMs)
+            throw IOException("HTTP 429: rate limited")
+        }
+
         if (!response.isSuccessful) {
             throw IOException("HTTP ${response.code}: ${response.body?.string()}")
         }
@@ -127,7 +139,7 @@ class CloudStreamingTranslator(
 
         val body = JSONObject().apply {
             put("model", model)
-            put("max_tokens", 1024)
+            put("max_tokens", 400)
             put("stream", true)
             put("messages", JSONArray().apply {
                 put(JSONObject().apply {
@@ -135,7 +147,7 @@ class CloudStreamingTranslator(
                     put("content", prompt)
                 })
             })
-            put("system", "You are a subtitle translator. Output ONLY the translated text — no explanations, no quotes, no punctuation changes unless required by the target language.")
+            put("system", "You are a real-time screen text translator. Output ONLY the translated text with no explanations, no quotes, no extra punctuation. Keep it concise — this is on-screen text.")
         }.toString()
 
         return Request.Builder()
@@ -147,8 +159,32 @@ class CloudStreamingTranslator(
             .build()
     }
 
-    private fun buildPrompt(text: String, sourceLang: String, targetLang: String): String =
-        "Translate the following from $sourceLang to $targetLang:\n\n$text"
+    private fun buildPrompt(text: String, sourceLang: String, targetLang: String): String {
+        val targetName = langName(targetLang)
+        return if (sourceLang == "auto") {
+            "Translate this on-screen text to $targetName:\n\n$text"
+        } else {
+            val sourceName = langName(sourceLang)
+            "Translate this on-screen text from $sourceName to $targetName:\n\n$text"
+        }
+    }
+
+    /** Maps BCP-47 codes to readable language names for better model comprehension. */
+    private fun langName(code: String): String = when (code.lowercase().split("-")[0]) {
+        "zh"  -> "Chinese (Simplified)"
+        "zht" -> "Chinese (Traditional)"
+        "en"  -> "English"
+        "de"  -> "German"
+        "ja"  -> "Japanese"
+        "ko"  -> "Korean"
+        "fr"  -> "French"
+        "es"  -> "Spanish"
+        "ru"  -> "Russian"
+        "ar"  -> "Arabic"
+        "pt"  -> "Portuguese"
+        "it"  -> "Italian"
+        else  -> code
+    }
 
     // ─── SSE token parser ─────────────────────────────────────────────────────
 

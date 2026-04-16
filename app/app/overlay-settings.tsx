@@ -4,17 +4,20 @@ import {
   View, Text, TouchableOpacity, StyleSheet,
   ActivityIndicator, Platform, Switch, ScrollView, Alert, TextInput,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import BreathingBackground from "../src/shared/components/BreathingBackground";
 import { getLiveTranslation, LiveSubtitleEvent } from "../src/features/live-translation";
 import { ScreenCaptureBridge } from "../src/features/live-translation/screen-capture-bridge";
 import LanguagePicker from "../src/shared/components/LanguagePicker";
 import { useLanguage } from "../src/shared/context/LanguageContext";
 
+const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? "https://shortssummarizer.up.railway.app";
+
 const lt = getLiveTranslation();
 
 export default function OverlaySettingsScreen() {
   const { t, langCode } = useLanguage();
+  const { sharedUrl } = useLocalSearchParams<{ sharedUrl?: string }>();
 
   // Session state
   const [running, setRunning]       = useState(false);
@@ -33,6 +36,22 @@ export default function OverlaySettingsScreen() {
   const [asrReady, setAsrReady]           = useState(false);
   const [asrDownloading, setAsrDownloading] = useState(false);
   const [asrProgress, setAsrProgress]     = useState<{ downloaded: number; total: number } | null>(null);
+
+  // Caption sync (platform API)
+  const [captionUrl, setCaptionUrl]           = useState("");
+  const [captionStatus, setCaptionStatus]     = useState<"idle" | "fetching" | "translating" | "syncing">("idle");
+  const [captionProgress, setCaptionProgress] = useState<{ done: number; total: number } | null>(null);
+
+  // ── Auto-trigger from share intent ────────────────────────────────────────
+  useEffect(() => {
+    if (sharedUrl && captionStatus === "idle") {
+      setCaptionUrl(sharedUrl);
+      // Pass URL directly to avoid stale state capture
+      const timer = setTimeout(() => handleCaptionSync(sharedUrl), 300);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sharedUrl]);
 
   // ── Persist API key ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -91,6 +110,42 @@ export default function OverlaySettingsScreen() {
       setRunLoading(false);
     }
   }, [running, targetLang, audioEnabled, asrReady, apiKey]);
+
+  // ── Caption sync ──────────────────────────────────────────────────────────
+  const handleCaptionSync = useCallback(async (urlOverride?: string) => {
+    const url = (urlOverride ?? captionUrl).trim();
+    if (!url) {
+      Alert.alert("No URL", "Paste a TikTok, YouTube, or Instagram video URL first.");
+      return;
+    }
+    setCaptionProgress(null);
+    setCaptionStatus("fetching");
+    try {
+      const { segments } = await ScreenCaptureBridge.loadCaptions(url, API_BASE);
+      if (!segments.length) {
+        Alert.alert("No Captions", "This video has no auto-captions. Try a different video.");
+        setCaptionStatus("idle");
+        return;
+      }
+      setCaptionStatus("translating");
+      setCaptionProgress({ done: 0, total: segments.length });
+      const unsub = ScreenCaptureBridge.onCaptionTranslateProgress((done, total) => {
+        setCaptionProgress({ done, total });
+      });
+      await ScreenCaptureBridge.playCaptions(segments, targetLang);
+      unsub();
+      setCaptionStatus("syncing");
+    } catch (e: any) {
+      Alert.alert("Caption Error", e.message ?? "Could not load captions.");
+      setCaptionStatus("idle");
+    }
+  }, [captionUrl, targetLang]);
+
+  const handleStopCaptions = useCallback(async () => {
+    await ScreenCaptureBridge.stopCaptions().catch(() => {});
+    setCaptionStatus("idle");
+    setCaptionProgress(null);
+  }, []);
 
   // ── ASR model download ────────────────────────────────────────────────────
   const handleDownloadAsrModels = async () => {
@@ -215,6 +270,73 @@ export default function OverlaySettingsScreen() {
                   )}
                   <Text style={styles.subtitleTranslated}>{subtitle.translated}</Text>
                 </View>
+              )}
+            </View>
+          )}
+
+          {/* Caption Sync */}
+          {lt.isAvailable() && (
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Caption Sync</Text>
+              <Text style={styles.cardDesc}>
+                Paste a TikTok, YouTube, or Instagram URL. Captions are fetched, translated on-device, and displayed in sync — zero delay, no OCR needed.
+              </Text>
+
+              <Text style={styles.label}>Translate to</Text>
+              <LanguagePicker
+                value={targetLang}
+                onChange={(lang) => setTargetLang(lang.code)}
+                searchPlaceholder={t.searchLanguage}
+              />
+
+              <TextInput
+                style={[styles.input, { marginTop: 4 }]}
+                value={captionUrl}
+                onChangeText={setCaptionUrl}
+                placeholder="https://www.tiktok.com/@user/video/…"
+                placeholderTextColor="#62666d"
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={captionStatus === "idle"}
+              />
+
+              {captionStatus === "translating" && captionProgress && (
+                <View style={styles.progressRow}>
+                  <View style={styles.progressBar}>
+                    <View
+                      style={[
+                        styles.progressFill,
+                        { width: `${Math.round((captionProgress.done / captionProgress.total) * 100)}%` },
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.progressText}>
+                    {captionProgress.done}/{captionProgress.total}
+                  </Text>
+                </View>
+              )}
+
+              {captionStatus === "syncing" ? (
+                <View style={{ gap: 8 }}>
+                  <View style={styles.statusRow}>
+                    <View style={[styles.dot, { backgroundColor: "#4caf50" }]} />
+                    <Text style={[styles.statusText, { color: "#4caf50" }]}>Syncing — go back to the video now</Text>
+                  </View>
+                  <TouchableOpacity style={[styles.button, { backgroundColor: "#ff6b6b" }]} onPress={handleStopCaptions}>
+                    <Text style={styles.buttonText}>Stop Sync</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={[styles.button, captionStatus !== "idle" && styles.buttonDisabled]}
+                  onPress={handleCaptionSync}
+                  disabled={captionStatus !== "idle"}
+                >
+                  {captionStatus === "fetching" || captionStatus === "translating"
+                    ? <ActivityIndicator color="#08090a" size="small" />
+                    : <Text style={styles.buttonText}>Load & Sync Captions</Text>
+                  }
+                </TouchableOpacity>
               )}
             </View>
           )}

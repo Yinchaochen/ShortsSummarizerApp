@@ -14,11 +14,11 @@
  */
 
 import { Platform } from "react-native";
-import { ScreenCaptureBridge, LiveSubtitleEvent } from "./screen-capture-bridge";
+import { ScreenCaptureBridge, LiveSubtitleEvent, CaptionSegment, CaptionsResponse } from "./screen-capture-bridge";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type { LiveSubtitleEvent };
+export type { LiveSubtitleEvent, CaptionSegment, CaptionsResponse };
 
 export interface StartOptions {
   /** BCP-47 target language code, e.g. "zh", "de", "en" */

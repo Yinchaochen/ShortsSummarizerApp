@@ -128,7 +128,7 @@ class ScreenCaptureService : Service() {
             enableAudio = enableAudio,
         )
 
-        val newOrchestrator = buildOrchestrator(apiKey, sourceLang)
+        val newOrchestrator = buildOrchestrator(apiKey, sourceLang, targetLang)
         newOrchestrator.onSubtitleEvent = { original, translated ->
             subtitleCallback?.invoke(original, translated)
         }
@@ -151,23 +151,33 @@ class ScreenCaptureService : Service() {
      * This is the only place in the app that names concrete classes —
      * everything downstream depends on interfaces.
      */
-    private fun buildOrchestrator(apiKey: String, sourceLang: String = "auto"): LiveTranslationOrchestrator {
+    private fun buildOrchestrator(apiKey: String, sourceLang: String = "auto", targetLang: String = "zh"): LiveTranslationOrchestrator {
         val capture    = MediaProjectionCaptureEngine(this)
         val ocr        = MLKitOcrEngine(langToOcrScript(sourceLang))
         val asr        = SherpaAsrAdapter(this)
         val sampler    = FrameDiffSampler()
         val inpainter  = TemporalBackgroundInpainter()
-        val translator = CloudStreamingTranslator(apiKey)
+        // Use on-device ML Kit translator when available (fast, free, offline).
+        // Fall back to cloud streaming only if an API key is explicitly provided.
+        val onDevice = apiKey.isBlank()
+        val translator: ITranslator = if (onDevice) {
+            Log.e(TAG, "No API key — using on-device ML Kit translator (0ms cooldown)")
+            MLKitTranslator(targetLang = targetLang)
+        } else {
+            Log.e(TAG, "API key provided — using cloud streaming translator (1500ms cooldown)")
+            CloudStreamingTranslator(apiKey)
+        }
         val renderer   = PositionalOverlayRenderer(this)
 
         return LiveTranslationOrchestrator(
-            capture    = capture,
-            ocr        = ocr,
-            asr        = asr,
-            sampler    = sampler,
-            inpainter  = inpainter,
-            translator = translator,
-            renderer   = renderer,
+            capture               = capture,
+            ocr                   = ocr,
+            asr                   = asr,
+            sampler               = sampler,
+            inpainter             = inpainter,
+            translator            = translator,
+            renderer              = renderer,
+            translationCooldownMs = if (onDevice) 0L else 1_500L,
         )
     }
 

@@ -170,6 +170,10 @@ dependencies {
 
     // ML Kit — full-screen OCR (Latin, CJK, Devanagari)
     implementation("com.google.mlkit:text-recognition:16.0.1")
+    // ML Kit — on-device translation (no API key, works offline after model download)
+    implementation("com.google.mlkit:translate:17.0.3")
+    // ML Kit — language identification (detects source language for "auto" mode)
+    implementation("com.google.mlkit:language-id:17.0.6")
     implementation("com.google.mlkit:text-recognition-chinese:16.0.1")
     implementation("com.google.mlkit:text-recognition-japanese:16.0.1")
     implementation("com.google.mlkit:text-recognition-korean:16.0.1")
@@ -181,6 +185,7 @@ dependencies {
 
     // Kotlin coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";

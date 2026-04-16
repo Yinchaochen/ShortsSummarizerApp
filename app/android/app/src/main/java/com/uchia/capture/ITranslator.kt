@@ -13,6 +13,15 @@ package com.uchia.capture
  */
 interface ITranslator {
     /**
+     * True if this translator can handle a numbered-list batch prompt
+     * (e.g. "1. text\n2. text") and return a matching numbered list.
+     *
+     * Cloud LLMs: true  — one request for N blocks, streaming partial updates.
+     * ML Kit:    false — translate each block in parallel individually.
+     */
+    val supportsBatch: Boolean get() = false
+
+    /**
      * Translate [text] from [sourceLang] to [targetLang].
      *
      * [onPartial]  — called with each incremental token as it arrives (may be called 0+ times)

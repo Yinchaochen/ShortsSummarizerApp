@@ -40,6 +40,8 @@ class PositionalOverlayView(
         val top: Int,
         val right: Int,
         val bottom: Int,
+        /** Background color sampled from video — used to paint over the original text. */
+        val coverColor: Int = android.graphics.Color.TRANSPARENT,
     )
 
     // ─── State ────────────────────────────────────────────────────────────────
@@ -169,26 +171,36 @@ class PositionalOverlayView(
 
     private fun buildBubble(block: TranslatedBlock): TextView {
         val dp = context.resources.displayMetrics.density
-        val padH = (8 * dp).toInt()
+        val padH = (10 * dp).toInt()
         val padV = (4 * dp).toInt()
-        val minHeight = (22 * dp).toInt()
+        val minHeight = (24 * dp).toInt()
 
-        // Semi-transparent dark rounded background — matches app brand (#0F0F1A)
+        // Use sampled cover color if available, otherwise use subtitle-style semi-transparent black.
+        // The cover color paints over the original text so only the translation is visible.
+        val bgColor = if (block.coverColor != android.graphics.Color.TRANSPARENT) {
+            // Blend cover color with 85% opacity to fully hide original text
+            (block.coverColor and 0x00FFFFFF) or 0xD9000000.toInt()
+        } else {
+            0xBB000000.toInt()   // subtitle style: 73% opaque black
+        }
+
         val bg = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadius = 6 * dp
-            setColor(0xDD0F0F1A.toInt())
+            cornerRadius = 4 * dp
+            setColor(bgColor)
         }
 
         val tv = TextView(context).apply {
             text = block.text
             setTextColor(Color.WHITE)
-            textSize = 13f
+            textSize = 15f   // larger — subtitle-sized
+            gravity = android.view.Gravity.CENTER
             setPadding(padH, padV, padH, padV)
             background = bg
+            setShadowLayer(2f * dp, 0f, 1f * dp, 0x88000000.toInt())  // subtle text shadow for readability
         }
 
-        // Size the bubble to match the OCR bounding box + padding
+        // Size the bubble to cover the original text bounding box exactly
         val bubbleW = (block.right - block.left) + padH * 2
         val bubbleH = ((block.bottom - block.top) + padV * 2).coerceAtLeast(minHeight)
 

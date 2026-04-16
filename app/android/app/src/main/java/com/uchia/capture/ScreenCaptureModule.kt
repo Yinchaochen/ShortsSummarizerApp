@@ -9,6 +9,9 @@ import android.os.Build
 import android.provider.Settings
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import kotlin.coroutines.resume
+import kotlinx.coroutines.*
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * React Native bridge for live translation.
@@ -34,6 +37,12 @@ class ScreenCaptureModule(private val reactContext: ReactApplicationContext) :
     companion object {
         const val NAME = "ScreenCaptureModule"
         const val REQUEST_CODE = 4001
+
+        /**
+         * URL received from an Android share-sheet intent (ACTION_SEND text/plain).
+         * Set by [MainActivity] on onCreate/onNewIntent; read-and-cleared by [getSharedUrl].
+         */
+        @Volatile var pendingSharedUrl: String? = null
     }
 
     private var pendingPromise: Promise? = null
@@ -42,6 +51,10 @@ class ScreenCaptureModule(private val reactContext: ReactApplicationContext) :
     private var isCapturing = false
 
     private val sherpaModelManager by lazy { SherpaModelManager(reactContext) }
+
+    // Caption sync (platform API captions — no screen capture needed)
+    private val captionScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var captionSyncManager: CaptionSyncManager? = null
 
     init {
         reactContext.addActivityEventListener(this)
@@ -175,6 +188,120 @@ class ScreenCaptureModule(private val reactContext: ReactApplicationContext) :
                 if (success) promise.resolve(null)
                 else promise.reject("DOWNLOAD_FAILED", "One or more ASR model files failed")
             }
+        )
+    }
+
+    // ─── Share intent ─────────────────────────────────────────────────────────
+
+    /**
+     * Returns the URL received from the last Android share-sheet intent, then clears it.
+     * Returns null if no share intent has arrived since the last call.
+     */
+    @ReactMethod
+    fun getSharedUrl(promise: Promise) {
+        val url = pendingSharedUrl
+        pendingSharedUrl = null
+        promise.resolve(url)
+    }
+
+    // ─── Caption sync (platform API) ─────────────────────────────────────────
+
+    /**
+     * Translate caption segments on-device with ML Kit and start the timer-based
+     * sync overlay.  Segments come from JS after calling GET /api/v1/captions.
+     *
+     * Each segment map: { start: number, end: number, text: string, x: number|null, y: number|null }
+     *
+     * Emits "onCaptionTranslateProgress" → { done: number, total: number }
+     * Resolves when all segments are translated and the overlay is running.
+     */
+    @ReactMethod
+    fun playCaptions(rawSegments: ReadableArray, targetLang: String, promise: Promise) {
+        captionScope.launch {
+            try {
+                // ── 1. Parse segments ─────────────────────────────────────────
+                val segments = mutableListOf<CaptionSyncManager.CaptionSegment>()
+                for (i in 0 until rawSegments.size()) {
+                    val map = rawSegments.getMap(i) ?: continue
+                    val text = map.getString("text") ?: continue
+                    if (text.isBlank()) continue
+                    segments.add(
+                        CaptionSyncManager.CaptionSegment(
+                            startSec = map.getDouble("start").toFloat(),
+                            endSec   = map.getDouble("end").toFloat(),
+                            text     = text,
+                            x        = if (map.isNull("x")) null else map.getDouble("x").toFloat(),
+                            y        = if (map.isNull("y")) null else map.getDouble("y").toFloat(),
+                        )
+                    )
+                }
+
+                if (segments.isEmpty()) {
+                    promise.reject("NO_SEGMENTS", "No caption segments provided")
+                    return@launch
+                }
+
+                // ── 2. Translate with ML Kit (sequential — model stays warm) ──
+                val mlkitTranslator = MLKitTranslator(targetLang = targetLang)
+                val translated = mutableListOf<CaptionSyncManager.CaptionSegment>()
+                segments.forEachIndexed { idx, seg ->
+                    val translatedText = translateSegmentSuspend(seg.text, targetLang, mlkitTranslator)
+                    translated.add(seg.copy(text = translatedText))
+
+                    // Emit progress to JS
+                    val params = Arguments.createMap().apply {
+                        putInt("done",  idx + 1)
+                        putInt("total", segments.size)
+                    }
+                    reactContext
+                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                        .emit("onCaptionTranslateProgress", params)
+                }
+                mlkitTranslator.release()
+
+                // ── 3. Start the sync overlay ─────────────────────────────────
+                val renderer = PositionalOverlayRenderer(reactContext)
+                val dm       = reactContext.resources.displayMetrics
+                val manager  = CaptionSyncManager(renderer, dm)
+                manager.load(translated)
+
+                captionSyncManager?.stop()
+                captionSyncManager = manager
+                manager.start()
+
+                promise.resolve(translated.size)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                promise.reject("CAPTION_ERROR", e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    /** Stop the caption sync overlay and release resources. */
+    @ReactMethod
+    fun stopCaptions(promise: Promise) {
+        captionSyncManager?.stop()
+        captionSyncManager = null
+        promise.resolve(null)
+    }
+
+    /**
+     * Suspend wrapper around [MLKitTranslator.translate].
+     * Falls back to the original [text] on error so the overlay always shows something.
+     */
+    private suspend fun translateSegmentSuspend(
+        text: String,
+        targetLang: String,
+        translator: MLKitTranslator,
+    ): String = suspendCancellableCoroutine { cont ->
+        translator.translate(
+            text       = text,
+            sourceLang = "auto",
+            targetLang = targetLang,
+            onPartial  = {},
+            onComplete = { result -> if (cont.isActive) cont.resume(result) },
+            onError    = { _      -> if (cont.isActive) cont.resume(text)   },
         )
     }
 

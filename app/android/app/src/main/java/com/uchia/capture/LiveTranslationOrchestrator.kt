@@ -30,14 +30,22 @@ class LiveTranslationOrchestrator(
     private val renderer  : ISubtitleRenderer,
     /** Scale factor used during capture — needed to map OCR coords back to real pixels. */
     private val scaleFactor: Float = 0.5f,
+    /**
+     * Minimum ms between translation calls.
+     * Set to 0 for on-device translators (no rate limit).
+     * Set to ~1500 for cloud APIs (50 req/min limit).
+     */
+    private val translationCooldownMs: Long = 0L,
 ) {
 
     companion object {
         private const val TAG = "Orchestrator"
         /** Frames awaiting OCR. Drops oldest if producer outruns consumer. */
         private const val FRAME_CHANNEL_CAPACITY = 4
-        /** If OCR and ASR produce the same text within this window, skip re-translating. */
-        private const val DEDUP_WINDOW_MS = 2_000L
+        /** Blocks with fewer letters than this are treated as noise (icons, numbers). */
+        private const val MIN_BLOCK_CHARS = 3
+        /** Max blocks to translate per frame — keeps latency bounded. */
+        private const val MAX_BLOCKS = 12
     }
 
     /** Notifies the JS layer of subtitle events: original + translated text. */
@@ -97,7 +105,7 @@ class LiveTranslationOrchestrator(
         scope.launch { videoLoop(config.targetLang) }
         capture.start(captureConfig)
 
-        Log.d(TAG, "Started — video=${config.enableVideo} audio=${config.enableAudio} target=${config.targetLang}")
+        Log.e(TAG, "Started — video=${config.enableVideo} audio=${config.enableAudio} target=${config.targetLang}")
     }
 
     fun stop() {
@@ -115,7 +123,7 @@ class LiveTranslationOrchestrator(
         prevFrameInChannel = false
         lastOcrText = ""
         lastAsrText = ""
-        Log.d(TAG, "Stopped")
+        Log.e(TAG, "Stopped")
     }
 
     fun release() {
@@ -137,10 +145,23 @@ class LiveTranslationOrchestrator(
 
         for (frame in frameChannel) {
             try {
-                val blocks = ocr.detect(frame)
+                val t0 = System.currentTimeMillis()
+                val allBlocks = ocr.detect(frame)
+                val tOcr = System.currentTimeMillis()
 
-                // Refine background model: now we know which regions have text,
-                // re-run updateBackground excluding those regions so the model stays clean.
+                // ── Region filter: keep video content zone, exclude chrome ──
+                // Exclude: very top (status bar 8%), very bottom (username bar 8%),
+                // right-side reaction column (right 18%).
+                // Subtitles on TikTok/YouTube appear at 70–90% height — keep them.
+                val frameW = frame.width.toFloat()
+                val frameH = frame.height.toFloat()
+                val blocks = allBlocks.filter { b ->
+                    val cy = b.boundingBox.centerY()
+                    val cx = b.boundingBox.centerX()
+                    cy > frameH * 0.08f && cy < frameH * 0.92f && cx < frameW * 0.82f
+                }
+                Log.e(TAG, "OCR: ${tOcr - t0}ms  raw=${allBlocks.size} filtered=${blocks.size}")
+
                 if (blocks.isNotEmpty()) {
                     inpainter.updateBackground(frame, blocks.map { it.boundingBox })
                 }
@@ -159,8 +180,20 @@ class LiveTranslationOrchestrator(
                 if (fullText == lastOcrText) continue
                 lastOcrText = fullText
 
-                // Translate all blocks in parallel, sampling background color per block
+                // Enforce cooldown (cloud API only — on-device translators use 0ms).
+                if (translationCooldownMs > 0) {
+                    val sinceLastTranslation = System.currentTimeMillis() - lastTranslatedAt
+                    if (sinceLastTranslation < translationCooldownMs) {
+                        Log.e(TAG, "skip: cooldown ${sinceLastTranslation}ms < ${translationCooldownMs}ms")
+                        continue
+                    }
+                }
+
+                Log.e(TAG, "translating: \"${fullText.take(60)}\"")
+                val tTxStart = System.currentTimeMillis()
                 val translated = translateBlocks(blocks, targetLang, scaleUp, temporalInpainter)
+                Log.e(TAG, "translation done: ${System.currentTimeMillis() - tTxStart}ms")
+
                 renderer.update(translated)
 
                 onSubtitleEvent?.invoke(
@@ -178,13 +211,14 @@ class LiveTranslationOrchestrator(
     }
 
     /**
-     * Translates blocks sequentially to avoid the shared-translator cancellation bug.
+     * Translate all blocks and return updated [RenderedSubtitle] list.
      *
-     * [CloudStreamingTranslator.translate] cancels the previous in-flight request each time
-     * it is called. Parallel async blocks would race to cancel each other, leaving all but
-     * the last continuation permanently unsuspended → [awaitAll] deadlock.
-     * Sequential translation is safe: each block waits for the previous to finish.
-     * Subtitle frames rarely have more than 1-2 blocks, so the added latency is negligible.
+     * Two paths depending on [ITranslator.supportsBatch]:
+     *  - Cloud (supportsBatch=true):  one API call with numbered list, streaming partial updates.
+     *  - MLKit (supportsBatch=false): each block translated in parallel, ~20ms total.
+     *
+     * Noise filtering: blocks shorter than [MIN_BLOCK_CHARS] or with no letters are skipped.
+     * Block count is capped at [MAX_BLOCKS].
      */
     private suspend fun translateBlocks(
         blocks: List<TextBlock>,
@@ -192,13 +226,18 @@ class LiveTranslationOrchestrator(
         scaleUp: Float,
         temporalInpainter: TemporalBackgroundInpainter?,
     ): List<RenderedSubtitle> {
-        return blocks.map { block ->
-            val translatedText = translateAsync(block.text, targetLang)
-            val coverColor = temporalInpainter?.sampleColor(block.boundingBox)
-                ?: android.graphics.Color.TRANSPARENT
+        val meaningful = blocks
+            .filter { it.text.length >= MIN_BLOCK_CHARS && it.text.any { c -> c.isLetter() } }
+            .take(MAX_BLOCKS)
+
+        if (meaningful.isEmpty()) return emptyList()
+
+        // Build subtitle shells — show original text immediately while translation is in flight.
+        val subtitles = meaningful.map { block ->
             RenderedSubtitle(
-                text = translatedText,
-                coverColor = coverColor,
+                text = block.text,
+                coverColor = temporalInpainter?.sampleColor(block.boundingBox)
+                    ?: android.graphics.Color.TRANSPARENT,
                 boundingBox = RectF(
                     block.boundingBox.left   * scaleUp,
                     block.boundingBox.top    * scaleUp,
@@ -206,6 +245,45 @@ class LiveTranslationOrchestrator(
                     block.boundingBox.bottom * scaleUp,
                 )
             )
+        }.toMutableList()
+        renderer.update(subtitles)
+
+        if (translator.supportsBatch) {
+            // ── Cloud path: one call, numbered list, streaming ─────────────
+            val batchInput = meaningful.mapIndexed { i, b -> "${i + 1}. ${b.text}" }.joinToString("\n")
+            val batchResult = translateAsync(batchInput, targetLang) { partial ->
+                applyBatchResult(partial, subtitles)
+                renderer.update(subtitles)
+            }
+            applyBatchResult(batchResult, subtitles)
+            Log.e(TAG, "cloud batch translated ${meaningful.size} blocks")
+        } else {
+            // ── MLKit path: all blocks in parallel, no rate limit ──────────
+            coroutineScope {
+                meaningful.mapIndexed { i, block ->
+                    async {
+                        val translated = translateAsync(block.text, targetLang)
+                        if (translated.isNotEmpty()) {
+                            subtitles[i] = subtitles[i].copy(text = translated)
+                        }
+                    }
+                }.forEach { it.await() }
+            }
+            Log.e(TAG, "mlkit parallel translated ${meaningful.size} blocks")
+        }
+
+        return subtitles
+    }
+
+    /** Parses "1. text\n2. text\n..." response and writes translations into [subtitles]. */
+    private fun applyBatchResult(result: String, subtitles: MutableList<RenderedSubtitle>) {
+        result.lines().forEach { line ->
+            val match = Regex("""^(\d+)\.\s*(.+)""").find(line.trim()) ?: return@forEach
+            val idx = match.groupValues[1].toIntOrNull()?.minus(1) ?: return@forEach
+            val text = match.groupValues[2].trim()
+            if (idx in subtitles.indices && text.isNotEmpty()) {
+                subtitles[idx] = subtitles[idx].copy(text = text)
+            }
         }
     }
 
@@ -230,27 +308,30 @@ class LiveTranslationOrchestrator(
     // ─── Translation helper ───────────────────────────────────────────────────
 
     /**
-     * Suspend wrapper around [ITranslator.translate] that accumulates streaming
-     * tokens and returns the final translation.
+     * Suspend wrapper around [ITranslator.translate].
      *
-     * Deduplication: if this text was already translated by the other stream
-     * within [DEDUP_WINDOW_MS], returns a cached result immediately.
+     * Streams partial tokens to [onPartial] for live overlay updates, then
+     * returns the fully assembled translation on completion.
+     * Falls back to the original [text] on error so the overlay always shows something.
      */
-    private suspend fun translateAsync(text: String, targetLang: String): String =
-        suspendCancellableCoroutine { cont ->
-            translator.translate(
-                text       = text,
-                sourceLang = "auto",
-                targetLang = targetLang,
-                onPartial  = { /* partial already handled by streaming renderer */ },
-                onComplete = { result ->
-                    lastTranslatedAt = System.currentTimeMillis()
-                    if (cont.isActive) cont.resume(result)
-                },
-                onError = { err ->
-                    Log.e(TAG, "Translation failed: ${err.message}")
-                    if (cont.isActive) cont.resume(text)   // fallback: show original
-                },
-            )
-        }
+    private suspend fun translateAsync(
+        text: String,
+        targetLang: String,
+        onPartial: (String) -> Unit = {},
+    ): String = suspendCancellableCoroutine { cont ->
+        translator.translate(
+            text       = text,
+            sourceLang = "auto",
+            targetLang = targetLang,
+            onPartial  = onPartial,
+            onComplete = { result ->
+                lastTranslatedAt = System.currentTimeMillis()
+                if (cont.isActive) cont.resume(result)
+            },
+            onError = { err ->
+                Log.e(TAG, "Translation failed: ${err.message}")
+                if (cont.isActive) cont.resume(text)   // fallback: show original
+            },
+        )
+    }
 }

@@ -21,8 +21,8 @@ class FrameDiffSampler(
     private val tileRows: Int = 4,
     private val tileCols: Int = 4,
     private val samplesPerTile: Int = 16,
-    private val tileThreshold: Float = 8f,   // luminance units 0-255
-    private val minChangedTiles: Int = 1,
+    private val tileThreshold: Float = 12f,  // luminance units 0-255
+    private val minChangedTiles: Int = 1,    // 1 tile changed is enough to trigger OCR
 ) : IFrameSampler {
 
     override fun shouldProcess(current: Bitmap, previous: Bitmap?): Boolean {
