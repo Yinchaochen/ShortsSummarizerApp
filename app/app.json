@@ -2,6 +2,7 @@
   "expo": {
     "name": "Uchia",
     "slug": "uchia",
+    "scheme": "uchia",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,7 +30,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "extra": {
       "router": {},
