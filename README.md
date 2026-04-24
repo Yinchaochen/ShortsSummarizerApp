@@ -62,7 +62,7 @@ Android Live Translation (separate, on-device):
 | YouTube Shorts | ✅ |
 | Instagram Reels | ✅ |
 | Bilibili | ✅ |
-| Xiaohongshu | ✅ |
+| RedNote | ✅ |
 
 ## Running locally
 
