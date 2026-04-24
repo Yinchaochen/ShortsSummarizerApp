@@ -6,7 +6,14 @@ from workers.tasks import summarize_video
 
 router = APIRouter()
 
-SUPPORTED_PLATFORMS = ("tiktok.com", "youtube.com", "youtu.be", "instagram.com")
+SUPPORTED_PLATFORMS = (
+    "tiktok.com",
+    "youtube.com",
+    "youtu.be",
+    "instagram.com",
+    "bilibili.com",
+    "b23.tv",
+)
 
 
 class SummarizeRequest(BaseModel):
@@ -22,7 +29,7 @@ class SummarizeRequest(BaseModel):
         if not any(p in v for p in SUPPORTED_PLATFORMS):
             raise AppError(
                 "UNSUPPORTED_PLATFORM",
-                "Only TikTok, YouTube, and Instagram links are supported.",
+                "Only TikTok, YouTube, Instagram, and Bilibili links are supported.",
                 status=422,
             )
         return v

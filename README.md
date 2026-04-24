@@ -1,6 +1,6 @@
 # Uchia — Short Video Summarizer
 
-AI-powered summarizer for TikTok, YouTube Shorts, and Instagram Reels. Paste a link, get a structured breakdown in seconds. Also ships a real-time screen translation overlay for Android.
+AI-powered summarizer for TikTok, YouTube Shorts, Instagram Reels, and Bilibili videos. Paste a link, get a structured breakdown in seconds. Also ships a real-time screen translation overlay for Android.
 
 **Live app → [uchia.io](https://shorts-summarizer-app.vercel.app)**
 **Download APK → [Latest release](https://github.com/Yinchaochen/ShortsSummarizerApp/releases/latest)**
@@ -9,7 +9,7 @@ AI-powered summarizer for TikTok, YouTube Shorts, and Instagram Reels. Paste a l
 
 ## What it does
 
-- **Summarize any short video** — TikTok, YouTube Shorts, Instagram Reels
+- **Summarize any short video** — TikTok, YouTube Shorts, Instagram Reels, Bilibili
 - **Gemini 2.5 Flash analysis** — visuals, subtitles, humor/meme structure, overall impression
 - **Real-time screen translation** — Android overlay that captures any app's screen, OCR-detects subtitles, and translates them live using ML Kit (fully on-device, no network needed)
 - **Free tier** — 15 summaries included, no account required to start
@@ -60,6 +60,7 @@ Android Live Translation (separate, on-device):
 | TikTok | ✅ |
 | YouTube Shorts | ✅ |
 | Instagram Reels | ✅ |
+| Bilibili | ✅ |
 
 ## Running locally
 
@@ -98,6 +99,7 @@ cd app/android
 | `SUPABASE_SERVICE_KEY` | backend | Supabase admin key |
 | `YOUTUBE_COOKIES` | Railway celeryworker | Cookie string for age-gated videos |
 | `INSTAGRAM_COOKIES` | Railway celeryworker | Cookie string for Instagram downloads |
+| `BILIBILI_COOKIES` | Railway celeryworker | Cookie string for Bilibili videos that require a logged-in session |
 | `REDIS_URL` | Railway | Celery broker |
 
 ## License

@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Query, HTTPException
 
 from services.captions import extract_captions
+from services.platforms.base import PlatformAccessError
 
 router = APIRouter()
 
 
 @router.get("/captions")
 async def get_captions(
-    url: str = Query(..., description="Video URL (TikTok, YouTube, Instagram, etc.)"),
+    url: str = Query(..., description="Video URL (TikTok, YouTube, Instagram, Bilibili, etc.)"),
 ):
     """
     Extract timed captions from a video URL.
@@ -19,12 +20,17 @@ async def get_captions(
     Speech captions have x=null, y=null.
 
     HTTP 404 — no captions found (video has no auto-captions).
-    HTTP 502 — yt-dlp extraction failure (private/deleted video, network error).
+    HTTP 502 — yt-dlp extraction failure (private/deleted video, network error, access blocked).
     """
     try:
         segments = extract_captions(url)
         return {"segments": segments, "count": len(segments)}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except PlatformAccessError as e:
+        raise HTTPException(
+            status_code=502,
+            detail={"code": e.code, "message": e.message},
+        )
     except RuntimeError as e:
         raise HTTPException(status_code=502, detail=str(e))

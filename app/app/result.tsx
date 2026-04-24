@@ -90,8 +90,6 @@ export default function ResultScreen() {
           const code = data.code ?? data.detail ?? "";
           if (code === "VIDEO_TOO_LONG") {
             showVideoTooLongToast();
-          } else if (code === "UNSUPPORTED_PLATFORM") {
-            setError(t.videoTooLong); // reuse closest existing translation; add dedicated key when needed
           } else {
             setError(data.detail ?? "Unknown error");
           }

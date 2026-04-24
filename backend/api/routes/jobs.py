@@ -11,6 +11,12 @@ STEP_LABELS = {
     "analyzing":   "Analyzing content...",
 }
 
+ERROR_LABELS = {
+    "BILIBILI_ACCESS_BLOCKED": (
+        "Bilibili blocked this request; refresh BILIBILI_COOKIES on the worker."
+    ),
+}
+
 
 @router.get("/job/{job_id}")
 def get_job(job_id: str):
@@ -33,6 +39,6 @@ def get_job(job_id: str):
             return {"state": "error", "code": exc.detail.get("code", "ERROR"), "detail": exc.detail.get("message", str(exc))}
         # Plain ValueError (e.g. VIDEO_TOO_LONG) — keep backward compat
         detail = str(exc)
-        return {"state": "error", "code": detail, "detail": detail}
+        return {"state": "error", "code": detail, "detail": ERROR_LABELS.get(detail, detail)}
 
     return {"state": result.state.lower()}

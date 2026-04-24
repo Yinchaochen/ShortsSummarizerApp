@@ -3,7 +3,7 @@ Caption extraction service.
 
 Uses yt-dlp to fetch timed subtitle/caption data from video URLs.
 Supports: YouTube (official auto-captions), TikTok (auto-captions where available),
-          Instagram (limited), and 1000+ other platforms yt-dlp supports.
+          Instagram (limited), Bilibili, and 1000+ other platforms yt-dlp supports.
 
 Returns a flat list of CaptionSegment dicts:
   [{"start": 1.23, "end": 4.56, "text": "Hello world", "x": None, "y": None}]
@@ -19,9 +19,14 @@ import re
 import tempfile
 import json
 import logging
-from typing import Optional
 
 import yt_dlp
+from services.platforms.base import (
+    BILIBILI_ACCESS_BLOCKED_CODE,
+    BILIBILI_ACCESS_BLOCKED_MESSAGE,
+    BasePlatform,
+    PlatformAccessError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -42,20 +47,27 @@ def extract_captions(url: str) -> list[dict]:
 
     with tempfile.TemporaryDirectory() as tmpdir:
         output_tmpl = os.path.join(tmpdir, "cap")
-        ydl_opts = _build_ydl_opts(output_tmpl, url)
+        ydl_opts, cookie_file = _build_ydl_opts(output_tmpl, url)
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=True)
         except Exception as e:
+            if BasePlatform.detect(url) == "bilibili" and BasePlatform.is_bilibili_access_blocked(e):
+                raise PlatformAccessError(
+                    BILIBILI_ACCESS_BLOCKED_CODE,
+                    BILIBILI_ACCESS_BLOCKED_MESSAGE,
+                ) from e
             raise RuntimeError(f"yt-dlp extraction failed: {e}") from e
+        finally:
+            BasePlatform.cleanup_cookie_file(cookie_file)
 
-        # 1. Try to read downloaded VTT/SRT file
-        segments = _read_subtitle_file(tmpdir)
+        # 1. Prefer ordered parsing from the info dict.
+        segments = _parse_from_info(info)
 
-        # 2. Fall back to parsing from info dict (json3 format)
+        # 2. Fall back to downloaded subtitle files if the extractor did not inline data.
         if not segments:
-            segments = _parse_from_info(info)
+            segments = _read_subtitle_file(tmpdir)
 
         # 3. Try TikTok text stickers from metadata
         stickers = _extract_tiktok_stickers(info)
@@ -71,49 +83,47 @@ def extract_captions(url: str) -> list[dict]:
 
 # ── yt-dlp options ────────────────────────────────────────────────────────────
 
-def _build_ydl_opts(output_tmpl: str, url: str) -> dict:
+def _build_ydl_opts(output_tmpl: str, url: str) -> tuple[dict, str | None]:
     opts: dict = {
         "skip_download":   True,
         "writeautosub":    True,
         "writesubtitles":  True,
         "subtitlesformat": "vtt",
-        "subtitleslangs":  ["en", "en-US", "en-orig", "en-GB"],
+        "subtitleslangs":  ["all"],
         "outtmpl":         output_tmpl,
         "quiet":           True,
         "no_warnings":     True,
-        "http_headers": {
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            ),
-        },
+        "http_headers":    dict(BasePlatform.BROWSER_HEADERS),
     }
 
+    cookie_file = None
+    platform = BasePlatform.detect(url)
+
     # Inject cookies if available (needed for some TikTok / YouTube age-restricted)
-    if "tiktok.com" in url:
-        _inject_cookie(opts, "TIKTOK_COOKIES")
-    elif "youtube.com" in url or "youtu.be" in url:
-        _inject_cookie(opts, "YOUTUBE_COOKIES")
+    if platform == "tiktok":
+        cookie_file = _inject_cookie(opts, "TIKTOK_COOKIES")
+    elif platform == "youtube":
+        cookie_file = _inject_cookie(opts, "YOUTUBE_COOKIES")
+    elif platform == "bilibili":
+        opts["http_headers"] = dict(BasePlatform.BILIBILI_HEADERS)
+        cookie_file = _inject_cookie(opts, "BILIBILI_COOKIES")
 
-    return opts
+    return opts, cookie_file
 
 
-def _inject_cookie(opts: dict, env_var: str) -> None:
-    content = os.environ.get(env_var, "").strip()
-    if not content:
-        return
-    tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="utf-8")
-    tmp.write(content.replace("\r\n", "\n").replace("\r", "\n"))
-    tmp.flush()
-    tmp.close()
-    opts["cookiefile"] = tmp.name
+def _inject_cookie(opts: dict, env_var: str) -> str | None:
+    return BasePlatform.add_cookie_file(opts, env_var)
 
 
 # ── VTT / subtitle file parsing ───────────────────────────────────────────────
 
 def _read_subtitle_file(tmpdir: str) -> list[dict]:
-    for fname in os.listdir(tmpdir):
+    subtitle_files = sorted(
+        (fname for fname in os.listdir(tmpdir) if fname.endswith((".vtt", ".srt"))),
+        key=_subtitle_file_sort_key,
+    )
+
+    for fname in subtitle_files:
         if fname.endswith(".vtt"):
             with open(os.path.join(tmpdir, fname), encoding="utf-8") as f:
                 return _parse_vtt(f.read())
@@ -169,19 +179,24 @@ def _parse_srt(content: str) -> list[dict]:
 
 def _parse_from_info(info: dict) -> list[dict]:
     """Parse captions directly from yt-dlp info dict when no file was written."""
-    for source in (info.get("subtitles", {}), info.get("automatic_captions", {})):
+    subtitles = info.get("subtitles", {}) or {}
+    automatic = info.get("automatic_captions", {}) or {}
+
+    for source, matcher in (
+        (subtitles, _is_english_lang),
+        (automatic, _is_english_lang),
+        (subtitles, _is_chinese_lang),
+        (automatic, _is_chinese_lang),
+        (subtitles, lambda _: True),
+        (automatic, lambda _: True),
+    ):
         for lang, tracks in source.items():
-            if not lang.startswith("en"):
+            if not matcher(lang):
                 continue
             for track in tracks:
-                if track.get("ext") not in ("json3", "srv3"):
-                    continue
-                try:
-                    segs = _parse_json3(track.get("data") or "")
-                    if segs:
-                        return segs
-                except Exception:
-                    pass
+                segs = _parse_track_data(track)
+                if segs:
+                    return segs
     return []
 
 
@@ -204,6 +219,48 @@ def _parse_json3(data: str) -> list[dict]:
                 "x": None, "y": None,
             })
     return segments
+
+
+def _parse_track_data(track: dict) -> list[dict]:
+    ext = (track.get("ext") or "").lower()
+    data = track.get("data") or ""
+
+    try:
+        if ext in ("json3", "srv3"):
+            return _parse_json3(data)
+        if ext == "vtt":
+            return _parse_vtt(data)
+        if ext == "srt":
+            return _parse_srt(data)
+    except Exception:
+        return []
+
+    return []
+
+
+def _is_english_lang(lang: str) -> bool:
+    return lang.lower().startswith("en")
+
+
+def _is_chinese_lang(lang: str) -> bool:
+    lang = lang.lower()
+    return lang.startswith("zh") or "chinese" in lang
+
+
+def _subtitle_file_sort_key(fname: str) -> tuple[int, str]:
+    lang = _subtitle_lang_from_filename(fname)
+    if _is_english_lang(lang):
+        return (0, fname)
+    if _is_chinese_lang(lang):
+        return (1, fname)
+    return (2, fname)
+
+
+def _subtitle_lang_from_filename(fname: str) -> str:
+    parts = fname.split(".")
+    if len(parts) < 3:
+        return ""
+    return parts[-2]
 
 
 # ── TikTok text sticker extraction ────────────────────────────────────────────
