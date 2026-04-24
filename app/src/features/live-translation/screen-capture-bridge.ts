@@ -128,7 +128,7 @@ export const ScreenCaptureBridge = {
   // ─── Caption sync (platform API) ─────────────────────────────────────────────
 
   /**
-   * Fetch pre-timed captions from the backend for a TikTok / YouTube / Instagram URL.
+   * Fetch pre-timed captions from the backend for a supported video URL.
    * Returns the raw segments in the source language — pass to [playCaptions] to translate.
    */
   async loadCaptions(url: string, apiBaseUrl: string, authToken?: string): Promise<CaptionsResponse> {
@@ -137,7 +137,11 @@ export const ScreenCaptureBridge = {
     const res = await fetch(`${apiBaseUrl}/api/v1/captions?url=${encodeURIComponent(url)}`, { headers });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      throw new Error((body as any).detail ?? `HTTP ${res.status}`);
+      const detail = (body as any).detail;
+      const message = typeof detail === "string"
+        ? detail
+        : detail?.message ?? `HTTP ${res.status}`;
+      throw new Error(message);
     }
     return res.json();
   },

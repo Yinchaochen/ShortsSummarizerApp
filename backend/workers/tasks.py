@@ -11,10 +11,26 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from celery import Celery
 from services.platforms import get_downloader
 from services.gemini import analyze_video
-from services.platforms.base import BasePlatform
+from services.platforms.base import (
+    BILIBILI_ACCESS_BLOCKED_CODE,
+    BILIBILI_ACCESS_BLOCKED_MESSAGE,
+    BasePlatform,
+    PlatformAccessError,
+)
 
 MAX_DURATION_SECONDS = 600  # 10 minutes
 MAX_FILE_SIZE_MB = 300      # Secondary guard: ~300 MB covers ~10 min at typical bitrate
+
+
+def _build_probe_opts(url: str) -> tuple[dict, str | None]:
+    opts = {"quiet": True, "no_warnings": True, "skip_download": True}
+    cookie_file = None
+
+    if BasePlatform.detect(url) == "bilibili":
+        opts["http_headers"] = dict(BasePlatform.BILIBILI_HEADERS)
+        cookie_file = BasePlatform.add_cookie_file(opts, "BILIBILI_COOKIES")
+
+    return opts, cookie_file
 
 
 def _get_video_duration(url: str) -> float | None:
@@ -22,17 +38,28 @@ def _get_video_duration(url: str) -> float | None:
     Returns None if the platform does not expose duration.
     Raises yt_dlp.utils.DownloadError on hard failures (blocked, not found).
     """
-    opts = {"quiet": True, "no_warnings": True, "skip_download": True}
-    with yt_dlp.YoutubeDL(opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-        if info is None:
-            return None
-        if info.get("_type") == "playlist":
-            entries = info.get("entries") or []
-            info = next(iter(entries), None)
+    opts, cookie_file = _build_probe_opts(url)
+
+    try:
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(url, download=False)
             if info is None:
                 return None
-        return info.get("duration")
+            if info.get("_type") == "playlist":
+                entries = info.get("entries") or []
+                info = next(iter(entries), None)
+                if info is None:
+                    return None
+            return info.get("duration")
+    except yt_dlp.utils.DownloadError as exc:
+        if BasePlatform.detect(url) == "bilibili" and BasePlatform.is_bilibili_access_blocked(exc):
+            raise PlatformAccessError(
+                BILIBILI_ACCESS_BLOCKED_CODE,
+                BILIBILI_ACCESS_BLOCKED_MESSAGE,
+            ) from exc
+        raise
+    finally:
+        BasePlatform.cleanup_cookie_file(cookie_file)
 
 
 load_dotenv(Path(__file__).parent.parent / ".env")
@@ -64,6 +91,8 @@ def summarize_video(self, url: str, language: str = "en", user_id: str | None = 
 
         try:
             duration = _get_video_duration(url)
+        except PlatformAccessError as exc:
+            raise ValueError(exc.code) from exc
         except yt_dlp.utils.DownloadError:
             duration = None
 
@@ -72,7 +101,10 @@ def summarize_video(self, url: str, language: str = "en", user_id: str | None = 
 
         self.update_state(state="PROGRESS", meta={"step": "downloading"})
         downloader = get_downloader(url)
-        downloader.download(url, tmp_path)
+        try:
+            downloader.download(url, tmp_path)
+        except PlatformAccessError as exc:
+            raise ValueError(exc.code) from exc
 
         file_size_mb = os.path.getsize(tmp_path) / (1024 * 1024)
         if file_size_mb > MAX_FILE_SIZE_MB:

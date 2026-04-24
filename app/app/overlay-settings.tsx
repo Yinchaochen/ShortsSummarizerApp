@@ -115,7 +115,7 @@ export default function OverlaySettingsScreen() {
   const handleCaptionSync = useCallback(async (urlOverride?: string) => {
     const url = (urlOverride ?? captionUrl).trim();
     if (!url) {
-      Alert.alert("No URL", "Paste a TikTok, YouTube, or Instagram video URL first.");
+      Alert.alert("No URL", "Paste a supported video URL first.");
       return;
     }
     setCaptionProgress(null);
@@ -279,7 +279,7 @@ export default function OverlaySettingsScreen() {
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Caption Sync</Text>
               <Text style={styles.cardDesc}>
-                Paste a TikTok, YouTube, or Instagram URL. Captions are fetched, translated on-device, and displayed in sync — zero delay, no OCR needed.
+                Paste a supported video URL. Captions are fetched, translated on-device, and displayed in sync — zero delay, no OCR needed.
               </Text>
 
               <Text style={styles.label}>Translate to</Text>
@@ -293,7 +293,7 @@ export default function OverlaySettingsScreen() {
                 style={[styles.input, { marginTop: 4 }]}
                 value={captionUrl}
                 onChangeText={setCaptionUrl}
-                placeholder="https://www.tiktok.com/@user/video/…"
+                placeholder="https://www.bilibili.com/video/BV..."
                 placeholderTextColor="#62666d"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -329,7 +329,9 @@ export default function OverlaySettingsScreen() {
               ) : (
                 <TouchableOpacity
                   style={[styles.button, captionStatus !== "idle" && styles.buttonDisabled]}
-                  onPress={handleCaptionSync}
+                  onPress={() => {
+                    void handleCaptionSync();
+                  }}
                   disabled={captionStatus !== "idle"}
                 >
                   {captionStatus === "fetching" || captionStatus === "translating"
