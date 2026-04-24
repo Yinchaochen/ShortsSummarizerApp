@@ -33,7 +33,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainActivity.kt",
       "source_location": "L1",
       "id": "mainactivity",
-      "community": 18
+      "community": 20
     },
     {
       "label": "MainActivity",
@@ -41,7 +41,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainActivity.kt",
       "source_location": "L15",
       "id": "mainactivity_mainactivity",
-      "community": 18
+      "community": 20
     },
     {
       "label": ".onCreate()",
@@ -49,7 +49,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainActivity.kt",
       "source_location": "L16",
       "id": "mainactivity_mainactivity_oncreate",
-      "community": 18
+      "community": 20
     },
     {
       "label": ".onNewIntent()",
@@ -57,7 +57,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainActivity.kt",
       "source_location": "L22",
       "id": "mainactivity_mainactivity_onnewintent",
-      "community": 18
+      "community": 20
     },
     {
       "label": ".handleShareIntent()",
@@ -65,7 +65,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainActivity.kt",
       "source_location": "L27",
       "id": "mainactivity_mainactivity_handleshareintent",
-      "community": 18
+      "community": 20
     },
     {
       "label": ".getMainComponentName()",
@@ -73,7 +73,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainActivity.kt",
       "source_location": "L36",
       "id": "mainactivity_mainactivity_getmaincomponentname",
-      "community": 18
+      "community": 20
     },
     {
       "label": ".createReactActivityDelegate()",
@@ -81,7 +81,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainActivity.kt",
       "source_location": "L38",
       "id": "mainactivity_mainactivity_createreactactivitydelegate",
-      "community": 18
+      "community": 20
     },
     {
       "label": ".invokeDefaultOnBackPressed()",
@@ -89,7 +89,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainActivity.kt",
       "source_location": "L49",
       "id": "mainactivity_mainactivity_invokedefaultonbackpressed",
-      "community": 18
+      "community": 20
     },
     {
       "label": "MainApplication.kt",
@@ -97,7 +97,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainApplication.kt",
       "source_location": "L1",
       "id": "mainapplication",
-      "community": 22
+      "community": 25
     },
     {
       "label": "MainApplication",
@@ -105,7 +105,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainApplication.kt",
       "source_location": "L21",
       "id": "mainapplication_mainapplication",
-      "community": 22
+      "community": 25
     },
     {
       "label": "getPackages()",
@@ -113,7 +113,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainApplication.kt",
       "source_location": "L26",
       "id": "mainapplication_getpackages",
-      "community": 22
+      "community": 25
     },
     {
       "label": "getJSMainModuleName()",
@@ -121,7 +121,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainApplication.kt",
       "source_location": "L32",
       "id": "mainapplication_getjsmainmodulename",
-      "community": 22
+      "community": 25
     },
     {
       "label": "getUseDeveloperSupport()",
@@ -129,7 +129,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainApplication.kt",
       "source_location": "L34",
       "id": "mainapplication_getusedevelopersupport",
-      "community": 22
+      "community": 25
     },
     {
       "label": ".onCreate()",
@@ -137,7 +137,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainApplication.kt",
       "source_location": "L43",
       "id": "mainapplication_mainapplication_oncreate",
-      "community": 22
+      "community": 25
     },
     {
       "label": ".onConfigurationChanged()",
@@ -145,7 +145,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\MainApplication.kt",
       "source_location": "L54",
       "id": "mainapplication_mainapplication_onconfigurationchanged",
-      "community": 22
+      "community": 25
     },
     {
       "label": "BubbleActivity.kt",
@@ -153,7 +153,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubbleActivity.kt",
       "source_location": "L1",
       "id": "bubbleactivity",
-      "community": 28
+      "community": 31
     },
     {
       "label": "BubbleActivity",
@@ -161,7 +161,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubbleActivity.kt",
       "source_location": "L17",
       "id": "bubbleactivity_bubbleactivity",
-      "community": 28
+      "community": 31
     },
     {
       "label": ".onCreate()",
@@ -169,7 +169,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubbleActivity.kt",
       "source_location": "L27",
       "id": "bubbleactivity_bubbleactivity_oncreate",
-      "community": 28
+      "community": 31
     },
     {
       "label": ".buildTranslationView()",
@@ -177,7 +177,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubbleActivity.kt",
       "source_location": "L49",
       "id": "bubbleactivity_bubbleactivity_buildtranslationview",
-      "community": 28
+      "community": 31
     },
     {
       "label": ".buildPetView()",
@@ -185,7 +185,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubbleActivity.kt",
       "source_location": "L67",
       "id": "bubbleactivity_bubbleactivity_buildpetview",
-      "community": 28
+      "community": 31
     },
     {
       "label": "BubbleModule.kt",
@@ -345,7 +345,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubblePackage.kt",
       "source_location": "L1",
       "id": "bubblepackage",
-      "community": 32
+      "community": 35
     },
     {
       "label": "BubblePackage",
@@ -353,7 +353,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubblePackage.kt",
       "source_location": "L7",
       "id": "bubblepackage_bubblepackage",
-      "community": 32
+      "community": 35
     },
     {
       "label": ".createNativeModules()",
@@ -361,7 +361,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubblePackage.kt",
       "source_location": "L8",
       "id": "bubblepackage_bubblepackage_createnativemodules",
-      "community": 32
+      "community": 35
     },
     {
       "label": ".createViewManagers()",
@@ -369,7 +369,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\bubble\\BubblePackage.kt",
       "source_location": "L11",
       "id": "bubblepackage_bubblepackage_createviewmanagers",
-      "community": 32
+      "community": 35
     },
     {
       "label": "CaptionSyncManager.kt",
@@ -377,7 +377,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\CaptionSyncManager.kt",
       "source_location": "L1",
       "id": "captionsyncmanager",
-      "community": 19
+      "community": 21
     },
     {
       "label": "CaptionSyncManager",
@@ -385,7 +385,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\CaptionSyncManager.kt",
       "source_location": "L20",
       "id": "captionsyncmanager_captionsyncmanager",
-      "community": 19
+      "community": 21
     },
     {
       "label": "CaptionSegment",
@@ -393,7 +393,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\CaptionSyncManager.kt",
       "source_location": "L25",
       "id": "captionsyncmanager_captionsegment",
-      "community": 19
+      "community": 21
     },
     {
       "label": ".load()",
@@ -401,7 +401,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\CaptionSyncManager.kt",
       "source_location": "L48",
       "id": "captionsyncmanager_captionsyncmanager_load",
-      "community": 19
+      "community": 21
     },
     {
       "label": ".start()",
@@ -409,7 +409,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\CaptionSyncManager.kt",
       "source_location": "L56",
       "id": "captionsyncmanager_captionsyncmanager_start",
-      "community": 19
+      "community": 21
     },
     {
       "label": ".stop()",
@@ -417,7 +417,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\CaptionSyncManager.kt",
       "source_location": "L68",
       "id": "captionsyncmanager_captionsyncmanager_stop",
-      "community": 19
+      "community": 21
     },
     {
       "label": "run()",
@@ -425,7 +425,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\CaptionSyncManager.kt",
       "source_location": "L81",
       "id": "captionsyncmanager_run",
-      "community": 19
+      "community": 21
     },
     {
       "label": ".toRenderedSubtitle()",
@@ -433,7 +433,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\CaptionSyncManager.kt",
       "source_location": "L105",
       "id": "captionsyncmanager_captionsyncmanager_torenderedsubtitle",
-      "community": 19
+      "community": 21
     },
     {
       "label": "CloudStreamingTranslator.kt",
@@ -521,7 +521,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\FrameDiffSampler.kt",
       "source_location": "L1",
       "id": "framediffsampler",
-      "community": 33
+      "community": 36
     },
     {
       "label": "FrameDiffSampler",
@@ -529,7 +529,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\FrameDiffSampler.kt",
       "source_location": "L20",
       "id": "framediffsampler_framediffsampler",
-      "community": 33
+      "community": 36
     },
     {
       "label": ".shouldProcess()",
@@ -537,7 +537,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\FrameDiffSampler.kt",
       "source_location": "L28",
       "id": "framediffsampler_framediffsampler_shouldprocess",
-      "community": 33
+      "community": 36
     },
     {
       "label": ".luminanceDiff()",
@@ -545,7 +545,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\FrameDiffSampler.kt",
       "source_location": "L61",
       "id": "framediffsampler_framediffsampler_luminancediff",
-      "community": 33
+      "community": 36
     },
     {
       "label": "IAsrEngine.kt",
@@ -633,7 +633,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ICaptureEngine.kt",
       "source_location": "L1",
       "id": "icaptureengine",
-      "community": 23
+      "community": 26
     },
     {
       "label": "ICaptureEngine",
@@ -641,7 +641,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ICaptureEngine.kt",
       "source_location": "L14",
       "id": "icaptureengine_icaptureengine",
-      "community": 23
+      "community": 26
     },
     {
       "label": ".start()",
@@ -649,7 +649,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ICaptureEngine.kt",
       "source_location": "L15",
       "id": "icaptureengine_icaptureengine_start",
-      "community": 23
+      "community": 26
     },
     {
       "label": ".stop()",
@@ -657,7 +657,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ICaptureEngine.kt",
       "source_location": "L16",
       "id": "icaptureengine_icaptureengine_stop",
-      "community": 23
+      "community": 26
     },
     {
       "label": ".setFrameCallback()",
@@ -665,7 +665,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ICaptureEngine.kt",
       "source_location": "L19",
       "id": "icaptureengine_icaptureengine_setframecallback",
-      "community": 23
+      "community": 26
     },
     {
       "label": ".setAudioCallback()",
@@ -673,7 +673,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ICaptureEngine.kt",
       "source_location": "L22",
       "id": "icaptureengine_icaptureengine_setaudiocallback",
-      "community": 23
+      "community": 26
     },
     {
       "label": ".release()",
@@ -681,7 +681,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ICaptureEngine.kt",
       "source_location": "L24",
       "id": "icaptureengine_icaptureengine_release",
-      "community": 23
+      "community": 26
     },
     {
       "label": "IFrameSampler.kt",
@@ -689,7 +689,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IFrameSampler.kt",
       "source_location": "L1",
       "id": "iframesampler",
-      "community": 36
+      "community": 39
     },
     {
       "label": "IFrameSampler",
@@ -697,7 +697,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IFrameSampler.kt",
       "source_location": "L14",
       "id": "iframesampler_iframesampler",
-      "community": 36
+      "community": 39
     },
     {
       "label": ".shouldProcess()",
@@ -705,7 +705,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IFrameSampler.kt",
       "source_location": "L19",
       "id": "iframesampler_iframesampler_shouldprocess",
-      "community": 36
+      "community": 39
     },
     {
       "label": "IInpainter.kt",
@@ -713,7 +713,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IInpainter.kt",
       "source_location": "L1",
       "id": "iinpainter",
-      "community": 29
+      "community": 32
     },
     {
       "label": "IInpainter",
@@ -721,7 +721,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IInpainter.kt",
       "source_location": "L19",
       "id": "iinpainter_iinpainter",
-      "community": 29
+      "community": 32
     },
     {
       "label": ".inpaint()",
@@ -729,7 +729,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IInpainter.kt",
       "source_location": "L24",
       "id": "iinpainter_iinpainter_inpaint",
-      "community": 29
+      "community": 32
     },
     {
       "label": ".updateBackground()",
@@ -737,7 +737,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IInpainter.kt",
       "source_location": "L33",
       "id": "iinpainter_iinpainter_updatebackground",
-      "community": 29
+      "community": 32
     },
     {
       "label": ".release()",
@@ -745,7 +745,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IInpainter.kt",
       "source_location": "L35",
       "id": "iinpainter_iinpainter_release",
-      "community": 29
+      "community": 32
     },
     {
       "label": "IOcrEngine.kt",
@@ -753,7 +753,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IOcrEngine.kt",
       "source_location": "L1",
       "id": "iocrengine",
-      "community": 34
+      "community": 37
     },
     {
       "label": "IOcrEngine",
@@ -761,7 +761,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IOcrEngine.kt",
       "source_location": "L14",
       "id": "iocrengine_iocrengine",
-      "community": 34
+      "community": 37
     },
     {
       "label": ".detect()",
@@ -769,7 +769,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IOcrEngine.kt",
       "source_location": "L19",
       "id": "iocrengine_iocrengine_detect",
-      "community": 34
+      "community": 37
     },
     {
       "label": ".release()",
@@ -777,7 +777,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\IOcrEngine.kt",
       "source_location": "L21",
       "id": "iocrengine_iocrengine_release",
-      "community": 34
+      "community": 37
     },
     {
       "label": "ISubtitleRenderer.kt",
@@ -785,7 +785,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ISubtitleRenderer.kt",
       "source_location": "L1",
       "id": "isubtitlerenderer",
-      "community": 24
+      "community": 27
     },
     {
       "label": "ISubtitleRenderer",
@@ -793,7 +793,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ISubtitleRenderer.kt",
       "source_location": "L12",
       "id": "isubtitlerenderer_isubtitlerenderer",
-      "community": 24
+      "community": 27
     },
     {
       "label": ".show()",
@@ -801,7 +801,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ISubtitleRenderer.kt",
       "source_location": "L14",
       "id": "isubtitlerenderer_isubtitlerenderer_show",
-      "community": 24
+      "community": 27
     },
     {
       "label": ".update()",
@@ -809,7 +809,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ISubtitleRenderer.kt",
       "source_location": "L20",
       "id": "isubtitlerenderer_isubtitlerenderer_update",
-      "community": 24
+      "community": 27
     },
     {
       "label": ".updateAudioBar()",
@@ -817,7 +817,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ISubtitleRenderer.kt",
       "source_location": "L26",
       "id": "isubtitlerenderer_isubtitlerenderer_updateaudiobar",
-      "community": 24
+      "community": 27
     },
     {
       "label": ".hide()",
@@ -825,7 +825,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ISubtitleRenderer.kt",
       "source_location": "L29",
       "id": "isubtitlerenderer_isubtitlerenderer_hide",
-      "community": 24
+      "community": 27
     },
     {
       "label": ".release()",
@@ -833,7 +833,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ISubtitleRenderer.kt",
       "source_location": "L31",
       "id": "isubtitlerenderer_isubtitlerenderer_release",
-      "community": 24
+      "community": 27
     },
     {
       "label": "ITranslator.kt",
@@ -841,7 +841,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ITranslator.kt",
       "source_location": "L1",
       "id": "itranslator",
-      "community": 30
+      "community": 33
     },
     {
       "label": "ITranslator",
@@ -849,7 +849,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ITranslator.kt",
       "source_location": "L14",
       "id": "itranslator_itranslator",
-      "community": 30
+      "community": 33
     },
     {
       "label": ".translate()",
@@ -857,7 +857,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ITranslator.kt",
       "source_location": "L33",
       "id": "itranslator_itranslator_translate",
-      "community": 30
+      "community": 33
     },
     {
       "label": ".cancel()",
@@ -865,7 +865,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ITranslator.kt",
       "source_location": "L43",
       "id": "itranslator_itranslator_cancel",
-      "community": 30
+      "community": 33
     },
     {
       "label": ".release()",
@@ -873,7 +873,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ITranslator.kt",
       "source_location": "L45",
       "id": "itranslator_itranslator_release",
-      "community": 30
+      "community": 33
     },
     {
       "label": "LiveTranslationOrchestrator.kt",
@@ -1041,7 +1041,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\MLKitOcrEngine.kt",
       "source_location": "L1",
       "id": "mlkitocrengine",
-      "community": 25
+      "community": 28
     },
     {
       "label": "MLKitOcrEngine",
@@ -1049,7 +1049,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\MLKitOcrEngine.kt",
       "source_location": "L31",
       "id": "mlkitocrengine_mlkitocrengine",
-      "community": 25
+      "community": 28
     },
     {
       "label": "Script",
@@ -1057,7 +1057,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\MLKitOcrEngine.kt",
       "source_location": "L33",
       "id": "mlkitocrengine_script",
-      "community": 25
+      "community": 28
     },
     {
       "label": ".detect()",
@@ -1065,7 +1065,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\MLKitOcrEngine.kt",
       "source_location": "L45",
       "id": "mlkitocrengine_mlkitocrengine_detect",
-      "community": 25
+      "community": 28
     },
     {
       "label": ".release()",
@@ -1073,7 +1073,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\MLKitOcrEngine.kt",
       "source_location": "L62",
       "id": "mlkitocrengine_mlkitocrengine_release",
-      "community": 25
+      "community": 28
     },
     {
       "label": ".filterChrome()",
@@ -1081,7 +1081,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\MLKitOcrEngine.kt",
       "source_location": "L76",
       "id": "mlkitocrengine_mlkitocrengine_filterchrome",
-      "community": 25
+      "community": 28
     },
     {
       "label": "await()",
@@ -1089,7 +1089,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\MLKitOcrEngine.kt",
       "source_location": "L95",
       "id": "mlkitocrengine_await",
-      "community": 25
+      "community": 28
     },
     {
       "label": "MLKitTranslator.kt",
@@ -1177,7 +1177,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\Models.kt",
       "source_location": "L1",
       "id": "models",
-      "community": 27
+      "community": 30
     },
     {
       "label": "CaptureConfig",
@@ -1185,7 +1185,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\Models.kt",
       "source_location": "L8",
       "id": "models_captureconfig",
-      "community": 27
+      "community": 30
     },
     {
       "label": "PCMChunk",
@@ -1193,7 +1193,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\Models.kt",
       "source_location": "L15",
       "id": "models_pcmchunk",
-      "community": 27
+      "community": 30
     },
     {
       "label": "TextBlock",
@@ -1201,7 +1201,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\Models.kt",
       "source_location": "L22",
       "id": "models_textblock",
-      "community": 27
+      "community": 30
     },
     {
       "label": "SessionConfig",
@@ -1209,7 +1209,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\Models.kt",
       "source_location": "L30",
       "id": "models_sessionconfig",
-      "community": 27
+      "community": 30
     },
     {
       "label": "RenderedSubtitle",
@@ -1217,7 +1217,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\Models.kt",
       "source_location": "L44",
       "id": "models_renderedsubtitle",
-      "community": 27
+      "community": 30
     },
     {
       "label": "PositionalOverlayRenderer.kt",
@@ -1305,7 +1305,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L1",
       "id": "positionaloverlayview",
-      "community": 17
+      "community": 18
     },
     {
       "label": "PositionalOverlayView",
@@ -1313,7 +1313,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L26",
       "id": "positionaloverlayview_positionaloverlayview",
-      "community": 17
+      "community": 18
     },
     {
       "label": "TranslatedBlock",
@@ -1321,7 +1321,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L36",
       "id": "positionaloverlayview_translatedblock",
-      "community": 17
+      "community": 18
     },
     {
       "label": ".show()",
@@ -1329,7 +1329,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L79",
       "id": "positionaloverlayview_positionaloverlayview_show",
-      "community": 17
+      "community": 18
     },
     {
       "label": ".update()",
@@ -1337,7 +1337,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L97",
       "id": "positionaloverlayview_positionaloverlayview_update",
-      "community": 17
+      "community": 18
     },
     {
       "label": ".updateSubtitleBar()",
@@ -1345,7 +1345,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L112",
       "id": "positionaloverlayview_positionaloverlayview_updatesubtitlebar",
-      "community": 17
+      "community": 18
     },
     {
       "label": ".hide()",
@@ -1353,7 +1353,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L129",
       "id": "positionaloverlayview_positionaloverlayview_hide",
-      "community": 17
+      "community": 18
     },
     {
       "label": ".buildSubtitleBar()",
@@ -1361,7 +1361,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L141",
       "id": "positionaloverlayview_positionaloverlayview_buildsubtitlebar",
-      "community": 17
+      "community": 18
     },
     {
       "label": ".buildBubble()",
@@ -1369,7 +1369,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\PositionalOverlayView.kt",
       "source_location": "L172",
       "id": "positionaloverlayview_positionaloverlayview_buildbubble",
-      "community": 17
+      "community": 18
     },
     {
       "label": "ScreenCaptureModule.kt",
@@ -1529,7 +1529,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ScreenCapturePackage.kt",
       "source_location": "L1",
       "id": "screencapturepackage",
-      "community": 35
+      "community": 38
     },
     {
       "label": "ScreenCapturePackage",
@@ -1537,7 +1537,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ScreenCapturePackage.kt",
       "source_location": "L8",
       "id": "screencapturepackage_screencapturepackage",
-      "community": 35
+      "community": 38
     },
     {
       "label": ".createNativeModules()",
@@ -1545,7 +1545,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ScreenCapturePackage.kt",
       "source_location": "L9",
       "id": "screencapturepackage_screencapturepackage_createnativemodules",
-      "community": 35
+      "community": 38
     },
     {
       "label": ".createViewManagers()",
@@ -1553,7 +1553,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\ScreenCapturePackage.kt",
       "source_location": "L13",
       "id": "screencapturepackage_screencapturepackage_createviewmanagers",
-      "community": 35
+      "community": 38
     },
     {
       "label": "ScreenCaptureService.kt",
@@ -1745,7 +1745,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaAsrManager.kt",
       "source_location": "L1",
       "id": "sherpaasrmanager",
-      "community": 26
+      "community": 29
     },
     {
       "label": "SherpaAsrManager",
@@ -1753,7 +1753,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaAsrManager.kt",
       "source_location": "L13",
       "id": "sherpaasrmanager_sherpaasrmanager",
-      "community": 26
+      "community": 29
     },
     {
       "label": ".isReady()",
@@ -1761,7 +1761,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaAsrManager.kt",
       "source_location": "L25",
       "id": "sherpaasrmanager_sherpaasrmanager_isready",
-      "community": 26
+      "community": 29
     },
     {
       "label": ".init()",
@@ -1769,7 +1769,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaAsrManager.kt",
       "source_location": "L27",
       "id": "sherpaasrmanager_sherpaasrmanager_init",
-      "community": 26
+      "community": 29
     },
     {
       "label": ".acceptWaveform()",
@@ -1777,7 +1777,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaAsrManager.kt",
       "source_location": "L67",
       "id": "sherpaasrmanager_sherpaasrmanager_acceptwaveform",
-      "community": 26
+      "community": 29
     },
     {
       "label": ".flush()",
@@ -1785,7 +1785,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaAsrManager.kt",
       "source_location": "L86",
       "id": "sherpaasrmanager_sherpaasrmanager_flush",
-      "community": 26
+      "community": 29
     },
     {
       "label": ".close()",
@@ -1793,7 +1793,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaAsrManager.kt",
       "source_location": "L95",
       "id": "sherpaasrmanager_sherpaasrmanager_close",
-      "community": 26
+      "community": 29
     },
     {
       "label": "SherpaModelManager.kt",
@@ -1801,7 +1801,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaModelManager.kt",
       "source_location": "L1",
       "id": "sherpamodelmanager",
-      "community": 20
+      "community": 22
     },
     {
       "label": "SherpaModelManager",
@@ -1809,7 +1809,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaModelManager.kt",
       "source_location": "L20",
       "id": "sherpamodelmanager_sherpamodelmanager",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".areModelsReady()",
@@ -1817,7 +1817,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaModelManager.kt",
       "source_location": "L50",
       "id": "sherpamodelmanager_sherpamodelmanager_aremodelsready",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".isNonEmpty()",
@@ -1825,7 +1825,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaModelManager.kt",
       "source_location": "L54",
       "id": "sherpamodelmanager_sherpamodelmanager_isnonempty",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".downloadModels()",
@@ -1833,7 +1833,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaModelManager.kt",
       "source_location": "L63",
       "id": "sherpamodelmanager_sherpamodelmanager_downloadmodels",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".estimatedMb()",
@@ -1841,7 +1841,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaModelManager.kt",
       "source_location": "L98",
       "id": "sherpamodelmanager_sherpamodelmanager_estimatedmb",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".downloadFile()",
@@ -1849,7 +1849,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaModelManager.kt",
       "source_location": "L105",
       "id": "sherpamodelmanager_sherpamodelmanager_downloadfile",
-      "community": 20
+      "community": 22
     },
     {
       "label": ".cancel()",
@@ -1857,7 +1857,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\SherpaModelManager.kt",
       "source_location": "L124",
       "id": "sherpamodelmanager_sherpamodelmanager_cancel",
-      "community": 20
+      "community": 22
     },
     {
       "label": "TemporalBackgroundInpainter.kt",
@@ -1865,7 +1865,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\TemporalBackgroundInpainter.kt",
       "source_location": "L1",
       "id": "temporalbackgroundinpainter",
-      "community": 21
+      "community": 23
     },
     {
       "label": "TemporalBackgroundInpainter",
@@ -1873,7 +1873,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\TemporalBackgroundInpainter.kt",
       "source_location": "L30",
       "id": "temporalbackgroundinpainter_temporalbackgroundinpainter",
-      "community": 21
+      "community": 23
     },
     {
       "label": ".updateBackground()",
@@ -1881,7 +1881,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\TemporalBackgroundInpainter.kt",
       "source_location": "L45",
       "id": "temporalbackgroundinpainter_temporalbackgroundinpainter_updatebackground",
-      "community": 21
+      "community": 23
     },
     {
       "label": ".inpaint()",
@@ -1889,7 +1889,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\TemporalBackgroundInpainter.kt",
       "source_location": "L88",
       "id": "temporalbackgroundinpainter_temporalbackgroundinpainter_inpaint",
-      "community": 21
+      "community": 23
     },
     {
       "label": ".sampleColor()",
@@ -1897,7 +1897,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\TemporalBackgroundInpainter.kt",
       "source_location": "L124",
       "id": "temporalbackgroundinpainter_temporalbackgroundinpainter_samplecolor",
-      "community": 21
+      "community": 23
     },
     {
       "label": ".release()",
@@ -1905,7 +1905,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\TemporalBackgroundInpainter.kt",
       "source_location": "L148",
       "id": "temporalbackgroundinpainter_temporalbackgroundinpainter_release",
-      "community": 21
+      "community": 23
     },
     {
       "label": ".isInsideAny()",
@@ -1913,7 +1913,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\TemporalBackgroundInpainter.kt",
       "source_location": "L156",
       "id": "temporalbackgroundinpainter_temporalbackgroundinpainter_isinsideany",
-      "community": 21
+      "community": 23
     },
     {
       "label": "Array5",
@@ -1921,7 +1921,7 @@
       "source_file": "app\\android\\app\\src\\main\\java\\com\\uchia\\capture\\TemporalBackgroundInpainter.kt",
       "source_location": "L162",
       "id": "temporalbackgroundinpainter_array5",
-      "community": 21
+      "community": 23
     },
     {
       "label": "formatTimeUntil()",
@@ -1985,7 +1985,7 @@
       "source_file": "app\\app\\privacy.tsx",
       "source_location": "L1",
       "id": "privacy",
-      "community": 42
+      "community": 45
     },
     {
       "label": "result.tsx",
@@ -2033,7 +2033,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L69",
       "id": "index_screencapturelivetranslation",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".isAvailable()",
@@ -2041,7 +2041,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L71",
       "id": "index_screencapturelivetranslation_isavailable",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".requestPermissions()",
@@ -2049,7 +2049,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L75",
       "id": "index_screencapturelivetranslation_requestpermissions",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".start()",
@@ -2057,7 +2057,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L84",
       "id": "index_screencapturelivetranslation_start",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".stop()",
@@ -2065,7 +2065,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L89",
       "id": "index_screencapturelivetranslation_stop",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".isRunning()",
@@ -2073,7 +2073,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L93",
       "id": "index_screencapturelivetranslation_isrunning",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".onSubtitle()",
@@ -2081,7 +2081,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L97",
       "id": "index_screencapturelivetranslation_onsubtitle",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".areAsrModelsReady()",
@@ -2089,7 +2089,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L101",
       "id": "index_screencapturelivetranslation_areasrmodelsready",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".downloadAsrModels()",
@@ -2097,7 +2097,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L105",
       "id": "index_screencapturelivetranslation_downloadasrmodels",
-      "community": 0
+      "community": 17
     },
     {
       "label": ".onAsrModelDownloadProgress()",
@@ -2105,7 +2105,7 @@
       "source_file": "app\\src\\features\\live-translation\\index.ts",
       "source_location": "L109",
       "id": "index_screencapturelivetranslation_onasrmodeldownloadprogress",
-      "community": 0
+      "community": 17
     },
     {
       "label": "getLiveTranslation()",
@@ -2329,7 +2329,7 @@
       "source_file": "backend\\main.py",
       "source_location": "L1",
       "id": "main",
-      "community": 39
+      "community": 42
     },
     {
       "label": "health()",
@@ -2337,7 +2337,7 @@
       "source_file": "backend\\main.py",
       "source_location": "L29",
       "id": "main_health",
-      "community": 39
+      "community": 42
     },
     {
       "label": "test.py",
@@ -2345,7 +2345,7 @@
       "source_file": "backend\\test.py",
       "source_location": "L1",
       "id": "test",
-      "community": 43
+      "community": 46
     },
     {
       "label": "test_api.py",
@@ -2545,7 +2545,7 @@
       "source_file": "backend\\api\\routes\\jobs.py",
       "source_location": "L1",
       "id": "jobs",
-      "community": 40
+      "community": 43
     },
     {
       "label": "get_job()",
@@ -2553,7 +2553,7 @@
       "source_file": "backend\\api\\routes\\jobs.py",
       "source_location": "L22",
       "id": "jobs_get_job",
-      "community": 40
+      "community": 43
     },
     {
       "label": "summarize.py",
@@ -2593,7 +2593,7 @@
       "source_file": "backend\\api\\routes\\usage.py",
       "source_location": "L1",
       "id": "usage",
-      "community": 41
+      "community": 44
     },
     {
       "label": "get_usage()",
@@ -2601,7 +2601,7 @@
       "source_file": "backend\\api\\routes\\usage.py",
       "source_location": "L10",
       "id": "usage_get_usage",
-      "community": 41
+      "community": 44
     },
     {
       "label": "extract_captions()",
@@ -2817,39 +2817,39 @@
       "source_file": "backend\\services\\gemini.py",
       "source_location": "L1",
       "id": "gemini",
-      "community": 31
+      "community": 34
     },
     {
       "label": "_parse_gemini_response()",
       "file_type": "code",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L100",
+      "source_location": "L104",
       "id": "gemini_parse_gemini_response",
-      "community": 31
+      "community": 34
     },
     {
       "label": "analyze_video()",
       "file_type": "code",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L127",
+      "source_location": "L131",
       "id": "gemini_analyze_video",
-      "community": 31
+      "community": 34
     },
     {
       "label": "Parse Gemini JSON response, falling back gracefully if not valid JSON.",
       "file_type": "rationale",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L101",
-      "id": "gemini_rationale_101",
-      "community": 31
+      "source_location": "L105",
+      "id": "gemini_rationale_105",
+      "community": 34
     },
     {
       "label": "Upload video to Gemini, return structured result with summary + AI detection.",
       "file_type": "rationale",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L128",
-      "id": "gemini_rationale_128",
-      "community": 31
+      "source_location": "L132",
+      "id": "gemini_rationale_132",
+      "community": 34
     },
     {
       "label": "supabase_client.py",
@@ -2988,6 +2988,78 @@
       "community": 7
     },
     {
+      "label": "video_prep.py",
+      "file_type": "code",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L1",
+      "id": "video_prep",
+      "community": 19
+    },
+    {
+      "label": "prepare_video_for_analysis()",
+      "file_type": "code",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L16",
+      "id": "video_prep_prepare_video_for_analysis",
+      "community": 19
+    },
+    {
+      "label": "_safe_getsize()",
+      "file_type": "code",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L68",
+      "id": "video_prep_safe_getsize",
+      "community": 19
+    },
+    {
+      "label": "_should_attempt_compression()",
+      "file_type": "code",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L75",
+      "id": "video_prep_should_attempt_compression",
+      "community": 19
+    },
+    {
+      "label": "_should_use_compressed_file()",
+      "file_type": "code",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L79",
+      "id": "video_prep_should_use_compressed_file",
+      "community": 19
+    },
+    {
+      "label": "_build_compressed_path()",
+      "file_type": "code",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L90",
+      "id": "video_prep_build_compressed_path",
+      "community": 19
+    },
+    {
+      "label": "_build_ffmpeg_command()",
+      "file_type": "code",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L95",
+      "id": "video_prep_build_ffmpeg_command",
+      "community": 19
+    },
+    {
+      "label": "_cleanup()",
+      "file_type": "code",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L129",
+      "id": "video_prep_cleanup",
+      "community": 19
+    },
+    {
+      "label": "Return the path that should be uploaded to Gemini.      If compression is worthw",
+      "file_type": "rationale",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L17",
+      "id": "video_prep_rationale_17",
+      "community": 19
+    },
+    {
       "label": "base.py",
       "file_type": "code",
       "source_file": "backend\\services\\platforms\\base.py",
@@ -3089,7 +3161,7 @@
       "source_file": "backend\\services\\platforms\\base.py",
       "source_location": "L39",
       "id": "base_rationale_39",
-      "community": 44
+      "community": 47
     },
     {
       "label": "Return the platform name for a given URL.",
@@ -3097,7 +3169,7 @@
       "source_file": "backend\\services\\platforms\\base.py",
       "source_location": "L44",
       "id": "base_rationale_44",
-      "community": 45
+      "community": 48
     },
     {
       "label": "bilibili.py",
@@ -3113,7 +3185,7 @@
       "source_file": "backend\\services\\platforms\\bilibili.py",
       "source_location": "L11",
       "id": "bilibili_bilibiliplatform",
-      "community": 1
+      "community": 2
     },
     {
       "label": "BasePlatform",
@@ -3129,7 +3201,7 @@
       "source_file": "backend\\services\\platforms\\bilibili.py",
       "source_location": "L14",
       "id": "bilibili_bilibiliplatform_download",
-      "community": 1
+      "community": 2
     },
     {
       "label": "Bilibili video downloader (yt-dlp + cookies when required).",
@@ -3137,7 +3209,7 @@
       "source_file": "backend\\services\\platforms\\bilibili.py",
       "source_location": "L12",
       "id": "bilibili_rationale_12",
-      "community": 1
+      "community": 2
     },
     {
       "label": "instagram.py",
@@ -3380,6 +3452,70 @@
       "community": 3
     },
     {
+      "label": "test_video_prep.py",
+      "file_type": "code",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L1",
+      "id": "test_video_prep",
+      "community": 24
+    },
+    {
+      "label": "VideoPreparationTests",
+      "file_type": "code",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L18",
+      "id": "test_video_prep_videopreparationtests",
+      "community": 24
+    },
+    {
+      "label": ".test_skips_compression_for_small_files()",
+      "file_type": "code",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L19",
+      "id": "test_video_prep_videopreparationtests_test_skips_compression_for_small_files",
+      "community": 24
+    },
+    {
+      "label": ".test_attempts_compression_for_large_files()",
+      "file_type": "code",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L23",
+      "id": "test_video_prep_videopreparationtests_test_attempts_compression_for_large_files",
+      "community": 24
+    },
+    {
+      "label": ".test_uses_compressed_file_when_it_hits_target_size()",
+      "file_type": "code",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L27",
+      "id": "test_video_prep_videopreparationtests_test_uses_compressed_file_when_it_hits_target_size",
+      "community": 24
+    },
+    {
+      "label": ".test_uses_compressed_file_when_it_is_significantly_smaller()",
+      "file_type": "code",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L32",
+      "id": "test_video_prep_videopreparationtests_test_uses_compressed_file_when_it_is_significantly_smaller",
+      "community": 24
+    },
+    {
+      "label": ".test_rejects_compressed_file_when_savings_are_too_small()",
+      "file_type": "code",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L37",
+      "id": "test_video_prep_videopreparationtests_test_rejects_compressed_file_when_savings_are_too_small",
+      "community": 24
+    },
+    {
+      "label": ".test_builds_sibling_compressed_path()",
+      "file_type": "code",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L42",
+      "id": "test_video_prep_videopreparationtests_test_builds_sibling_compressed_path",
+      "community": 24
+    },
+    {
       "label": "tasks.py",
       "file_type": "code",
       "source_file": "backend\\workers\\tasks.py",
@@ -3433,7 +3569,7 @@
       "source_file": "scripts\\export_cookies.py",
       "source_location": "L1",
       "id": "export_cookies",
-      "community": 37
+      "community": 40
     },
     {
       "label": "to_netscape()",
@@ -3441,7 +3577,7 @@
       "source_file": "scripts\\export_cookies.py",
       "source_location": "L21",
       "id": "export_cookies_to_netscape",
-      "community": 37
+      "community": 40
     },
     {
       "label": "main()",
@@ -3449,7 +3585,7 @@
       "source_file": "scripts\\export_cookies.py",
       "source_location": "L33",
       "id": "export_cookies_main",
-      "community": 37
+      "community": 40
     },
     {
       "label": "generate_translations.py",
@@ -3553,7 +3689,7 @@
       "source_file": "scripts\\update_railway_env.py",
       "source_location": "L1",
       "id": "update_railway_env",
-      "community": 38
+      "community": 41
     },
     {
       "label": "upsert_variable()",
@@ -3561,7 +3697,7 @@
       "source_file": "scripts\\update_railway_env.py",
       "source_location": "L31",
       "id": "update_railway_env_upsert_variable",
-      "community": 38
+      "community": 41
     },
     {
       "label": "main()",
@@ -3569,7 +3705,7 @@
       "source_file": "scripts\\update_railway_env.py",
       "source_location": "L65",
       "id": "update_railway_env_main",
-      "community": 38
+      "community": 41
     }
   ],
   "links": [
@@ -8389,7 +8525,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L100",
+      "source_location": "L104",
       "weight": 1.0,
       "_src": "gemini",
       "_tgt": "gemini_parse_gemini_response",
@@ -8401,7 +8537,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L127",
+      "source_location": "L131",
       "weight": 1.0,
       "_src": "gemini",
       "_tgt": "gemini_analyze_video",
@@ -8413,7 +8549,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L195",
+      "source_location": "L205",
       "weight": 1.0,
       "_src": "gemini_analyze_video",
       "_tgt": "gemini_parse_gemini_response",
@@ -8425,24 +8561,24 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L101",
+      "source_location": "L105",
       "weight": 1.0,
-      "_src": "gemini_rationale_101",
+      "_src": "gemini_rationale_105",
       "_tgt": "gemini_parse_gemini_response",
       "source": "gemini_parse_gemini_response",
-      "target": "gemini_rationale_101",
+      "target": "gemini_rationale_105",
       "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "backend\\services\\gemini.py",
-      "source_location": "L128",
+      "source_location": "L132",
       "weight": 1.0,
-      "_src": "gemini_rationale_128",
+      "_src": "gemini_rationale_132",
       "_tgt": "gemini_analyze_video",
       "source": "gemini_analyze_video",
-      "target": "gemini_rationale_128",
+      "target": "gemini_rationale_132",
       "confidence_score": 1.0
     },
     {
@@ -8803,6 +8939,174 @@
       "_tgt": "transcript_format_timestamp",
       "source": "transcript_format_time_range",
       "target": "transcript_format_timestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "video_prep",
+      "_tgt": "video_prep_prepare_video_for_analysis",
+      "source": "video_prep",
+      "target": "video_prep_prepare_video_for_analysis",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_src": "video_prep",
+      "_tgt": "video_prep_safe_getsize",
+      "source": "video_prep",
+      "target": "video_prep_safe_getsize",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "video_prep",
+      "_tgt": "video_prep_should_attempt_compression",
+      "source": "video_prep",
+      "target": "video_prep_should_attempt_compression",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_src": "video_prep",
+      "_tgt": "video_prep_should_use_compressed_file",
+      "source": "video_prep",
+      "target": "video_prep_should_use_compressed_file",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L90",
+      "weight": 1.0,
+      "_src": "video_prep",
+      "_tgt": "video_prep_build_compressed_path",
+      "source": "video_prep",
+      "target": "video_prep_build_compressed_path",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_src": "video_prep",
+      "_tgt": "video_prep_build_ffmpeg_command",
+      "source": "video_prep",
+      "target": "video_prep_build_ffmpeg_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L129",
+      "weight": 1.0,
+      "_src": "video_prep",
+      "_tgt": "video_prep_cleanup",
+      "source": "video_prep",
+      "target": "video_prep_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "video_prep_prepare_video_for_analysis",
+      "_tgt": "video_prep_safe_getsize",
+      "source": "video_prep_prepare_video_for_analysis",
+      "target": "video_prep_safe_getsize",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_src": "video_prep_prepare_video_for_analysis",
+      "_tgt": "video_prep_should_attempt_compression",
+      "source": "video_prep_prepare_video_for_analysis",
+      "target": "video_prep_should_attempt_compression",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "video_prep_prepare_video_for_analysis",
+      "_tgt": "video_prep_build_compressed_path",
+      "source": "video_prep_prepare_video_for_analysis",
+      "target": "video_prep_build_compressed_path",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "video_prep_prepare_video_for_analysis",
+      "_tgt": "video_prep_build_ffmpeg_command",
+      "source": "video_prep_prepare_video_for_analysis",
+      "target": "video_prep_build_ffmpeg_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "video_prep_prepare_video_for_analysis",
+      "_tgt": "video_prep_cleanup",
+      "source": "video_prep_prepare_video_for_analysis",
+      "target": "video_prep_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_src": "video_prep_prepare_video_for_analysis",
+      "_tgt": "video_prep_should_use_compressed_file",
+      "source": "video_prep_prepare_video_for_analysis",
+      "target": "video_prep_should_use_compressed_file",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\services\\video_prep.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "video_prep_rationale_17",
+      "_tgt": "video_prep_prepare_video_for_analysis",
+      "source": "video_prep_prepare_video_for_analysis",
+      "target": "video_prep_rationale_17",
       "confidence_score": 1.0
     },
     {
@@ -9595,6 +9899,90 @@
       "_tgt": "test_bilibili_support_transcriptformattingtests_test_renders_mono_and_bilingual_transcript_text",
       "source": "test_bilibili_support_transcriptformattingtests",
       "target": "test_bilibili_support_transcriptformattingtests_test_renders_mono_and_bilingual_transcript_text",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_src": "test_video_prep",
+      "_tgt": "test_video_prep_videopreparationtests",
+      "source": "test_video_prep",
+      "target": "test_video_prep_videopreparationtests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "test_video_prep_videopreparationtests",
+      "_tgt": "test_video_prep_videopreparationtests_test_skips_compression_for_small_files",
+      "source": "test_video_prep_videopreparationtests",
+      "target": "test_video_prep_videopreparationtests_test_skips_compression_for_small_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "test_video_prep_videopreparationtests",
+      "_tgt": "test_video_prep_videopreparationtests_test_attempts_compression_for_large_files",
+      "source": "test_video_prep_videopreparationtests",
+      "target": "test_video_prep_videopreparationtests_test_attempts_compression_for_large_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_src": "test_video_prep_videopreparationtests",
+      "_tgt": "test_video_prep_videopreparationtests_test_uses_compressed_file_when_it_hits_target_size",
+      "source": "test_video_prep_videopreparationtests",
+      "target": "test_video_prep_videopreparationtests_test_uses_compressed_file_when_it_hits_target_size",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_src": "test_video_prep_videopreparationtests",
+      "_tgt": "test_video_prep_videopreparationtests_test_uses_compressed_file_when_it_is_significantly_smaller",
+      "source": "test_video_prep_videopreparationtests",
+      "target": "test_video_prep_videopreparationtests_test_uses_compressed_file_when_it_is_significantly_smaller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "test_video_prep_videopreparationtests",
+      "_tgt": "test_video_prep_videopreparationtests_test_rejects_compressed_file_when_savings_are_too_small",
+      "source": "test_video_prep_videopreparationtests",
+      "target": "test_video_prep_videopreparationtests_test_rejects_compressed_file_when_savings_are_too_small",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "backend\\tests\\test_video_prep.py",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "test_video_prep_videopreparationtests",
+      "_tgt": "test_video_prep_videopreparationtests_test_builds_sibling_compressed_path",
+      "source": "test_video_prep_videopreparationtests",
+      "target": "test_video_prep_videopreparationtests_test_builds_sibling_compressed_path",
       "confidence_score": 1.0
     },
     {

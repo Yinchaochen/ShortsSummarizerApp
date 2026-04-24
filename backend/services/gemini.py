@@ -2,13 +2,17 @@ import os
 import re
 import json
 import time
+import logging
 from google import genai
 from google.genai import types
+from services.video_prep import prepare_video_for_analysis
 
 GEMINI_MODELS = [
     "models/gemini-2.5-flash",
     "models/gemini-flash-latest",
 ]
+
+logger = logging.getLogger(__name__)
 
 LANG_PROMPTS = {
     "af": "Reply in Afrikaans.",
@@ -135,12 +139,18 @@ def analyze_video(video_path: str, language: str = "en", on_progress=None) -> di
 
     client = genai.Client(api_key=api_key)
     video_file = None
+    prepared_video_path = video_path
+    cleanup_path = None
 
     try:
+        prepared_video_path, cleanup_path = prepare_video_for_analysis(video_path)
+        if prepared_video_path != video_path:
+            logger.info("Using compressed video for Gemini upload: %s", prepared_video_path)
+
         if on_progress:
             on_progress("uploading")
 
-        with open(video_path, "rb") as f:
+        with open(prepared_video_path, "rb") as f:
             video_file = client.files.upload(
                 file=f,
                 config=types.UploadFileConfig(mime_type="video/mp4"),
@@ -205,3 +215,8 @@ def analyze_video(video_path: str, language: str = "en", on_progress=None) -> di
                 client.files.delete(name=video_file.name)
             except Exception:
                 pass  # Best-effort cleanup — don't mask the real error
+        if cleanup_path and os.path.exists(cleanup_path):
+            try:
+                os.remove(cleanup_path)
+            except Exception:
+                pass
