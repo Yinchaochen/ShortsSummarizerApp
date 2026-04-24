@@ -22,6 +22,7 @@ app.include_router(captions.router,  prefix="/api/v1")
 app.include_router(summarize.router, prefix="/api")
 app.include_router(jobs.router,      prefix="/api")
 app.include_router(usage.router,     prefix="/api")
+app.include_router(captions.router,  prefix="/api")
 
 
 @app.get("/health")

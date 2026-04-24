@@ -1,9 +1,41 @@
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
+from pydantic import BaseModel, field_validator
 
+from api.errors import AppError
+from api.middleware.auth import get_current_user
 from services.captions import extract_captions
 from services.platforms.base import PlatformAccessError
+from services.transcript import build_transcript
 
 router = APIRouter()
+
+SUPPORTED_PLATFORMS = (
+    "tiktok.com",
+    "youtube.com",
+    "youtu.be",
+    "instagram.com",
+    "bilibili.com",
+    "b23.tv",
+)
+
+
+class TranscriptRequest(BaseModel):
+    url: str
+    language: str = "en"
+
+    @field_validator("url")
+    @classmethod
+    def validate_url(cls, v: str) -> str:
+        v = v.strip()
+        if not v.startswith("https://"):
+            raise ValueError("URL must start with https://")
+        if not any(platform in v for platform in SUPPORTED_PLATFORMS):
+            raise AppError(
+                "UNSUPPORTED_PLATFORM",
+                "Only TikTok, YouTube, Instagram, and Bilibili links are supported.",
+                status=422,
+            )
+        return v
 
 
 @router.get("/captions")
@@ -33,4 +65,22 @@ async def get_captions(
             detail={"code": e.code, "message": e.message},
         )
     except RuntimeError as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
+
+@router.post("/transcript")
+async def get_transcript(
+    body: TranscriptRequest,
+    _: dict = Depends(get_current_user),
+):
+    try:
+        return build_transcript(body.url, target_language=body.language)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except PlatformAccessError as e:
+        raise HTTPException(
+            status_code=502,
+            detail={"code": e.code, "message": e.message},
+        )
+    except (RuntimeError, EnvironmentError) as e:
         raise HTTPException(status_code=502, detail=str(e))

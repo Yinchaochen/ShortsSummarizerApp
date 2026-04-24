@@ -60,7 +60,7 @@ export default function HomeScreen() {
         setUsageRemaining(u.remaining);
         setResetsAt(u.resets_at ?? null);
       }).catch(() => {});
-      router.push({ pathname: "/result", params: { jobId } });
+      router.push({ pathname: "/result", params: { jobId, url: url.trim(), language: langCode } });
     } catch (e) {
       setError(e instanceof ApiError ? e.message : String(e));
     } finally {

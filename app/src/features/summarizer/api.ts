@@ -1,5 +1,5 @@
 import { supabase } from "../../shared/lib/supabase";
-import { JobResult } from "./types";
+import { JobResult, TranscriptResult } from "./types";
 
 const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? "https://shortssummarizer.up.railway.app";
 const API_V1 = `${API_BASE}/api/v1`;
@@ -55,6 +55,16 @@ export async function submitSummarize(url: string, language: string): Promise<st
   });
   const data = await handleResponse<{ job_id: string }>(res);
   return data.job_id;
+}
+
+export async function fetchTranscript(url: string, language: string): Promise<TranscriptResult> {
+  const headers = await getAuthHeader();
+  const res = await fetch(`${API_V1}/transcript`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...headers },
+    body: JSON.stringify({ url, language }),
+  });
+  return handleResponse<TranscriptResult>(res);
 }
 
 export async function pollJob(jobId: string): Promise<{

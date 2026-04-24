@@ -1,16 +1,17 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, Animated, Clipboard,
+  StyleSheet, Animated, Clipboard, ActivityIndicator,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { pollJob, ApiError } from "../src/features/summarizer/api";
-import { JobResult } from "../src/features/summarizer/types";
+import { pollJob, ApiError, fetchTranscript } from "../src/features/summarizer/api";
+import { JobResult, TranscriptResult } from "../src/features/summarizer/types";
 import { useAppStore } from "../src/shared/store/useAppStore";
 import BreathingBackground from "../src/shared/components/BreathingBackground";
 import AIDetectionCard from "../src/features/summarizer/components/AIDetectionCard";
 import Footer from "../src/shared/components/Footer";
 import { useLanguage } from "../src/shared/context/LanguageContext";
+import { LANGUAGES } from "../src/shared/lib/languages";
 
 const STEPS = ["downloading", "uploading", "processing", "analyzing"];
 
@@ -28,12 +29,16 @@ function parseResult(raw: any): JobResult {
 }
 
 export default function ResultScreen() {
-  const { jobId } = useLocalSearchParams<{ jobId: string }>();
-  const { t } = useLanguage();
+  const { jobId, url, language } = useLocalSearchParams<{ jobId: string; url?: string; language?: string }>();
+  const { langCode, t } = useLanguage();
   const addSummary = useAppStore((s) => s.addSummary);
+  const transcriptLanguage = language || langCode;
 
   const [step, setStep] = useState("downloading");
   const [result, setResult] = useState<JobResult | null>(null);
+  const [transcript, setTranscript] = useState<TranscriptResult | null>(null);
+  const [transcriptLoading, setTranscriptLoading] = useState(false);
+  const [transcriptError, setTranscriptError] = useState("");
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -82,7 +87,7 @@ export default function ResultScreen() {
           setDone(true);
           // Store in history for future history screen
           if (jobId) {
-            addSummary({ id: jobId, url: "", platform: "", language: "", result: parsed });
+            addSummary({ id: jobId, url: url ?? "", platform: "", language: transcriptLanguage, result: parsed });
           }
 
         } else if (data.state === "error") {
@@ -100,12 +105,40 @@ export default function ResultScreen() {
       }
     }, 2000);
     return () => clearInterval(interval);
-  }, [jobId]);
+  }, [jobId, url, transcriptLanguage]);
+
+  const getLanguageLabel = useCallback((code?: string, fallback?: string) => {
+    if (!code) return fallback ?? "Unknown";
+    const match = LANGUAGES.find((item) => item.code.toLowerCase() === code.toLowerCase());
+    return match?.nativeName ?? match?.name ?? fallback ?? code;
+  }, []);
+
+  const handleExtractTranscript = useCallback(async () => {
+    if (!url || transcriptLoading) return;
+    setTranscriptLoading(true);
+    setTranscriptError("");
+    try {
+      const data = await fetchTranscript(url, transcriptLanguage);
+      setTranscript(data);
+    } catch (e) {
+      setTranscriptError(e instanceof ApiError ? e.message : t.failedToConnect);
+    } finally {
+      setTranscriptLoading(false);
+    }
+  }, [transcriptLanguage, transcriptLoading, t.failedToConnect, url]);
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ["0%", "100%"],
   });
+
+  const transcriptButtonLabel = transcript ? "Refresh Full Transcript" : "Extract Full Transcript";
+  const transcriptSourceLabel = transcript
+    ? getLanguageLabel(transcript.source_language.code, transcript.source_language.label)
+    : "";
+  const transcriptTargetLabel = transcript
+    ? getLanguageLabel(transcript.target_language.code, transcript.target_language.label)
+    : "";
 
   return (
     <View style={styles.rootContainer}>
@@ -143,6 +176,47 @@ export default function ResultScreen() {
                 <Text style={styles.copyText}>{t.copySummary}</Text>
               </TouchableOpacity>
             </View>
+
+            {url ? (
+              <View style={styles.resultCard}>
+                <View style={styles.transcriptHeader}>
+                  <View style={styles.transcriptTitleWrap}>
+                    <Text style={styles.transcriptTitle}>Full Transcript</Text>
+                    <Text style={styles.transcriptMeta}>
+                      {transcript?.is_bilingual
+                        ? `${transcriptSourceLabel} + ${transcriptTargetLabel}`
+                        : transcriptSourceLabel || "Original subtitles"}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={[styles.copyButton, styles.transcriptActionButton]}
+                    onPress={handleExtractTranscript}
+                    disabled={transcriptLoading}
+                  >
+                    {transcriptLoading
+                      ? <ActivityIndicator color="#d0d6e0" />
+                      : <Text style={styles.copyText}>{transcriptButtonLabel}</Text>
+                    }
+                  </TouchableOpacity>
+                </View>
+
+                {transcriptError ? (
+                  <Text style={styles.transcriptError}>{transcriptError}</Text>
+                ) : null}
+
+                {transcript ? (
+                  <>
+                    <Text style={styles.transcriptBody}>{transcript.display_text}</Text>
+                    <TouchableOpacity
+                      style={styles.copyButton}
+                      onPress={() => Clipboard.setString(transcript.display_text)}
+                    >
+                      <Text style={styles.copyText}>Copy Transcript</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : null}
+              </View>
+            ) : null}
             <AIDetectionCard
               isAiGenerated={result.is_ai_generated}
               isDeepfake={result.is_deepfake}
@@ -179,6 +253,13 @@ const styles = StyleSheet.create({
   errorText: { color: "#ff6b6b", fontSize: 14, lineHeight: 22 },
   resultCard: { backgroundColor: "rgba(255,255,255,0.03)", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", padding: 20, gap: 16 },
   resultText: { color: "#d0d6e0", fontSize: 15, lineHeight: 26 },
+  transcriptHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", gap: 16 },
+  transcriptTitleWrap: { flex: 1, gap: 6 },
+  transcriptTitle: { color: "#f7f8f8", fontSize: 18, fontWeight: "600" },
+  transcriptMeta: { color: "#62666d", fontSize: 12, lineHeight: 18 },
+  transcriptActionButton: { minWidth: 180 },
+  transcriptBody: { color: "#d0d6e0", fontSize: 14, lineHeight: 24 },
+  transcriptError: { color: "#ff8585", fontSize: 13, lineHeight: 20 },
   copyButton: { borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", borderRadius: 8, paddingVertical: 10, alignItems: "center" },
   copyText: { color: "#62666d", fontSize: 13 },
   toast: {

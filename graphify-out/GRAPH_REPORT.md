@@ -1,25 +1,25 @@
 # Graph Report - .  (2026-04-24)
 
 ## Corpus Check
-- 78 files · ~235,105 words
+- 79 files · ~236,474 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 423 nodes · 483 edges · 46 communities detected
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 42 edges (avg confidence: 0.5)
+- 446 nodes · 533 edges · 46 communities detected
+- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 51 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## God Nodes (most connected - your core abstractions)
-1. `BasePlatform` - 24 edges
+1. `BasePlatform` - 25 edges
 2. `BubbleModule` - 18 edges
 3. `ScreenCaptureModule` - 18 edges
-4. `PlatformAccessError` - 16 edges
-5. `ScreenCaptureService` - 10 edges
-6. `ScreenCaptureLiveTranslation` - 10 edges
-7. `CloudStreamingTranslator` - 9 edges
-8. `IAsrEngine` - 9 edges
-9. `LiveTranslationOrchestrator` - 9 edges
-10. `MediaProjectionCaptureEngine` - 9 edges
+4. `PlatformAccessError` - 17 edges
+5. `AppError` - 11 edges
+6. `ScreenCaptureService` - 10 edges
+7. `ScreenCaptureLiveTranslation` - 10 edges
+8. `CloudStreamingTranslator` - 9 edges
+9. `IAsrEngine` - 9 edges
+10. `LiveTranslationOrchestrator` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Validate Supabase JWT and return user dict.` --uses--> `AppError`  [INFERRED]
@@ -30,122 +30,122 @@
   backend\api\middleware\auth.py → backend\api\errors.py
 - `Increment free_count by 1 after a successful summary.` --uses--> `AppError`  [INFERRED]
   backend\api\middleware\auth.py → backend\api\errors.py
-- `SummarizeRequest` --uses--> `AppError`  [INFERRED]
-  backend\api\routes\summarize.py → backend\api\errors.py
+- `TranscriptRequest` --uses--> `AppError`  [INFERRED]
+  backend\api\routes\captions.py → backend\api\errors.py
 
 ## Communities
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
-Nodes (6): ApiError, getAuthHeader(), getUsage(), handleResponse(), submitSummarize(), ScreenCaptureLiveTranslation
+Nodes (7): ApiError, fetchTranscript(), getAuthHeader(), getUsage(), handleResponse(), submitSummarize(), ScreenCaptureLiveTranslation
 
 ### Community 1 - "Community 1"
-Cohesion: 0.12
-Nodes (30): PlatformAccessError, _build_ydl_opts(), _clean_html(), extract_captions(), _extract_tiktok_stickers(), get_captions(), _inject_cookie(), _is_chinese_lang() (+22 more)
+Cohesion: 0.1
+Nodes (32): PlatformAccessError, BilibiliPlatform, Bilibili video downloader (yt-dlp + cookies when required)., _build_ydl_opts(), _clean_html(), extract_captions(), _extract_tiktok_stickers(), get_captions() (+24 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.11
-Nodes (12): ABC, BasePlatform, Abstract base for all platform downloaders. Add a new platform by subclassing an, BasePlatform, BilibiliPlatform, Bilibili video downloader (yt-dlp + cookies when required)., InstagramPlatform, Instagram Reels / Posts downloader (yt-dlp + cookie file). (+4 more)
+Cohesion: 0.1
+Nodes (15): ABC, BasePlatform, Abstract base for all platform downloaders. Add a new platform by subclassing an, BasePlatform, InstagramPlatform, Instagram Reels / Posts downloader (yt-dlp + cookie file)., _build_probe_opts(), _get_video_duration() (+7 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.11
-Nodes (1): BubbleModule
+Nodes (7): BaseModel, TranscriptRequest, SummarizeRequest, CaptionParsingTests, PlatformDetectionTests, RequestValidationTests, TranscriptFormattingTests
 
 ### Community 4 - "Community 4"
 Cohesion: 0.11
-Nodes (1): ScreenCaptureModule
+Nodes (1): BubbleModule
 
 ### Community 5 - "Community 5"
-Cohesion: 0.13
-Nodes (5): BaseModel, SummarizeRequest, CaptionParsingTests, PlatformDetectionTests, SummarizeRequestTests
+Cohesion: 0.11
+Nodes (1): ScreenCaptureModule
 
 ### Community 6 - "Community 6"
 Cohesion: 0.18
 Nodes (12): check_usage(), get_current_user(), _get_or_create_usage(), increment_usage(), Validate Supabase JWT and return user dict., Fetch usage row, creating it if absent. Resets free_count if 24h has elapsed., Check usage and raise 403 if the free limit is reached. Returns remaining uses., Increment free_count by 1 after a successful summary. (+4 more)
 
 ### Community 7 - "Community 7"
+Cohesion: 0.28
+Nodes (14): build_transcript(), _call_gemini_json(), _chunk_segments(), _detect_language(), _format_time_range(), _format_timestamp(), _get_client(), _languages_differ() (+6 more)
+
+### Community 8 - "Community 8"
 Cohesion: 0.15
 Nodes (1): ScreenCaptureService
 
-### Community 8 - "Community 8"
+### Community 9 - "Community 9"
 Cohesion: 0.27
 Nodes (11): build_ts_file(), full_mode(), main(), parse_existing_i18n(), patch_mode(), Generate UI translations for all languages in languages.ts using Gemini.  Usage:, Ask Gemini to translate all strings to the target language in one call., Parse the auto-generated i18n.ts and return all current translations.     Return (+3 more)
 
-### Community 9 - "Community 9"
+### Community 10 - "Community 10"
 Cohesion: 0.2
 Nodes (1): CloudStreamingTranslator
 
-### Community 10 - "Community 10"
+### Community 11 - "Community 11"
 Cohesion: 0.2
 Nodes (1): IAsrEngine
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.2
 Nodes (1): LiveTranslationOrchestrator
 
-### Community 12 - "Community 12"
+### Community 13 - "Community 13"
 Cohesion: 0.2
 Nodes (1): MediaProjectionCaptureEngine
 
-### Community 13 - "Community 13"
+### Community 14 - "Community 14"
 Cohesion: 0.2
 Nodes (1): MLKitTranslator
 
-### Community 14 - "Community 14"
+### Community 15 - "Community 15"
 Cohesion: 0.2
 Nodes (1): PositionalOverlayRenderer
 
-### Community 15 - "Community 15"
+### Community 16 - "Community 16"
 Cohesion: 0.2
 Nodes (1): SherpaAsrAdapter
 
-### Community 16 - "Community 16"
+### Community 17 - "Community 17"
 Cohesion: 0.22
 Nodes (2): PositionalOverlayView, TranslatedBlock
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 Cohesion: 0.25
 Nodes (1): MainActivity
 
-### Community 18 - "Community 18"
+### Community 19 - "Community 19"
 Cohesion: 0.25
 Nodes (2): CaptionSegment, CaptionSyncManager
 
-### Community 19 - "Community 19"
+### Community 20 - "Community 20"
 Cohesion: 0.25
 Nodes (1): SherpaModelManager
 
-### Community 20 - "Community 20"
+### Community 21 - "Community 21"
 Cohesion: 0.25
 Nodes (2): Array5, TemporalBackgroundInpainter
 
-### Community 21 - "Community 21"
+### Community 22 - "Community 22"
 Cohesion: 0.29
 Nodes (1): MainApplication
 
-### Community 22 - "Community 22"
+### Community 23 - "Community 23"
 Cohesion: 0.29
 Nodes (1): ICaptureEngine
 
-### Community 23 - "Community 23"
+### Community 24 - "Community 24"
 Cohesion: 0.29
 Nodes (1): ISubtitleRenderer
 
-### Community 24 - "Community 24"
+### Community 25 - "Community 25"
 Cohesion: 0.29
 Nodes (2): MLKitOcrEngine, Script
 
-### Community 25 - "Community 25"
+### Community 26 - "Community 26"
 Cohesion: 0.29
 Nodes (1): SherpaAsrManager
 
-### Community 26 - "Community 26"
+### Community 27 - "Community 27"
 Cohesion: 0.33
 Nodes (5): CaptureConfig, PCMChunk, RenderedSubtitle, SessionConfig, TextBlock
-
-### Community 27 - "Community 27"
-Cohesion: 0.47
-Nodes (5): _build_probe_opts(), _get_video_duration(), Fetch video duration in seconds without downloading.     Returns None if the pla, Download video, analyze with Gemini, save result to Supabase., summarize_video()
 
 ### Community 28 - "Community 28"
 Cohesion: 0.4
@@ -240,17 +240,17 @@ Nodes (1): Return the platform name for a given URL.
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `BasePlatform` connect `Community 2` to `Community 1`, `Community 27`, `Community 5`?**
-  _High betweenness centrality (0.034) - this node is a cross-community bridge._
-- **Why does `SummarizeRequest` connect `Community 5` to `Community 6`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `AppError` connect `Community 6` to `Community 5`?**
+- **Why does `BasePlatform` connect `Community 2` to `Community 1`, `Community 3`?**
+  _High betweenness centrality (0.021) - this node is a cross-community bridge._
+- **Why does `TranscriptRequest` connect `Community 3` to `Community 1`, `Community 6`?**
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
+- **Why does `AppError` connect `Community 6` to `Community 1`, `Community 3`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
-- **Are the 21 inferred relationships involving `BasePlatform` (e.g. with `Caption extraction service.  Uses yt-dlp to fetch timed subtitle/caption data fr` and `Extract timed captions from a video URL.      Returns list of:         {"start":`) actually correct?**
-  _`BasePlatform` has 21 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 13 inferred relationships involving `PlatformAccessError` (e.g. with `Extract timed captions from a video URL.      Returns a list of caption segments` and `Caption extraction service.  Uses yt-dlp to fetch timed subtitle/caption data fr`) actually correct?**
-  _`PlatformAccessError` has 13 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 22 inferred relationships involving `BasePlatform` (e.g. with `Caption extraction service.  Uses yt-dlp to fetch timed subtitle/caption data` and `Extract timed captions from a video URL.      Returns list of:         {"star`) actually correct?**
+  _`BasePlatform` has 22 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 14 inferred relationships involving `PlatformAccessError` (e.g. with `TranscriptRequest` and `Extract timed captions from a video URL.      Returns a list of caption segmen`) actually correct?**
+  _`PlatformAccessError` has 14 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 7 inferred relationships involving `AppError` (e.g. with `Validate Supabase JWT and return user dict.` and `Fetch usage row, creating it if absent. Resets free_count if 24h has elapsed.`) actually correct?**
+  _`AppError` has 7 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `CaptionSegment`, `Script`, `CaptureConfig` to the rest of the system?**
   _21 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05 - nodes in this community are weakly interconnected._

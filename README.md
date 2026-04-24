@@ -10,6 +10,7 @@ AI-powered summarizer for TikTok, YouTube Shorts, Instagram Reels, and Bilibili 
 ## What it does
 
 - **Summarize any short video** — TikTok, YouTube Shorts, Instagram Reels, Bilibili
+- **Extract full subtitles** — pull the full transcript from supported videos, with bilingual side-by-side output when the transcript language differs from the selected app language
 - **Gemini 2.5 Flash analysis** — visuals, subtitles, humor/meme structure, overall impression
 - **Real-time screen translation** — Android overlay that captures any app's screen, OCR-detects subtitles, and translates them live using ML Kit (fully on-device, no network needed)
 - **Free tier** — 15 summaries included, no account required to start

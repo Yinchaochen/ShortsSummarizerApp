@@ -3,4 +3,4 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "sh -c 'cd /app && celery -A workers.tasks.celery_app worker --loglevel=info --concurrency=2'"
+startCommand = "python -m celery -A workers.tasks.celery_app worker --loglevel=info --concurrency=2"
