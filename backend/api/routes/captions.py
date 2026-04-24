@@ -16,6 +16,8 @@ SUPPORTED_PLATFORMS = (
     "instagram.com",
     "bilibili.com",
     "b23.tv",
+    "xiaohongshu.com",
+    "xhslink.com",
 )
 
 
@@ -27,12 +29,12 @@ class TranscriptRequest(BaseModel):
     @classmethod
     def validate_url(cls, v: str) -> str:
         v = v.strip()
-        if not v.startswith("https://"):
-            raise ValueError("URL must start with https://")
+        if not v.startswith(("https://", "http://")):
+            raise ValueError("URL must start with http:// or https://")
         if not any(platform in v for platform in SUPPORTED_PLATFORMS):
             raise AppError(
                 "UNSUPPORTED_PLATFORM",
-                "Only TikTok, YouTube, Instagram, and Bilibili links are supported.",
+                "Only TikTok, YouTube, Instagram, Bilibili, and Xiaohongshu links are supported.",
                 status=422,
             )
         return v

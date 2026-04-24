@@ -1,6 +1,6 @@
 # Uchia — Short Video Summarizer
 
-AI-powered summarizer for TikTok, YouTube Shorts, Instagram Reels, and Bilibili videos. Paste a link, get a structured breakdown in seconds. Also ships a real-time screen translation overlay for Android.
+AI-powered summarizer for TikTok, YouTube Shorts, Instagram Reels, Bilibili, and Xiaohongshu videos. Paste a link, get a structured breakdown in seconds. Also ships a real-time screen translation overlay for Android.
 
 **Live app → [uchia.io](https://shorts-summarizer-app.vercel.app)**
 **Download APK → [Latest release](https://github.com/Yinchaochen/ShortsSummarizerApp/releases/latest)**
@@ -9,7 +9,7 @@ AI-powered summarizer for TikTok, YouTube Shorts, Instagram Reels, and Bilibili 
 
 ## What it does
 
-- **Summarize any short video** — TikTok, YouTube Shorts, Instagram Reels, Bilibili
+- **Summarize any short video** — TikTok, YouTube Shorts, Instagram Reels, Bilibili, Xiaohongshu
 - **Extract full subtitles** — pull the full transcript from supported videos, with bilingual side-by-side output when the transcript language differs from the selected app language
 - **Gemini 2.5 Flash analysis** — visuals, subtitles, humor/meme structure, overall impression
 - **Real-time screen translation** — Android overlay that captures any app's screen, OCR-detects subtitles, and translates them live using ML Kit (fully on-device, no network needed)
@@ -29,7 +29,7 @@ AI-powered summarizer for TikTok, YouTube Shorts, Instagram Reels, and Bilibili 
 │         Railway — web + celeryworker + redis     │
 │                                                  │
 │  yt-dlp download → Gemini 2.5 Flash analysis    │
-│  Platform abstraction: TikTok / YouTube / IG     │
+│  Platform abstraction: TikTok / YouTube / IG / XHS│
 └──────────────────────┬──────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────┐
@@ -62,6 +62,7 @@ Android Live Translation (separate, on-device):
 | YouTube Shorts | ✅ |
 | Instagram Reels | ✅ |
 | Bilibili | ✅ |
+| Xiaohongshu | ✅ |
 
 ## Running locally
 
@@ -101,6 +102,7 @@ cd app/android
 | `YOUTUBE_COOKIES` | Railway celeryworker | Cookie string for age-gated videos |
 | `INSTAGRAM_COOKIES` | Railway celeryworker | Cookie string for Instagram downloads |
 | `BILIBILI_COOKIES` | Railway celeryworker | Cookie string for Bilibili videos that require a logged-in session |
+| `XIAOHONGSHU_COOKIES` | Railway celeryworker | Optional cookie string for Xiaohongshu videos that require a logged-in session |
 | `REDIS_URL` | Railway | Celery broker |
 
 ## License

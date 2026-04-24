@@ -11,7 +11,9 @@ if str(BACKEND_ROOT) not in sys.path:
 from api.routes.captions import TranscriptRequest
 from api.routes.summarize import SummarizeRequest
 from services.captions import _parse_from_info, _read_subtitle_file
+from services.platforms import get_downloader
 from services.platforms.base import BasePlatform
+from services.platforms.xiaohongshu import XiaoHongShuPlatform
 from services.transcript import (
     _languages_differ,
     _render_bilingual_text,
@@ -35,6 +37,19 @@ class PlatformDetectionTests(unittest.TestCase):
     def test_detects_b23_short_url(self):
         self.assertEqual(BasePlatform.detect("https://b23.tv/abcd1234"), "bilibili")
 
+    def test_detects_xiaohongshu_desktop_url(self):
+        self.assertEqual(
+            BasePlatform.detect("https://www.xiaohongshu.com/discovery/item/69a53707000000001503b708"),
+            "xiaohongshu",
+        )
+
+    def test_detects_xhs_short_url(self):
+        self.assertEqual(BasePlatform.detect("http://xhslink.com/o/AraalrX99XI"), "xiaohongshu")
+
+    def test_returns_xiaohongshu_downloader(self):
+        downloader = get_downloader("http://xhslink.com/o/AraalrX99XI")
+        self.assertIsInstance(downloader, XiaoHongShuPlatform)
+
 
 class RequestValidationTests(unittest.TestCase):
     def test_accepts_bilibili_summary_url(self):
@@ -44,6 +59,14 @@ class RequestValidationTests(unittest.TestCase):
     def test_accepts_bilibili_transcript_url(self):
         body = TranscriptRequest(url="https://www.bilibili.com/video/BV11Bd8BPEsb/")
         self.assertEqual(body.url, "https://www.bilibili.com/video/BV11Bd8BPEsb/")
+
+    def test_accepts_xiaohongshu_summary_short_url(self):
+        body = SummarizeRequest(url="http://xhslink.com/o/AraalrX99XI")
+        self.assertEqual(body.url, "http://xhslink.com/o/AraalrX99XI")
+
+    def test_accepts_xiaohongshu_transcript_url(self):
+        body = TranscriptRequest(url="https://www.xiaohongshu.com/explore/69a53707000000001503b708")
+        self.assertEqual(body.url, "https://www.xiaohongshu.com/explore/69a53707000000001503b708")
 
 
 class CaptionParsingTests(unittest.TestCase):

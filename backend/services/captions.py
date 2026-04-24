@@ -3,7 +3,7 @@ Caption extraction service.
 
 Uses yt-dlp to fetch timed subtitle/caption data from video URLs.
 Supports: YouTube (official auto-captions), TikTok (auto-captions where available),
-          Instagram (limited), Bilibili, and 1000+ other platforms yt-dlp supports.
+          Instagram (limited), Bilibili, Xiaohongshu, and 1000+ other platforms yt-dlp supports.
 
 Returns a flat list of CaptionSegment dicts:
   [{"start": 1.23, "end": 4.56, "text": "Hello world", "x": None, "y": None}]
@@ -107,6 +107,9 @@ def _build_ydl_opts(output_tmpl: str, url: str) -> tuple[dict, str | None]:
     elif platform == "bilibili":
         opts["http_headers"] = dict(BasePlatform.BILIBILI_HEADERS)
         cookie_file = _inject_cookie(opts, "BILIBILI_COOKIES")
+    elif platform == "xiaohongshu":
+        opts["http_headers"] = dict(BasePlatform.XIAOHONGSHU_HEADERS)
+        cookie_file = _inject_cookie(opts, "XIAOHONGSHU_COOKIES")
 
     return opts, cookie_file
 

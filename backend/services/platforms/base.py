@@ -34,6 +34,12 @@ class BasePlatform(ABC):
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
     }
 
+    XIAOHONGSHU_HEADERS = {
+        **BROWSER_HEADERS,
+        "Referer": "https://www.xiaohongshu.com/",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+    }
+
     @abstractmethod
     def download(self, url: str, output_path: str) -> bool:
         """Download the video to output_path. Returns True on success."""
@@ -50,6 +56,8 @@ class BasePlatform(ABC):
             return "youtube"
         if "bilibili.com" in url or "b23.tv" in url:
             return "bilibili"
+        if "xiaohongshu.com" in url or "xhslink.com" in url:
+            return "xiaohongshu"
         return "unknown"
 
     @staticmethod

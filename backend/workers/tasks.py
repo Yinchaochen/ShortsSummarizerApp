@@ -29,6 +29,9 @@ def _build_probe_opts(url: str) -> tuple[dict, str | None]:
     if BasePlatform.detect(url) == "bilibili":
         opts["http_headers"] = dict(BasePlatform.BILIBILI_HEADERS)
         cookie_file = BasePlatform.add_cookie_file(opts, "BILIBILI_COOKIES")
+    elif BasePlatform.detect(url) == "xiaohongshu":
+        opts["http_headers"] = dict(BasePlatform.XIAOHONGSHU_HEADERS)
+        cookie_file = BasePlatform.add_cookie_file(opts, "XIAOHONGSHU_COOKIES")
 
     return opts, cookie_file
 
