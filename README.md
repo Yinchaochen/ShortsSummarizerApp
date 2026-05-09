@@ -105,6 +105,61 @@ cd app/android
 | `XIAOHONGSHU_COOKIES` | Railway celeryworker | Optional cookie string for Xiaohongshu videos that require a logged-in session |
 | `REDIS_URL` | Railway | Celery broker |
 
+## Use as a Claude Code skill
+
+This repo ships a `SKILL.md` at [`skill/SKILL.md`](skill/SKILL.md) so Claude Code (or any AI agent that follows the same `~/.claude/skills/<name>/SKILL.md` convention) can call the deployed Uchia API directly. After installing the skill, you can paste any supported short-video URL in chat and ask "analyze this reel" / "summarize 这个视频" / "use this as a UI reference" — the agent will hit the API, poll the job, and hand you back the structured breakdown.
+
+### Install
+
+```bash
+# macOS / Linux
+mkdir -p ~/.claude/skills/shorts-summarizer
+cp skill/SKILL.md ~/.claude/skills/shorts-summarizer/SKILL.md
+```
+
+```powershell
+# Windows (PowerShell)
+$dest = "$env:USERPROFILE\.claude\skills\shorts-summarizer"
+New-Item -ItemType Directory -Force -Path $dest | Out-Null
+Copy-Item skill\SKILL.md "$dest\SKILL.md"
+```
+
+Restart your Claude Code session — the skill will appear in the available-skills list.
+
+### Set the API token (one-time)
+
+The deployed API requires a Supabase JWT. Grab yours once:
+
+1. Open [shorts-summarizer-app.vercel.app](https://shorts-summarizer-app.vercel.app) and log in
+2. DevTools → **Application** → **Local Storage** → key like `sb-xxxxxx-auth-token`
+3. Copy the `access_token` value (long `eyJ...` string)
+4. Persist as a user env var so the skill can read it without prompting:
+
+```bash
+# bash / zsh — add to ~/.zshrc or ~/.bashrc
+export UCHIA_TOKEN="eyJ..."
+```
+
+```powershell
+# Windows — persist for the current user
+[System.Environment]::SetEnvironmentVariable("UCHIA_TOKEN", "eyJ...", "User")
+# Restart your shell / Claude Code session so the variable is picked up
+```
+
+### Use
+
+Paste a URL + intent. Examples that auto-trigger the skill:
+
+- `https://www.instagram.com/reel/DX_csG5TILA/ — analyze this for UI reference`
+- `https://www.tiktok.com/@user/video/123 总结一下`
+- `https://youtube.com/shorts/abc what's happening in this video?`
+
+Supported platforms: TikTok, YouTube Shorts, Instagram Reels, Bilibili, Xiaohongshu. Free tier = 15 summaries / 24h per logged-in user.
+
+### Customize for your own deployment
+
+The shipped `SKILL.md` points at `https://shortssummarizer.up.railway.app`. If you fork this repo and deploy your own backend, edit the API base URL inside `SKILL.md` (search for `shortssummarizer.up.railway.app`) before installing.
+
 ## License
 
 MIT
