@@ -5,6 +5,12 @@ android/build/
 android/.idea/
 ios/
 graphify-out/
+.tmp/
+.agents/
+scripts/_meeting/
+scripts/last_summary.json
+scripts/last_ui_description.md
+www.bilibili.com_cookies.txt
 __pycache__/
 *.pyc
 *.generated.py
