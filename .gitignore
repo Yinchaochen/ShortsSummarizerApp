@@ -27,3 +27,16 @@ desktop.ini
 
 # Logs
 *.log
+
+# Local analysis / generated scratch output
+.tmp/
+.graphify_ast.json
+.graphify_detect.json
+graphify-out/cache/
+graphify-out/graph.html
+scripts/_meeting/
+scripts/last_summary.json
+scripts/last_ui_description.md
+
+# Local auth material
+*_cookies.txt
